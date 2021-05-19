@@ -1,0 +1,340 @@
+import numpy as np
+import math
+import matplotlib.pyplot as plt
+
+# Fixed Parameters
+PinS_to_FHP = 800 # m
+FHP_to_GARP = 3000 # m
+
+# Flexible Parameters
+GP = 3.7 # deg  (maximum 6.3 deg, optimum 3.7 deg)
+FHPCH = 15 # m (typically 15 m, increase FHPCH as necessary)
+
+MA_Climb_Gradient = 0.042 #
+
+OCH_PinS = PinS_to_FHP * math.tan(GP * math.pi / 180) + FHPCH # ft (minimum 250 ft)
+
+x_origin_of_Z_Surface = -(700 + 38 / math.tan(GP * math.pi / 180))
+
+print("x_origin_of_Z_Surface :" + str(x_origin_of_Z_Surface)+ ' m')
+
+x_PinS = 1852
+
+print("OCH_PinS :" + str(OCH_PinS)+ ' m')
+print("OCH_PinS :" + str(OCH_PinS * 3.2808) + ' ft')
+
+PinS_to_HRP = 1 * 1852 # m
+
+Safety_AW = 15 # m
+HCH = 3 # m
+alpha = 15 # deg (night time operation)
+
+ATT = 444 # m
+
+O1 = [2700, 400, 17] # O1 (x, y, z)
+O2 = [4000, 1350, 81] # O2 (x, y, z)
+O3 = [500, 40, 19] # O3
+O4 = [1000, 80, 30] # O4
+O5 = [200, 150, 65] # O5
+O6 = [-700, 300, 70] # O6
+
+plt.figure(1)
+
+W_Surface = [0.03494, 0, -6.45]
+W2_Surface = [0.0485, 0, -38.77]
+X_Surface = [0.032556, 0.2138, -58.89]
+Y_Surface = [0.025341, 0.26772, -67.93]
+Z_Surface = [-MA_Climb_Gradient, 0, -58.29]
+
+# Foot Print Contour
+C = [799.18 + 1052, 153.76]
+D = [375.1 + 1052, 218.18, 218.14]
+E = [-1387.63 + 1052, 485.75]
+
+C1 = [8770.75 + 1052, 344, 300]
+C2 = [2382.75 + 1052, 271.88, 74.81]
+D1 = [5281.05 + 1052, 874.47, 300]
+E1 = [-5747.08 + 1052, 1481.6, 183.1]
+
+plt.plot(np.linspace(-C2[0], -C2[0], 1000),np.linspace(C2[1], -C2[1], 1000),'r', linewidth=0.7)
+
+plt.plot(np.linspace(-E[0], -E[0], 1000),np.linspace(E[1], -E[1], 1000),'r', linewidth=0.7)
+
+plt.plot(np.linspace(-E1[0], -E1[0], 1000),np.linspace(E1[1], -E1[1], 1000),'r', linewidth=0.7)
+
+plt.plot(np.linspace(-C[0], -C[0], 1000),np.linspace(C[1], -C[1], 1000),'r', linewidth=0.7)
+plt.plot(np.linspace(-C1[0], -C1[0], 1000),np.linspace(C1[1], -C1[1], 1000),'r', linewidth=0.7)
+
+plt.plot(np.linspace(-C[0], -D[0], 1000),np.linspace(C[1], D[1], 1000),'r', linewidth=0.7)
+plt.plot(np.linspace(-C[0], -D[0], 1000),np.linspace(-C[1], -D[1], 1000),'r', linewidth=0.7)
+
+plt.plot(np.linspace(-E[0], -D[0], 1000),np.linspace(E[1], D[1], 1000),'r', linewidth=0.7)
+plt.plot(np.linspace(-E[0], -D[0], 1000),np.linspace(-E[1], -D[1], 1000),'r', linewidth=0.7)
+
+plt.plot(np.linspace(-D[0], -D1[0], 1000),np.linspace(D[1], D1[1], 1000),'r', linewidth=0.7)
+plt.plot(np.linspace(-D[0], -D1[0], 1000),np.linspace(-D[1], -D1[1], 1000),'r', linewidth=0.7)
+
+plt.plot(np.linspace(-C1[0], -D1[0], 1000),np.linspace(C1[1], D1[1], 1000),'r', linewidth=0.7)
+plt.plot(np.linspace(-C1[0], -D1[0], 1000),np.linspace(-C1[1], -D1[1], 1000),'r', linewidth=0.7)
+
+plt.plot(np.linspace(-E1[0], -E[0], 1000),np.linspace(E1[1], E[1], 1000),'r', linewidth=0.7)
+plt.plot(np.linspace(-E1[0], -E[0], 1000),np.linspace(-E1[1], -E[1], 1000),'r', linewidth=0.7)
+
+plt.plot(np.linspace(-C2[0], -C[0], 1000),np.linspace(C2[1], C[1], 1000),'r', linewidth=0.7)
+plt.plot(np.linspace(-C2[0], -C[0], 1000),np.linspace(-C2[1], -C[1], 1000),'r', linewidth=0.7)
+
+plt.plot(np.linspace(-C1[0], -C2[0], 1000),np.linspace(C1[1], C2[1], 1000),'r', linewidth=0.7)
+plt.plot(np.linspace(-C1[0], -C2[0], 1000),np.linspace(-C1[1], -C2[1], 1000),'r', linewidth=0.7)
+
+plt.plot(np.linspace(-E1[0], -10000, 1000),np.linspace(0.8 * 1852, 0.8 * 1852, 1000),'r', linewidth=0.7)
+plt.plot(np.linspace(-E1[0], -10000, 1000),np.linspace(-0.8 * 1852, -0.8 * 1852, 1000),'r', linewidth=0.7)
+
+plt.scatter(-O1[0]-PinS_to_HRP,O1[1])
+plt.annotate('O1', (-O1[0]-PinS_to_HRP,O1[1]))
+
+plt.scatter(-O2[0]-PinS_to_HRP,O2[1])
+plt.annotate('O2', (-O2[0]-PinS_to_HRP,O2[1]))
+
+plt.scatter(-O3[0],O3[1],s = 20)
+plt.annotate('O3', (-O3[0] + 20,O3[1] + 20))
+
+plt.scatter(-O4[0],O4[1],s = 20)
+plt.annotate('O4', (-O4[0] + 20,O4[1] + 20))
+
+plt.scatter(-O5[0],O5[1],s = 20)
+plt.annotate('O5', (-O5[0] + 20,O5[1] + 20))
+
+plt.scatter(-O6[0],O6[1],s = 20)
+plt.annotate('O6', (-O6[0] + 20,O6[1] + 20))
+
+plt.scatter(0,0,s=20, c='k')
+plt.annotate('HRP', (0+20,0 - 200))
+
+plt.scatter(-x_PinS,0,s=20, c='k')
+plt.annotate('MAPt', (-x_PinS+20 , 0 - 200))
+
+plt.scatter(-x_PinS + PinS_to_FHP, 0 ,s=20, c='k')
+plt.annotate('FHP', (-x_PinS + PinS_to_FHP +20, 0 - 200))
+
+plt.grid(color='k', linestyle='-', linewidth=0.1)
+plt.axis('equal')
+
+# ============ Figure 2 =================== #
+
+# plt.figure(2)
+
+# Fixed Parameters
+PinS_to_FHP = 800 # m
+FHP_to_GARP = 3000 # m
+
+# Flexible Parameters
+GP = 3.7 # deg  (maximum 6.3 deg, optimum 3.7 deg)
+FHPCH = 15 # m (typically 15 m, increase FHPCH as necessary)
+
+MA_Climb_Gradient = 0.042 #
+
+OCH_PinS = PinS_to_FHP * math.tan(GP * math.pi / 180) + FHPCH # ft (minimum 250 ft)
+
+x_origin_of_Z_Surface = -(700 + 38 / math.tan(GP * math.pi / 180))
+
+print("x_origin_of_Z_Surface :" + str(x_origin_of_Z_Surface)+ ' m')
+
+x_PinS = 1852
+
+print("OCH_PinS :" + str(OCH_PinS)+ ' m')
+print("OCH_PinS :" + str(OCH_PinS * 3.2808) + ' ft')
+
+PinS_to_HRP = 1 * 1852 # m
+
+Safety_AW = 15 # m
+HCH = 3 # m
+alpha = 15 # deg (night time operation)
+
+ATT = 444 # m
+
+O1 = [2700, 400, 17] # O1 (x, y, z)
+O2 = [4000, 1350, 81] # O2 (x, y, z)
+O3 = [500, 40, 19] # O3
+O4 = [1000, 80, 30] # O4
+O5 = [200, 150, 65] # O5
+O6 = [-700, 300, 70] # O6
+
+
+W_Surface = [0.05012, 0, -6.45]
+W2_Surface = [0.0701, 0, -38.77]
+X_Surface = [0.032556, 0.2138, -58.89]
+Y_Surface = [0.025341, 0.26772, -67.93]
+Z_Surface = [-MA_Climb_Gradient, 0, -58.29]
+
+# Foot Print Contour
+C = [553.07 + 1052, 153.76]
+D = [375.1 + 1052, 218.18, 218.14]
+E = [-2030.78 + 1052, 485.75]
+
+C1 = [6114.33 + 1052, 748, 300]
+C2 = [1617.62 + 1052, 378.19, 74.81]
+D1 = [5281.05 + 1052, 874.47, 300]
+E1 = [-6148.18 + 1052, 1481.6, 183.1]
+
+plt.plot(np.linspace(-C2[0], -C2[0], 1000),np.linspace(C2[1], -C2[1], 1000),'k', linewidth=0.7)
+
+plt.plot(np.linspace(-E[0], -E[0], 1000),np.linspace(E[1], -E[1], 1000),'k', linewidth=0.7)
+
+plt.plot(np.linspace(-E1[0], -E1[0], 1000),np.linspace(E1[1], -E1[1], 1000),'k', linewidth=0.7)
+
+plt.plot(np.linspace(-C[0], -C[0], 1000),np.linspace(C[1], -C[1], 1000),'k', linewidth=0.7)
+plt.plot(np.linspace(-C1[0], -C1[0], 1000),np.linspace(C1[1], -C1[1], 1000),'k', linewidth=0.7)
+
+plt.plot(np.linspace(-C[0], -D[0], 1000),np.linspace(C[1], D[1], 1000),'k', linewidth=0.7)
+plt.plot(np.linspace(-C[0], -D[0], 1000),np.linspace(-C[1], -D[1], 1000),'k', linewidth=0.7)
+
+plt.plot(np.linspace(-E[0], -D[0], 1000),np.linspace(E[1], D[1], 1000),'k', linewidth=0.7)
+plt.plot(np.linspace(-E[0], -D[0], 1000),np.linspace(-E[1], -D[1], 1000),'k', linewidth=0.7)
+
+plt.plot(np.linspace(-D[0], -D1[0], 1000),np.linspace(D[1], D1[1], 1000),'k', linewidth=0.7)
+plt.plot(np.linspace(-D[0], -D1[0], 1000),np.linspace(-D[1], -D1[1], 1000),'k', linewidth=0.7)
+
+plt.plot(np.linspace(-C1[0], -D1[0], 1000),np.linspace(C1[1], D1[1], 1000),'k', linewidth=0.7)
+plt.plot(np.linspace(-C1[0], -D1[0], 1000),np.linspace(-C1[1], -D1[1], 1000),'k', linewidth=0.7)
+
+plt.plot(np.linspace(-E1[0], -E[0], 1000),np.linspace(E1[1], E[1], 1000),'k', linewidth=0.7)
+plt.plot(np.linspace(-E1[0], -E[0], 1000),np.linspace(-E1[1], -E[1], 1000),'k', linewidth=0.7)
+
+plt.plot(np.linspace(-C2[0], -C[0], 1000),np.linspace(C2[1], C[1], 1000),'k', linewidth=0.7)
+plt.plot(np.linspace(-C2[0], -C[0], 1000),np.linspace(-C2[1], -C[1], 1000),'k', linewidth=0.7)
+
+plt.plot(np.linspace(-C1[0], -C2[0], 1000),np.linspace(C1[1], C2[1], 1000),'k', linewidth=0.7)
+plt.plot(np.linspace(-C1[0], -C2[0], 1000),np.linspace(-C1[1], -C2[1], 1000),'k', linewidth=0.7)
+
+plt.plot(np.linspace(-E1[0], -10000, 1000),np.linspace(0.8 * 1852, 0.8 * 1852, 1000),'k', linewidth=0.7)
+plt.plot(np.linspace(-E1[0], -10000, 1000),np.linspace(-0.8 * 1852, -0.8 * 1852, 1000),'k', linewidth=0.7)
+
+plt.scatter(-O1[0]-PinS_to_HRP,O1[1])
+plt.annotate('O1', (-O1[0]-PinS_to_HRP,O1[1]))
+
+plt.scatter(-O2[0]-PinS_to_HRP,O2[1])
+plt.annotate('O2', (-O2[0]-PinS_to_HRP,O2[1]))
+
+plt.scatter(-O3[0],O3[1],s = 20)
+plt.annotate('O3', (-O3[0] + 20,O3[1] + 20))
+
+plt.scatter(-O4[0],O4[1],s = 20)
+plt.annotate('O4', (-O4[0] + 20,O4[1] + 20))
+
+plt.scatter(-O5[0],O5[1],s = 20)
+plt.annotate('O5', (-O5[0] + 20,O5[1] + 20))
+
+plt.scatter(-O6[0],O6[1],s = 20)
+plt.annotate('O6', (-O6[0] + 20,O6[1] + 20))
+
+plt.scatter(0,0,s=20, c='k')
+plt.annotate('HRP', (0+20,0 - 200))
+
+plt.scatter(-x_PinS,0,s=20, c='k')
+plt.annotate('MAPt', (-x_PinS+20 , 0 - 200))
+
+plt.scatter(-x_PinS + PinS_to_FHP, 0 ,s=20, c='k')
+plt.annotate('FHP', (-x_PinS + PinS_to_FHP +20, 0 - 200))
+
+plt.grid(color='k', linestyle='-', linewidth=0.1)
+plt.axis('equal')
+
+# ======== LNAV
+
+MOC_final = 75 # m
+MOC_missed_approach = 30 # m
+
+OCA_O1 = math.ceil(O1[2] + MOC_final)
+OCA_O2 = math.ceil(O2[2] + MOC_final * ((0.4 * 1852) - (1350 - 0.4 * 1852)) / (0.4 * 1852))
+
+OCS_level = OCA_O2 + HCH - MOC_final# m
+
+OCA_O4 = math.ceil(O4[2] + MOC_final)
+
+OCH = OCA_O4
+
+print("==== Approach ======")
+
+print("Level OCS: " + str(OCS_level) + ' m')
+
+x_DP = - OCA_O4 / math.tan(8.3 * math.pi / 180) # m
+y_DP = 0;
+
+print("OCA_O1: "+ str(OCA_O1) + " m")
+print("OCA_O2: "+ str(OCA_O2) + " m")
+
+PinS_to_HRP = 1 * 1852 # m
+
+x_alpha = -(60 - Safety_AW)/math.tan(15 * math.pi / 180) - Safety_AW
+
+plt.figure(1)
+
+plt.scatter(x_DP,y_DP,s=20, c='k')
+plt.annotate('DP', (x_DP + 20, y_DP + 20))
+
+plt.scatter(-PinS_to_HRP,0)
+plt.annotate('MAPt', (-PinS_to_HRP,0))
+
+plt.scatter(-O1[0]-PinS_to_HRP,O1[1])
+plt.annotate('O1', (-O1[0]-PinS_to_HRP,O1[1]))
+
+plt.scatter(-O2[0]-PinS_to_HRP,O2[1])
+plt.annotate('O2', (-O2[0]-PinS_to_HRP,O2[1]))
+
+plt.plot(np.linspace(0, -PinS_to_HRP-4000, 1000),np.linspace(0, 0, 1000),'b', linewidth=0.7)
+
+plt.plot(np.linspace(0, -PinS_to_HRP-4000, 1000), np.linspace(-0.4*1852, -0.4*1852, 1000), 'b--', linewidth=0.7)
+plt.plot(np.linspace(0, -PinS_to_HRP-4000, 1000), np.linspace(0.4*1852, 0.4*1852, 1000), 'b--', linewidth=0.7)
+
+plt.plot(np.linspace(-PinS_to_HRP, -PinS_to_HRP-4000, 1000), np.linspace(-0.8*1852, -0.8*1852, 1000), 'k', linewidth=0.7)
+plt.plot(np.linspace(-PinS_to_HRP, -PinS_to_HRP-4000, 1000), np.linspace(0.8*1852, 0.8*1852, 1000), 'k', linewidth=0.7)
+
+x_r = np.ones((1000, 1))
+y_r = np.ones((1000, 1))
+theta = np.linspace(-90, 90, 1000)
+
+for i in range(0,1000):
+    x_r[i] = (0.4 * 1852) * math.cos(theta[i] * math.pi / 180)
+    y_r[i] = (0.4 * 1852) * math.sin(theta[i] * math.pi / 180)
+
+plt.plot(x_r,y_r, 'b', linewidth=0.7)
+
+sin_alpha = 0.4 * 1852 / (PinS_to_HRP ** 2 + (1852 * 0.8) ** 2) ** 0.5
+sin_beta = PinS_to_HRP / (PinS_to_HRP ** 2 + (1852 * 0.8) ** 2) ** 0.5
+
+alpha = np.arcsin(sin_alpha) * 180 / math.pi
+beta = np.arcsin(sin_beta) * 180 / math.pi
+gamma = 90 - (alpha + beta)
+
+plt.plot(np.linspace(1000, -PinS_to_HRP, 1000),
+         np.linspace(0.8*1852 - math.tan(gamma * math.pi / 180) * abs(PinS_to_HRP + 1000)
+         , 0.8*1852, 1000), 'b', linewidth=0.7)
+
+plt.plot(np.linspace(1000, -PinS_to_HRP, 1000),
+         np.linspace(-0.8*1852 + math.tan(gamma * math.pi / 180) * abs(PinS_to_HRP + 1000)
+         , -0.8*1852, 1000), 'b', linewidth=0.7)
+
+plt.plot(np.linspace(x_DP, -PinS_to_HRP - ATT, 1000), np.linspace(-0.4*1852, -0.4*1852, 1000), 'b', linewidth=0.7)
+plt.plot(np.linspace(x_DP, -PinS_to_HRP - ATT, 1000), np.linspace(0.4*1852, 0.4*1852, 1000), 'b', linewidth=0.7)
+
+plt.plot(np.linspace(x_DP, x_DP, 1000), np.linspace(0.4*1852, -0.4*1852, 1000), 'b', linewidth=0.7)
+
+plt.plot(np.linspace(-Safety_AW, x_DP, 1000), np.linspace(Safety_AW, 0.4*1852, 1000), 'b', linewidth=0.7)
+plt.plot(np.linspace(-Safety_AW, x_DP, 1000), np.linspace(-Safety_AW, -0.4*1852, 1000), 'b', linewidth=0.7)
+
+plt.plot(np.linspace(-PinS_to_HRP - ATT, -PinS_to_HRP - ATT, 1000), np.linspace(-0.4*1852, 0.4*1852, 1000), 'b', linewidth=0.7)
+plt.plot(np.linspace(0, -PinS_to_HRP - ATT, 1000), np.linspace(0, 0, 1000), 'b', linewidth=0.7)
+
+plt.plot(np.linspace(-PinS_to_HRP, -PinS_to_HRP, 1000), np.linspace(0.4*1852, 0.8*1852, 1000), 'b', linewidth=0.7)
+plt.plot(np.linspace(-PinS_to_HRP, -PinS_to_HRP, 1000), np.linspace(-0.4*1852, -0.8*1852, 1000), 'b', linewidth=0.7)
+
+plt.plot(np.linspace(x_DP, x_alpha, 1000), np.linspace(60, 60, 1000), 'b', linewidth=0.7)
+plt.plot(np.linspace(x_DP, x_alpha, 1000), np.linspace(-60, -60, 1000), 'b', linewidth=0.7)
+
+plt.plot(np.linspace(-Safety_AW, x_alpha, 1000), np.linspace(Safety_AW, 60, 1000), 'b', linewidth=0.7)
+plt.plot(np.linspace(-Safety_AW, x_alpha, 1000), np.linspace(-Safety_AW, -60, 1000), 'b', linewidth=0.7)
+
+plt.show()
+
+
+
