@@ -8,7 +8,7 @@ try:
                                   password = "password",
                                   host = "127.0.0.1",
                                   port = "5432",
-                                  database = "airac_2021_04")
+                                  database = "airac_2021_05")
 
     cur = conn.cursor()
 
