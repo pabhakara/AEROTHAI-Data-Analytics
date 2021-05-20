@@ -8,7 +8,7 @@ try:
                                   password = "password",
                                   host = "127.0.0.1",
                                   port = "5432",
-                                  database = "airac_2021_03")
+                                  database = "airac_2021_04")
 
     cur = conn.cursor()
 
@@ -30,14 +30,12 @@ try:
     cur.execute(sql_query)
     conn.commit()
 
-    sql_query = "select a.*, wp.ident, " \
-                "replace(wp.lat::text, ',', '.')," \
-                "replace(wp.long::text, ',', '.') " \
+    sql_query = "select a.*, wp.Ident, " \
+                "replace(wp.Lat::text, ',', '.')," \
+                "replace(wp.Long::text, ',', '.') " \
                 "from ats a, waypoint wp " \
-                "where wp.id = a.idwayp " \
-                "order by a.id ASC"
-
-
+                "where wp.ID = a.IDWayp " \
+                "order by a.ID ASC"
 
 
     print(sql_query)
@@ -85,7 +83,6 @@ try:
                 "VALUES('" + str(ats_route_id[k]) + "'," +\
                 str(sub_route_id) + ",ST_LineFromText('LINESTRING(" +\
                 str(float(waypoint_long[k])) + " " + str(float(waypoint_lat[k])) + ","
-
 
     k = k + 1
 
