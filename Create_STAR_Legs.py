@@ -9,7 +9,7 @@ conn_postgres = psycopg2.connect(user = "postgres",
                                   password = "password",
                                   host = "127.0.0.1",
                                   port = "5432",
-                                  database = "airac_2021_04")
+                                  database = "airac_2021_05")
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory = psycopg2.extras.DictCursor)
 
@@ -78,11 +78,12 @@ with conn_postgres:
             k = k + 1
             print(k)
             temp_1 = record[k]
-            temp_2 = record[k+1]
-            latitude_1 = str(float(temp_1['latitude']))
-            longitude_1 = str(float(temp_1['longitude']))
             if k == num_of_records - 1:
                 break
+            temp_2 = record[k+1]
+
+            latitude_1 = str(float(temp_1['latitude']))
+            longitude_1 = str(float(temp_1['longitude']))
 
         postgres_sql_text = postgres_sql_text + \
                             longitude_1 + " " + latitude_1 + ","
@@ -97,11 +98,12 @@ with conn_postgres:
         print(str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
 
         k = k + 1
-        temp_1 = record[k]
 
-        if k == num_of_records - 1:
+        if k > num_of_records - 2:
             break
+
         else:
+            temp_1 = record[k]
             temp_2 = record[k + 1]
 
         # -----

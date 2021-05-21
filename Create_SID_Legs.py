@@ -76,12 +76,14 @@ with conn_postgres:
                                 longitude_1 + " " + latitude_1 +  ","
             k = k + 1
             print(k)
-            temp_1 = record[k]
-            temp_2 = record[k+1]
-            latitude_1 = str(float(temp_1['latitude']))
-            longitude_1 = str(float(temp_1['longitude']))
-            if k == num_of_records - 1:
+
+            if k > num_of_records - 2:
                 break
+            else:
+                temp_1 = record[k]
+                temp_2 = record[k+1]
+                latitude_1 = str(float(temp_1['latitude']))
+                longitude_1 = str(float(temp_1['longitude']))
 
         postgres_sql_text = postgres_sql_text + \
                             longitude_1 + " " + latitude_1 + ","
@@ -96,11 +98,11 @@ with conn_postgres:
         print(str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
 
         k = k + 1
-        temp_1 = record[k]
 
-        if k == num_of_records - 1:
+        if k > num_of_records - 2:
             break
         else:
+            temp_1 = record[k]
             temp_2 = record[k + 1]
 
         # -----
