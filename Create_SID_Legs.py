@@ -34,7 +34,7 @@ with conn_postgres:
     conn_postgres.commit()
 
     postgres_sql_text = "select ST_Y(wp_geom) as latitude, ST_X(wp_geom) as longitude, * " + \
-                        "from sid order by airport_ident,procedure_ident"
+                        "from sid order by airport_ident,procedure_ident,transition,id"
 
     print(postgres_sql_text)
 
