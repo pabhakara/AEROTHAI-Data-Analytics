@@ -21,7 +21,7 @@ DC.execute("set client_encoding = " + encoding)
 mysql = '''show tables from flight'''
 dbx.execute(mysql)
 ts = dbx.fetchall()
-tables = ['target_2021_04','2021_04_radar']
+tables = ['target_2021_05','2021_05_radar']
 
 for table in tables:
     mysql = '''describe flight.%s''' % (table)
