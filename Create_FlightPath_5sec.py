@@ -14,14 +14,14 @@ conn_postgres = psycopg2.connect(user = "postgres",
                                   password = "password",
                                   host = "127.0.0.1",
                                   port = "5432",
-                                  database = "flight_track_5s")
+                                  database = "test_db")
 
 with conn_postgres:
 
     cursor_postgres = conn_postgres.cursor(cursor_factory = psycopg2.extras.DictCursor)
 
     # create the table name that will store the radar track
-    year_month = "2021_02_05"
+    year_month = "2021_02"
     table_name = "track_" + year_month + "_5sec"
 
     # Create an sql query that creates a new table for radar tracks in Postgres SQL database
@@ -41,10 +41,15 @@ with conn_postgres:
 
     conn_postgres.commit()
 
-    postgres_sql_text = "SELECT b.track_id,b.app_time,b._24bitaddress,b.callsign,b.dep,b.dest,b.actype," + \
-                  "b.latitude,b.longitude,b.actual_flight_level,b.cdm " + \
-                  "from target_" + year_month + "_geom b " + \
-                  "order by b.track_id,b.app_time"
+    # postgres_sql_text = "SELECT b.track_id,b.app_time,b._24bitaddress,b.callsign,b.dep,b.dest,b.actype," + \
+    #               "b.latitude,b.longitude,b.actual_flight_level,b.cdm " + \
+    #               "from target_" + year_month + "_geom b " + \
+    #               "order by b.track_id,b.app_time"
+
+    postgres_sql_text = "SELECT b.\"TID\",b.\"APPTIME\",b.\"ACADDRESS\",b.\"CALLSIGN\",b.\"DEP\",b.\"DES\",b.\"ACTYPE\"," + \
+                  "b.\"LATITUDE\",b.\"LONGITUDE\",b.\"AFLEVEL\",b.\"CDM\" " + \
+                  "from target_" + year_month + "_5s b " + \
+                  "order by b.\"TID\",b.\"APPTIME\""
 
     print(postgres_sql_text)
     cursor_postgres.execute(postgres_sql_text)

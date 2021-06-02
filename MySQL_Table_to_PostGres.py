@@ -14,7 +14,7 @@ db = mysql.connector.connect(host='172.16.101.32',
 encoding = 'Latin1'
 
 dbx = db.cursor()
-DB = psycopg2.connect("dbname='flight_track'")
+DB = psycopg2.connect("dbname='los_2021_05'")
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
 
