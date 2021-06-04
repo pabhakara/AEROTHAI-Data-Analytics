@@ -21,7 +21,7 @@ with conn_postgres:
 
     year = '2021'
     month = '02'
-    day_list = range(1,3)
+    day_list = range(3,29)
 
     t = time.time()
 
@@ -43,32 +43,36 @@ with conn_postgres:
     # lon_offset_scale = .3
 
     # Create an sql query that creates a new table for radar tracks in Postgres SQL database
-    postgres_sql_text = "DROP TABLE IF EXISTS " + table_name + "_flightkey; \n" + \
-                        "CREATE TABLE " + table_name + "_flightkey " + \
-                        "(callsign character varying, flight_id integer, " \
-                        "flight_key character varying, geom geometry, " + \
-                        "start_time timestamp without time zone, " + \
-                        "etd timestamp without time zone, " + \
-                        "atd timestamp without time zone, " + \
-                        "eta timestamp without time zone, " + \
-                        "ata timestamp without time zone, " + \
-                        "end_time timestamp without time zone, " + \
-                        "dep character varying, dest character varying, " + \
-                        "actype character varying, " + \
-                        "frule character varying, " + \
-                        "reg character varying, " + \
-                        "item_18 character varying, " + \
-                        "comnav character varying, flevel character varying, " + \
-                        "processedfixroute character varying," + \
-                        "processedfix character varying," + \
-                        "processedroute character varying)" + \
-                        "WITH (OIDS=FALSE); \n" + \
-                        "ALTER TABLE " + table_name + "_flightkey " \
-                                                      "OWNER TO postgres;"
-    print(postgres_sql_text)
-    cursor_postgres.execute(postgres_sql_text)
 
-    conn_postgres.commit()
+
+    # postgres_sql_text = "DROP TABLE IF EXISTS " + table_name + "_flightkey; \n" + \
+    #                     "CREATE TABLE " + table_name + "_flightkey " + \
+    #                     "(callsign character varying, flight_id integer, " \
+    #                     "flight_key character varying, geom geometry, " + \
+    #                     "start_time timestamp without time zone, " + \
+    #                     "etd timestamp without time zone, " + \
+    #                     "atd timestamp without time zone, " + \
+    #                     "eta timestamp without time zone, " + \
+    #                     "ata timestamp without time zone, " + \
+    #                     "end_time timestamp without time zone, " + \
+    #                     "dep character varying, dest character varying, " + \
+    #                     "actype character varying, " + \
+    #                     "frule character varying, " + \
+    #                     "reg character varying, " + \
+    #                     "item_18 character varying, " + \
+    #                     "comnav character varying, flevel character varying, " + \
+    #                     "processedfixroute character varying," + \
+    #                     "processedfix character varying," + \
+    #                     "processedroute character varying)" + \
+    #                     "WITH (OIDS=FALSE); \n" + \
+    #                     "ALTER TABLE " + table_name + "_flightkey " \
+    #                                                   "OWNER TO postgres;"
+    # print(postgres_sql_text)
+    # cursor_postgres.execute(postgres_sql_text)
+    #
+    # conn_postgres.commit()
+
+
 
     for day in day_list:
         # Try to connect to the remote MySQL database which contains flight plan data and radar target data.
@@ -99,12 +103,6 @@ with conn_postgres:
 
         num_of_records = len(record)
         print("num_of_record: ", num_of_records)
-
-        # cursor_mysql = conn_mysql.cursor(dictionary=True)
-        # cursor_mysql.execute(mysql_query)
-        # record = cursor_mysql.fetchall()
-        # num_of_records = len(record)
-        # print("num_of_record: ",num_of_records)
 
         k = 0
 
