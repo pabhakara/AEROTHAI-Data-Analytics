@@ -11,7 +11,7 @@ import psycopg2
 encoding = 'Latin1'
 
 dbx = db.cursor()
-DB = psycopg2.connect("dbname='flight_postgres'")
+DB = psycopg2.connect("dbname='flight_target'")
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
 

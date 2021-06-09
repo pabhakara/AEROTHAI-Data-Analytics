@@ -14,14 +14,14 @@ db = mysql.connector.connect(host='172.16.101.32',
 encoding = 'Latin1'
 
 dbx = db.cursor()
-DB = psycopg2.connect("dbname='los_2021_05'")
+DB = psycopg2.connect("dbname='flight_target'")
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
 
 mysql = '''show tables from flight'''
 dbx.execute(mysql)
 ts = dbx.fetchall()
-tables = ['target_2021_05','2021_05_radar']
+tables = ['target_2019_02']
 
 for table in tables:
     mysql = '''describe flight.%s''' % (table)
