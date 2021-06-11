@@ -1,0 +1,161 @@
+asterix
+=======
+
+Asterix is utility used for reading and parsing of EUROCONTROL ASTERIX protocol data from stdin, file or network multicast stream.
+
+ASTERIX stands for All Purpose STructured EUROCONTROL SuRveillance Information EXchange.
+It is an ATM Surveillance Data Binary Messaging Format which allows transmission of harmonised information between any surveillance and automation system.
+ASTERIX defines the structure of the data to be exchanged over a communication medium, from the encoding of every bit of information up to the organisation of the data within a block of data - without any loss of information during the whole process.
+More about ASTERIX protocol you can find here: http://www.eurocontrol.int/services/asterix
+
+Asterix application was developed by Croatia Control Ltd.
+
+This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. See COPYING file for details.
+
+BUILDING FOR WINDOWS
+====================
+
+You need to install Cygwin (http://www.cygwin.com/)
+Install following cygwin packages:
+    binutils
+    cygwin-devel
+    gcc-core
+    gcc-g++
+    make
+    libexpat-devel
+
+In cygwin terminal from asterix/src directory start following command:
+
+make
+make install
+
+for debug version:
+make debug
+make debug install
+
+asterix.exe will be created in asterix/install
+
+BUILDING FOR LINUX
+==================
+
+From asterix/src directory start following command:
+
+make
+make install
+
+for debug version:
+make debug
+make debug install
+
+asterix.exe will be created in asterix/install
+
+BUILDING FOR OS X
+=================
+
+You need to install the "Command Line Tools".
+On 10.7 (Lion) and 10.8 (Moutain Lion), download Xcode from the Mac App Store.
+After installing Xcode, go to "Xcode->Preferences->Downloads" and install the
+package "Command Line Tools".
+
+From asterix/src directory start following command:
+
+make
+make install
+
+for debug version:
+make debug
+make debug install
+
+asterix.exe will be created in asterix/install
+
+USING CMAKE
+===========
+If you have CMake installed, on any platform run:
+
+cmake .
+make 
+
+
+USAGE
+=====
+
+asterix [-h] [-V] [-v] [-L] [-o] [-s] [-P|-O|-R|-F|-H] [-l|-x|-j|-jh|-je] [-d filename] [-LF filename] -f filename|-i mcastaddress:ipaddress:port[:srcaddress]
+
+Options:
+   -h,--help        Show this help message and exit.
+   -V,--version     Show version information and exit.
+   -v,--verbose     Show more information during program execution.
+   -d,--def         XML protocol definitions filenames are listed in specified filename. By default are listed in config/asterix.ini
+   -L,--list        List all configured ASTERIX items. Mark which items are filtered.
+   -LF,--filter     Printout only items listed in configured file.
+   -o,--loop        Loop the input file. Only relevant when file is data source.
+   -s,--sync        Output will be printed synchronously with input file (with time delays between packets). This parameter is used only if input is from file.
+
+Input format:
+   -P,--pcap        Input is from PCAP file
+   -R,--oradispcap  Input is from PCAP file and Asterix packet is encapsulated in ORADIS packet
+   -O,--oradis      Asterix packet is encapsulated in ORADIS packet
+   -F,--final       Asterix packet is encapsulated in FINAL packet.
+   -H,--hdlc        Asterix packet is encapsulated in HDLC packet.
+   -G,--gps         Asterix packet is encapsulated in GPS packet.
+
+Output format:
+   -l,--line             Output will be printed as one line per item. This format is suitable for parsing.
+   -x,--xml              Output will be printed in compact line-delimited XML format (one object per line, suitable for parsing).
+   -xh,--xmlh            Output will be printed in human readable XML format (suitable for file storage).
+   -j,--json             Output will be printed in compact line-delimited JSON format (one object per line, suitable for parsing).
+   -jh,--jsonh           Output will be printed in human readable JSON format (suitable for file storage).
+   -je,--json-extensive  Output will be printed in extensive JSON format (with both hex and scaled value and description of each item).
+
+
+Data source:
+   -f filename      File generated from libpcap (tcpdump or Wireshark) or file in FINAL or HDLC format.
+                    For example: -f filename.pcap
+   -i m:i:p[:s]     Multicast IP address:Interface address:Port[:Source address].
+                    For example: 232.1.1.12:10.17.58.37:21112:10.17.22.23
+                    More than one multicast group could be defined, use @ as separator.
+                    For example: 232.1.1.13:10.17.58.37:21112:10.17.22.23@232.1.1.14:10.17.58.37:21112:10.17.22.23
+
+WIRESHARK PLUGIN
+=================
+
+Wireshark (http://www.wireshark.org/) plugin can be created from Asterix source.
+For instructions see asterix\src\asterix\wireshark-plugin\HowToBuild.txt
+Note: Wireshark plugin is not supported any more since the Wireshark version 1.10.
+(but now there is a Asterix dissector in Wireshark so you can use it directly)
+
+PYTHON MODULE
+=============
+
+Asterix can be built as Python module.
+
+Build with:
+    python setup.py build
+
+Install:
+    python setup.py install
+
+To run unit tests:
+    python -m unittest
+
+You can also install the latest version from pip directly:
+    pip install asterix-decoder
+
+To install python module on Windows machine you need to do it through cygwin console (see above).
+
+
+CREDITS
+=======
+
+Jurica Baricevic    -   Created engine source (as part of converter project)
+Zeljko Harjac       -   Modifications of engine source
+Damir Salantic      -   Created Asterix source and part of Asterix XML files, Created Python module
+Darko Markus        -   Created Asterix XML files, debuging and testing
+Benjamin Bertrand   -   Created Asterix XML files, OS X building procedure
+Sergey Nastasyak    -   Created Asterix XML files
+Nabil Bendafi       -   Etheral plugin
+Krzysztof Rutkowski -   Python function for parsing with offset
+
+and many other GitHub contributors: https://github.com/CroatiaControlLtd/asterix/graphs/contributors
+
+Thank you.

@@ -1,0 +1,252 @@
+Version History for Asterix 
+===========================
+0			
+2005-2013	
+Converter project.
+
+1.0.0
+07.05.2013.
+Initial version of Asterix forked from converter.
+
+1.0.1
+13.05.2013. 
+Reading of Raw format from file fixed. 
+Added new categories.
+
+1.0.2
+14.05.2013.
+Added "hex" encode format (see in CAT048)
+
+1.0.3
+05.07.2013.
+Explicit format fixed (see example in asterix_cat021_0_26.xml)
+Fixed bug that prevented parsing of multiple Data Records in one Data Block
+
+1.0.4
+03.12.2013.
+Optional source address in multicast definition implemented: format is "-i m:i:p[:s]\tMulticast IP address:Interface address:Port[:Source address]"
+
+2.0.0
+25.6.2014.
+JSON output format added
+Code optimization 
+Compound format in JSON output fixed  
+Number of decimal places on textual output increased from 3 to 7
+Some debug outputs removed
+Output data filtering added 
+Asterix format definitions updated (mainly short names)
+Compund in compund format enabled
+Explicit can contain different formats
+XIDEF removed
+Unused code remvoed
+CML files: Special characters removed from BitsShortName, some BitsShortName renamed, tabs aligned
+RE and SP items are allowed
+Increased number of deciam points in float presentation (from 3 to 7)
+Bug in data records position fixed
+Bug in writing of large strings to stdout fixed
+Max UDP packet size increased
+Synchronous output with input file (option -s)
+Looping the input file (option -o)
+Timestamp from final format printed
+Filtering items fixed
+
+2.1.0
+17.11.2014.
+Timestamp (seconds since midnight) is printed for raw packets
+2.1.1
+11.12.2014.
+Synchronous mode implemented for final format (same as for pcap)
+
+2.1.2
+29.04.2015.
+Fixed listening on different multicast addresses with same UDP port
+CAT062 fixed format of ACASAD
+
+2.1.3
+29.6.2015.
+Explicit format fixed
+
+2.1.4
+16.9.2015.
+Fixed github issue #15: Skip block with invalid length
+
+2.1.5
+26.11.2015.
+Some extra error information to help debugging wrong format definition
+Definition of CAT004 added
+
+2.1.6
+17.2.2016.
+Issue #20 asterix_cat034_1_26.xml: Data item 050 SSR status: bit 4 read twice
+Issue #19 Problem found in DataItemBits::getBits(.....)
+Issue #16 Issue with enforcement of fx=1
+
+2.1.7
+24.2.2016.
+Issue #23 creation of cat021/RE (asterix coding rules for reserved expansion field)
+Added definition for RE field in CAT021_1_8 (by ifsnop)
+
+2.1.8
+6.3.2016.
+Issue #27 option --def doesn't work 
+Issue #28 filter doesn't work on explicit dataitems 
+
+2.1.9
+8.3.2016.
+Issue #30 Can not bind to multicast address on Windows
+
+2.2.0
+6.4.2016.
+Issue #36 cat010: Add hex encode to 24-bits target address
+Issue #33 Subscribe to more than one multicast group for input 
+
+2.2.1
+13.4.2016.
+Issue #38 filter appends extra characters in multibit dataitems
+
+2.3.0
+7.7.2016.
+Issue #39 Additional updates for category 48, version 1.21
+Issue #40 Example for reading Special Purpose field in CAT48
+Issue #41 Implementing BDS decoding using fixed length definitions
+Issue #42 Segmentation fault
+Issue #43 Added hex dump of packets before asterix decoding in DEBUG mode
+Issue #44 #45 CAT21v0.26 DI165 was defined as compound, changed to variable
+Issue #46 filtering fails to properly produce valid json outputfiltering fails to properly produce valid json output
+Issue #47 Fix: cat21v0.26/di090/PA is unsigned
+Issue #48 Fix: cat21v0.26/160/GS is signed 
+Issue #49 Memory leaks fixedIssue #49 Memory leaks fixed
+Issue #50 fixed spelling typo 
+Issue #51 BDS decoding implemented (for now registers 40,50,60)
+Feature: Added automatic tests and Travis CI integration
+
+python_v0.4.0
+15.4.2017.
+Added parsing with offset (by Krzysztof Rutkowski)
+
+2.3.1 (python_v0.4.2)
+17.5.2017.
+Added category 240
+
+2.4.0 (python_v0.5.0)
+21.9.2017.
+Changed python output for Compound filed (now each secondary part is separate dictionary)
+Some primary parts of Compund in XML definitions changed
+Some XML files beautified
+Fixed handling of compund when primary part is larger than 1 byte
+Note that output from this version is not compatible with previoud version
+
+2.4.1. (python_v0.5.1)
+19.4.2018.
+wrong repetitive fixed length on I048/120
+BDS30 decoding added to CAT062
+
+2.4.2. (python_v0.5.2)
+30.5.2018.
+Updated Cat 62 from 1.16 to 1.17 (backward compatible)
+
+2.4.2 (python_v0.5.4)
+20.7.2018.
+Fixed asterix.describe
+
+2.4.3 (python_v0.5.5)
+24.7.2018.
+Special characters ('Space' and ':') are now allowed in file names.
+
+2.4.4 (python_v0.5.6)
+12.10.2018.
+Possible bug with buffer overflow fixed
+
+2.4.5 (python_v0.5.8)
+30.10.2018.
+Possible bug with memory overflow fixed when input buffer longer then needed
+
+2.4.6 (python_v0.5.9)
+08.02.2019.
+Fixes in asterix definition files for CAT021 and CAT001
+
+2.5.0 (python_v0.5.10)
+29.8.2019.
+Fixed Issue #92 that crashed python version when ASCII characters were not alphanumeric
+Fixed issue #91 Processing stdin. Now asterix can be called with : cat file.asterix | asterix
+
+2.5.1 (python_v0.5.11)
+16.10.2019.
+Added CAT011
+
+2.5.2 (python_v0.5.12)
+6.11.2019.
+Issue #99 problem decoding I048/100 Mode-C Code and Code Confidence Indicator
+Fix: open asterix file in binary mode
+
+2.5.3
+4.12.2019.
+Issue #106 UDP multicast receiving on OS X
+
+2.5.4 (python_v0.5.13)
+9.3.2020.
+Fixed format of I380, I390 in CAT11
+Added RE field definition for Category 62+ format
+
+2.5.5 
+1.4.2020.
+Issue #113 Export undecoded asterix data in output
+
+2.5.6 (python_v0.5.14)
+10.4.2020.
+Added new categories: CAT025, CAT205
+
+2.6.0 (python_v0.5.15)
+15.5.2020.
+Issue #120 Add line-delimited XML output format and add indentation to standard XML output
+Issue #119 crc calculation not properly initialized
+Issue #118 format_arg_list truncates output if bigger than 256 bytes
+Issue #117 format_arg_list use fixed size, json corruption
+Issue #116 Error in decodification of I021/271 version 2.1
+Issue #114 use uniform spelling for twos and two's (in two's complement)
+Feature: Added CMake building mechanism
+Modifications in CAT011
+All code reformated using CLion automatic reformat
+
+2.6.1 (python_v0.5.15)
+19.8.2020.
+Feature #135 Implement extensive JSON output format
+
+2.6.2 (python_v0.5.16)
+26.8.2020.
+Issue #151 Scale does not match the spec for I062/380, subfield #22 (Position)
+Issue #152 Longitude min/max is +/- 90 deg in I062/380 subfield #9 (Trajectory Intent Data)
+Issue #153 Problem decoding Runway Designation in I062/390
+Issue #154 Scale does not match the spec for I062/500, subfield # 3
+Issue #155 Scale does not match the spec for I062/500, subfield # 5
+
+2.7.0 (python_v0.6.0)
+Issue #159 Track Angle Rate should be encoded as signed in I021/165 
+Issue #160 Typos in bit value descriptions in asterix_cat021_2_4.xml
+Issue #161 CAT021 - problem decoding Military Extended Squitter in Reserved Expansion Field
+Issue #104 problem with Data Item I048/030, Warning/Error Conditions and Target Classification 
+Issue #156 Duplicate JSON keys for I062/510 Composed Track Number
+Issue #162 No JSON array for I048/030 and I062/510 if only one extent is present in the data item
+Warning: with this update following items are changed in JSON and Python format
+001/030, 001/130, 001/210, 002/050, 002/060, 002/080, 008/100, 008/110, 019/553, 020/030, 021/110, 023/110, 025/100, 048/030, 062/510, 252/240
+Elements in those items (all variable items with only one extent) are now presented as list of dictionaries.
+
+2.7.1 (python_v0.6.1)
+Issue #166 Scale missing from Mode 5 GNSS-derived Altitude in I062/110
+Issue #167 Subfield 8 of I062/380 (Trajectory Intent Status) should be defined as Variable in xml config
+Issue #168 Error codes from write are not detected
+Issue #169 Problem decoding BDS 4,5 reserved bits
+Issue #171 Hexdata presentation is not correct for multiple records in block
+RE item added to CAT010
+
+2.8.0 (python_v0.7.0)
+Issue #175 Cat021 Ed2.4 SelH is not reasonable
+Issue #174 Warning: ‘char* strncpy(char*, const char*, size_t)’ output may be truncated
+Issue #122 glibc version 2.1 behaves diffrently than glibc 2.0.6
+Added CAT004 v1.12
+Issue #178 Explicit items with more elements then in definition should be put to list
+
+2.8.1 (python_v0.7.1)
+Issue #180 Problem decoding repetitive data item I023/120 Service Statistics
+Issue #181 Add missing Single Antenna (SA) element in Data Item I021/008 for CAT021 v2.1 
+Issue #182 convert timestamp to double, improves precision 
