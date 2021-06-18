@@ -3,8 +3,17 @@ __author__ = 'dsalanti'
 import asterix
 import dpkt
 
+#path = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Data samples/'
+#filename = 'wireshark_sbapmtn01li_OPS_CAT62_2021-06-11.pcap'
+
+path = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Data samples/'
+filename = 'test.pcap'
+
 # Read example file from packet resources
-sample_filename = asterix.get_sample_file('cat_034_048.pcap')
+#sample_filename = asterix.get_sample_file(path+filename)
+
+sample_filename = path + filename
+
 with open(sample_filename, 'rb') as f:
     pcap = dpkt.pcap.Reader(f)
 
@@ -18,5 +27,5 @@ with open(sample_filename, 'rb') as f:
         cntr += 1
 
         # Parse data
-        parsed = asterix.parse(data)
+        parsed = asterix.parse(data,Verbose=False)
         print(parsed)

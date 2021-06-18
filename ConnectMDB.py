@@ -6,7 +6,7 @@ dataFile = "ASTNAV.mdb"
 
 # set up some constants
 MDB = os.getcwd() + "/" + dataFile
-DRV = '{Microsoft Access Driver (*.mdb)}'
+DRV = '{Microsoft Access Driver (*.mdb, *.accdb)}'
 PWD = ''
 
 # connect to db
