@@ -86,7 +86,8 @@ with conn:
     k = k + 1
 
     while k < num_of_ids:
-        if (terminate[k] == 'Y') or not(str(ats_route_id[k]) == str(ats_route_id[k+1])):
+        if (terminate[k] == 'Y') or \
+                not(str(ats_route_id[k]) == str(ats_route_id[k+1])):
 
             sql_text = sql_text + str(float(waypoint_long[k])) + " " + str(float(waypoint_lat[k])) + ")',4326));"
 

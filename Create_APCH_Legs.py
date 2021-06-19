@@ -108,7 +108,8 @@ with conn:
 
     k = k + 1
 
-    while k < num_of_ids:
+    while k < num_of_ids - 1:
+
         if  not(str(type[k]) == str(type[k+1])) or \
             not(str(terminal_id[k]) == str(terminal_id[k+1]))  :
 
