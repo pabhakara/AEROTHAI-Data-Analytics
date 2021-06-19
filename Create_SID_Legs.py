@@ -1,8 +1,4 @@
-import psycopg2
 import psycopg2.extras
-import datetime
-import math
-import time
 
 # Try to connect to the local PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
 conn_postgres = psycopg2.connect(user = "postgres",
