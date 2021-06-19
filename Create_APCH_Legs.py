@@ -2,14 +2,15 @@ import psycopg2
 
 table_name = 'apch_world_legs'
 
-try:
-    # Setup Postgres DB connection
-    conn = psycopg2.connect(user = "postgres",
-                                  password = "password",
-                                  host = "127.0.0.1",
-                                  port = "5432",
-                                  database = "airac_2021_06")
 
+    # Setup Postgres DB connection
+conn = psycopg2.connect(user = "postgres",
+                                password = "password",
+                                host = "127.0.0.1",
+                                port = "5432",
+                                database = "airac_2021_06")
+
+with conn:
     cur = conn.cursor()
 
     sql_query = "DROP TABLE IF EXISTS " + table_name + ";"
@@ -136,14 +137,4 @@ try:
             sql_text = sql_text + str(float(waypoint_long[k])) + " " + str(float(waypoint_lat[k])) + ","
             k = k + 1
     print(sql_text)
-
-    cur.close()
-
-except (Exception, psycopg2.DatabaseError) as error:
-    print(error)
-
-finally:
-    if conn is not None:
-        conn.close()
-
 
