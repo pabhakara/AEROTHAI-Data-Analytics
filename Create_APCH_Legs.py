@@ -2,8 +2,6 @@ import psycopg2
 
 table_name = 'apch_world_legs'
 
-
-    # Setup Postgres DB connection
 conn = psycopg2.connect(user = "postgres",
                                 password = "password",
                                 host = "127.0.0.1",
