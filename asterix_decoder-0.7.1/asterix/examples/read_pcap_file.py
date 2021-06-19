@@ -8,7 +8,9 @@ import dpkt
 sample_filename = asterix.get_sample_file('batrsda01li_CAT62.pcapng')
 
 path = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Data samples/ADS-B Data PCAP/'
-filename = 'ADSB13112020.pcap'
+path = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Data samples/asterix_decoder-0.7.1/asterix/sample_data/'
+#filename = 'ADSB13112020.pcap'
+filename = 'sample.pcap'
 #print('batrsda01li_CAT62.pcapng')/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Data samples/asterix_decoder-0.7.1/asterix
 sample_filename = path + filename
 with open(sample_filename, 'rb') as f:

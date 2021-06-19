@@ -9,11 +9,11 @@ conn_postgres = psycopg2.connect(user = "postgres",
                                   password = "password",
                                   host = "127.0.0.1",
                                   port = "5432",
-                                  database = "airac_2021_05")
+                                  database = "airac_2021_06")
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory = psycopg2.extras.DictCursor)
 
-    table_name = 'star_geom'
+    table_name = 'star_world_legs'
 
     postgres_sql_text = "\n \n DROP TABLE IF EXISTS " + table_name + "; \n" + \
                         "CREATE TABLE " + table_name + " " + \
@@ -34,7 +34,7 @@ with conn_postgres:
     conn_postgres.commit()
 
     postgres_sql_text = "select ST_Y(wp_geom) as latitude, ST_X(wp_geom) as longitude, * " + \
-                        "from star order by airport_ident,procedure_ident,transition,id"
+                        "from star_world order by airport_ident,procedure_ident,transition,id"
 
     print(postgres_sql_text)
 
@@ -53,7 +53,7 @@ with conn_postgres:
     temp_2 = record[k + 1]
 
     airport_ident = str(temp_1['airport_ident'])
-    proc_type = str(temp_1['proc_type'])
+    proc_type = str(temp_1['procedure_type'])
     procedure_ident = str(temp_1['procedure_ident'])
     rwy_designator = str(temp_1['rwy_designator'])
     transition = str(temp_1['transition'])
@@ -124,7 +124,7 @@ with conn_postgres:
                                 "\"proc_type\",\"procedure_ident\",\"rwy_designator\",\"transition\",\"geom\")"
 
             airport_ident = str(temp_1['airport_ident'])
-            proc_type = str(temp_1['proc_type'])
+            proc_type = str(temp_1['procedure_type'])
             procedure_ident = str(temp_1['procedure_ident'])
             rwy_designator = str(temp_1['rwy_designator'])
             transition = str(temp_1['transition'])
