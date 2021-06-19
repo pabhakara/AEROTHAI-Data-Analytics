@@ -1,6 +1,6 @@
 import psycopg2
 
-table_name = 'apch_legs'
+table_name = 'apch_world_legs'
 
 try:
     # Setup Postgres DB connection
@@ -39,21 +39,22 @@ try:
     #             "where wp.id = a.idwayp " \
     #             "order by a.id ASC"
 
-    sql_query = "SELECT terminal_id, " \
-                "name, " \
+    sql_query = "SELECT idterminal, " \
+                "procedure_ident, " \
                 "airport_ident, " \
-                "designator, " \
-                "ident, " \
+                "rwy_designator, " \
+                "waypoint_ident, " \
                 "replace(waypointlat::text, ',', '.')," \
                 "replace(waypointlong::text, ',', '.')," \
                 "type, " \
+                "transition, " \
                 "trackcode " \
-                "FROM approach_wp_geom " \
+                "FROM apch_world " \
                 "WHERE trackcode like \'IF\' or " \
                 "trackcode like \'DF\' or " \
                 "trackcode like \'CF\' or " \
                 "trackcode like \'TF\' " \
-                "order by termimalleg_id "
+                "order by id "
 
     print(sql_query)
 
@@ -67,26 +68,28 @@ try:
 
     # initialize parameters
     terminal_id = []
-    name = []
+    procedure_ident = []
     airport_ident = []
     rwy_designator = []
     type = []
     waypoint_ident = []
     waypoint_lat = []
     waypoint_long = []
+    transition = []
     trackcode = []
 
     # populate the parameters with the query results, row by row
     for row in results:
         terminal_id.append(row[0])
-        name.append(row[1])
+        procedure_ident.append(row[1])
         airport_ident.append(row[2])
         rwy_designator.append(row[3])
         waypoint_ident.append(row[4])
         waypoint_lat.append(row[5])
         waypoint_long.append(row[6])
         type.append(row[7])
-        trackcode.append(row[8])
+        transition.append(row[8])
+        trackcode.append(row[9])
     print("Number of rows: " + str(len(terminal_id)))
     num_of_ids = len(terminal_id)
 
@@ -97,7 +100,7 @@ try:
     # initialize first INSERT query
     sql_text =  "INSERT INTO " + table_name + " (name," +\
                 "airport_ident,rwy_designator,type,geom) " +\
-                "VALUES('" + str(name[k]) + "','" +\
+                "VALUES('" + str(procedure_ident[k]) + "','" +\
                 str(airport_ident[k]) + "','" + \
                 str(rwy_designator[k]) + "','" + \
                 str(type[k]) + "'," + \
@@ -121,7 +124,7 @@ try:
 
             sql_text = "INSERT INTO " + table_name + " (name," + \
                        "airport_ident,rwy_designator,type,geom) " + \
-                       "VALUES('" + str(name[k]) + "','" + \
+                       "VALUES('" + str(procedure_ident[k]) + "','" + \
                        str(airport_ident[k]) + "','" + \
                        str(rwy_designator[k]) + "','" + \
                        str(type[k]) + "'," + \
