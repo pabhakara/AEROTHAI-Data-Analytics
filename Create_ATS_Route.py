@@ -96,12 +96,15 @@ with conn:
             cur.execute(sql_text)
             conn.commit()
 
+
             if not (str(ats_route_id[k] == str(ats_route_id[k + 1]))):
                 sub_route_id = 1
             else:
                 sub_route_id = sub_route_id + 1
 
             k = k + 1
+
+
 
             sql_text = "INSERT INTO " + table_name + " (ats_route_id," + \
                        "sub_route_id,geom) " + \
@@ -110,9 +113,11 @@ with conn:
                        str(float(waypoint_long[k])) + " " + str(float(waypoint_lat[k])) + ","
 
             k = k + 1
+
         else:
             sql_text = sql_text + str(float(waypoint_long[k])) + " " + str(float(waypoint_lat[k])) + ","
             k = k + 1
+
     print(sql_text)
 
 
