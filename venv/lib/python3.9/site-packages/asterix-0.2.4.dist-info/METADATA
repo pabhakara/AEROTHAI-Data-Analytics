@@ -1,0 +1,26 @@
+Metadata-Version: 2.0
+Name: asterix
+Version: 0.2.4
+Summary: Manage python components startup quickly and efficiently
+Home-page: https://github.com/hkupty/asterix
+Author: Henry "Ingvij" Kupty
+Author-email: hkupty@gmail.com
+License: MIT
+Keywords: component management system startup
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Libraries :: Application Frameworks
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+
+Manage python components startup quickly and efficiently
+
+Asterix allows you to build a dependency graph of the components your
+application require and make them globally available by binding them
+to your app (be it a component is started or any object you supply).
+
+

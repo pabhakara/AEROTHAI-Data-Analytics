@@ -6,7 +6,6 @@ import shapely
 # Enable fiona driver
 gpd.io.file.fiona.drvsupport.supported_drivers['KML'] = 'rw'
 
-
 # Try to connect to the local PostGresSQL database in which we will store our surveillance coverage
 
 #engine = create_engine('postgresql://postgres:password@127.0.0.1:5432/flight_track_5s')
