@@ -13,13 +13,13 @@ conn_postgres = psycopg2.connect(user = "postgres",
                                   password = "password",
                                   host = "127.0.0.1",
                                   port = "5432",
-                                  database = "los_2021_05")
+                                  database = "los_2021_06")
 with conn_postgres:
 
     cursor_postgres = conn_postgres.cursor()
 
     year_list = ['2021']
-    month_list = ['05']
+    month_list = ['06']
     #month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
 
     for year in year_list:

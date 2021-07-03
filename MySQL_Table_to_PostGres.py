@@ -6,7 +6,7 @@ import time
 t = time.time()
 
 db = mysql.connector.connect(host='172.16.101.32',
-                             database='flight_vtbs',
+                             database='flight',
                              user='pabhakara',
                              password='327146ra',
                              auth_plugin='mysql_native_password')
@@ -14,11 +14,11 @@ db = mysql.connector.connect(host='172.16.101.32',
 encoding = 'Latin1'
 
 dbx = db.cursor()
-DB = psycopg2.connect("dbname='tecos'")
+DB = psycopg2.connect("dbname='los_2021_06'")
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
 
-mysql = '''show tables from flight_vtbd'''
+mysql = '''show tables from flight'''
 dbx.execute(mysql)
 ts = dbx.fetchall()
 
@@ -29,20 +29,20 @@ ts = dbx.fetchall()
 # '2021_09_vtbs_tecos_arr','2021_10_vtbs_tecos_arr',
 # '2021_11_vtbs_tecos_arr','2021_12_vtbs_tecos_arr']
 tables = []
-years = ['2015','2016','2017']
-years = ['2018','2019','2020','2021']
-years = ['2020','2021'] ,'07', '08', '09', '10', '11', '12'
-years = ['2014']
-postfix = '_vtbd_tecos_dep'
+
+years = ['2021']
+#postfix = '_vtbd_tecos_dep'
+postfix = '_radar'
+prefix = ''
 
 for year in years:
-    for month in ['12']:
-        text = (year + '_' + month + postfix)
+    for month in ['06']:
+        text = (prefix + year + '_' + month + postfix)
         print(text)
         tables = tables + [text]
 
 for table in tables:
-    mysql = '''describe flight_vtbd.%s''' % (table)
+    mysql = '''describe flight.%s''' % (table)
     dbx.execute(mysql)
     rows = dbx.fetchall()
     print(rows)
@@ -70,7 +70,7 @@ for table in tables:
         print(e)
         DB.rollback()
 
-    msql = '''select * from flight_vtbd.%s''' % (table)
+    msql = '''select * from flight.%s''' % (table)
     dbx.execute(msql)
     rows = dbx.fetchall()
     n = len(rows)
