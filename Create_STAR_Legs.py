@@ -5,11 +5,11 @@ conn_postgres = psycopg2.connect(user = "postgres",
                                   password = "password",
                                   host = "127.0.0.1",
                                   port = "5432",
-                                  database = "airac_2021_06")
+                                  database = "airac_2021_07")
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory = psycopg2.extras.DictCursor)
 
-    table_name = 'star_world_legs'
+    table_name = 'star_legs'
 
     postgres_sql_text = "\n \n DROP TABLE IF EXISTS " + table_name + "; \n" + \
                         "CREATE TABLE " + table_name + " " + \
@@ -29,8 +29,8 @@ with conn_postgres:
 
     conn_postgres.commit()
 
-    postgres_sql_text = "select ST_Y(wp_geom) as latitude, ST_X(wp_geom) as longitude, * " + \
-                        "from star_world order by airport_ident,procedure_ident,transition,id"
+    postgres_sql_text = "select ST_Y(wp_geom) as \"Latitude\", ST_X(wp_geom) as \"Longitude\", * " + \
+                        "from star order by airport_ident,procedure_ident,\"Transition\",\"ID\""
 
     print(postgres_sql_text)
 
@@ -52,9 +52,9 @@ with conn_postgres:
     proc_type = str(temp_1['procedure_type'])
     procedure_ident = str(temp_1['procedure_ident'])
     rwy_designator = str(temp_1['rwy_designator'])
-    transition = str(temp_1['transition'])
-    latitude_1 = str(float(temp_1['latitude']))
-    longitude_1 = str(float(temp_1['longitude']))
+    transition = str(temp_1['Transition'])
+    latitude_1 = str(float(temp_1['Latitude']))
+    longitude_1 = str(float(temp_1['Longitude']))
 
     postgres_sql_text = "INSERT INTO \"" + table_name + "\" (\"airport_ident\"," + \
                         "\"proc_type\",\"procedure_ident\",\"rwy_designator\",\"transition\",\"geom\")"
@@ -68,7 +68,7 @@ with conn_postgres:
 
     while k < num_of_records - 1:
         while (temp_1['procedure_ident'] == temp_2['procedure_ident']) and \
-            (temp_1['transition'] == temp_2['transition']):
+            (temp_1['Transition'] == temp_2['Transition']):
             postgres_sql_text = postgres_sql_text + \
                                 longitude_1 + " " + latitude_1 +  ","
             k = k + 1
@@ -78,8 +78,8 @@ with conn_postgres:
                 break
             temp_2 = record[k+1]
 
-            latitude_1 = str(float(temp_1['latitude']))
-            longitude_1 = str(float(temp_1['longitude']))
+            latitude_1 = str(float(temp_1['Latitude']))
+            longitude_1 = str(float(temp_1['Longitude']))
 
         postgres_sql_text = postgres_sql_text + \
                             longitude_1 + " " + latitude_1 + ","
@@ -104,13 +104,13 @@ with conn_postgres:
 
         # -----
 
-        latitude_1 = str(float(temp_1['latitude']))
+        latitude_1 = str(float(temp_1['Latitude']))
 
-        latitude_2 = str(float(temp_2['latitude']))
+        latitude_2 = str(float(temp_2['Latitude']))
 
-        longitude_1 = str(float(temp_1['longitude']))
+        longitude_1 = str(float(temp_1['Longitude']))
 
-        longitude_2 = str(float(temp_2['longitude']))
+        longitude_2 = str(float(temp_2['Longitude']))
 
         # -----
 
@@ -123,9 +123,9 @@ with conn_postgres:
             proc_type = str(temp_1['procedure_type'])
             procedure_ident = str(temp_1['procedure_ident'])
             rwy_designator = str(temp_1['rwy_designator'])
-            transition = str(temp_1['transition'])
-            latitude_1 = str(float(temp_1['latitude']))
-            longitude_1 = str(float(temp_1['longitude']))
+            transition = str(temp_1['Transition'])
+            latitude_1 = str(float(temp_1['Latitude']))
+            longitude_1 = str(float(temp_1['Longitude']))
 
             postgres_sql_text = postgres_sql_text + " VALUES('" + airport_ident + "','" \
                                 + proc_type + "','" \

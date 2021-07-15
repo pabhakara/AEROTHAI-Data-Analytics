@@ -2,7 +2,6 @@ import mysql.connector
 import psycopg2
 import time
 
-
 t = time.time()
 
 db = mysql.connector.connect(host='172.16.101.32',

@@ -6,7 +6,7 @@ conn = psycopg2.connect(user = "postgres",
                         password = "password",
                         host = "127.0.0.1",
                         port = "5432",
-                        database = "airac_2021_06")
+                        database = "airac_2021_07")
 
 with conn:
     cur = conn.cursor()
@@ -29,12 +29,12 @@ with conn:
     cur.execute(sql_query)
     conn.commit()
 
-    sql_query = "select a.*, wp.Ident, " \
-                "replace(wp.lat::text, ',', '.')," \
-                "replace(wp.long::text, ',', '.') " \
+    sql_query = "select a.*, wp.\"Ident\", " \
+                "replace(wp.\"Lat\"::text, ',', '.')," \
+                "replace(wp.\"Long\"::text, ',', '.') " \
                 "from \"ATS\" a, \"Waypoint\" wp " \
-                "where wp.id = a.idwayp " \
-                "order by a.id ASC"
+                "where wp.\"ID\" = a.\"IDWayp\" " \
+                "order by a.\"ID\" ASC"
 
 
     print(sql_query)

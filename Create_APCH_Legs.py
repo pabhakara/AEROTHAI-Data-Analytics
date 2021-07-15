@@ -1,12 +1,12 @@
 import psycopg2
 
-table_name = 'apch_world_legs'
+table_name = 'apch_legs'
 
 conn = psycopg2.connect(user = "postgres",
                                 password = "password",
                                 host = "127.0.0.1",
                                 port = "5432",
-                                database = "airac_2021_06")
+                                database = "airac_2021_07")
 
 with conn:
     cur = conn.cursor()
@@ -38,22 +38,22 @@ with conn:
     #             "where wp.id = a.idwayp " \
     #             "order by a.id ASC"
 
-    sql_query = "SELECT idterminal, " \
+    sql_query = "SELECT \"IDTerminal\", " \
                 "procedure_ident, " \
                 "airport_ident, " \
                 "rwy_designator, " \
                 "waypoint_ident, " \
-                "replace(waypointlat::text, ',', '.')," \
-                "replace(waypointlong::text, ',', '.')," \
-                "type, " \
-                "transition, " \
-                "trackcode " \
-                "FROM apch_world " \
-                "WHERE trackcode like \'IF\' or " \
-                "trackcode like \'DF\' or " \
-                "trackcode like \'CF\' or " \
-                "trackcode like \'TF\' " \
-                "order by id "
+                "replace(\"WaypointLat\"::text, ',', '.')," \
+                "replace(\"WaypointLong\"::text, ',', '.')," \
+                "\"Type\", " \
+                "\"Transition\", " \
+                "\"TrackCode\" " \
+                "FROM apch " \
+                "WHERE \"TrackCode\" like \'IF\' or " \
+                "\"TrackCode\" like \'DF\' or " \
+                "\"TrackCode\" like \'CF\' or " \
+                "\"TrackCode\" like \'TF\' " \
+                "order by \"ID\" "
 
     print(sql_query)
 
