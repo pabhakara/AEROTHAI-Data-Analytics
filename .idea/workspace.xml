@@ -5,21 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b70db43c-7c4d-4b3e-9e46-199adf2487f4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/venv/lib/python3.9/site-packages/pyodbc-4.0.31.dist-info/INSTALLER" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/venv/lib/python3.9/site-packages/pyodbc-4.0.31.dist-info/LICENSE.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/venv/lib/python3.9/site-packages/pyodbc-4.0.31.dist-info/METADATA" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/venv/lib/python3.9/site-packages/pyodbc-4.0.31.dist-info/RECORD" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/venv/lib/python3.9/site-packages/pyodbc-4.0.31.dist-info/REQUESTED" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/venv/lib/python3.9/site-packages/pyodbc-4.0.31.dist-info/WHEEL" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/venv/lib/python3.9/site-packages/pyodbc-4.0.31.dist-info/top_level.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/venv/lib/python3.9/site-packages/pyodbc.cpython-39-darwin.so" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConnectMDB.py" beforeDir="false" afterPath="$PROJECT_DIR$/ConnectMDB.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Create_APCH_Legs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_APCH_Legs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Create_ATS_Route.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_ATS_Route.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Create_SID_Legs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_SID_Legs.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Create_STAR_Legs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_STAR_Legs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MySQL_Table_to_PostGres.py" beforeDir="false" afterPath="$PROJECT_DIR$/MySQL_Table_to_PostGres.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +52,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Create_SID_Legs">
+  <component name="RunManager" selected="Python.Create_APCH_Legs">
     <configuration name="ConnectMDB" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AEROTHAI_Data_Analytics" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -192,9 +181,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Create_SID_Legs" />
-        <item itemvalue="Python.Create_STAR_Legs" />
         <item itemvalue="Python.Create_APCH_Legs" />
+        <item itemvalue="Python.Create_STAR_Legs" />
+        <item itemvalue="Python.Create_SID_Legs" />
         <item itemvalue="Python.Create_ATS_Route" />
         <item itemvalue="Python.ConnectMDB" />
       </list>
@@ -419,7 +408,14 @@
       <option name="project" value="LOCAL" />
       <updated>1626055780591</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="test2">
+      <created>1626341685773</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1626341685773</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">

@@ -30,7 +30,7 @@ with conn_postgres:
     conn_postgres.commit()
 
     postgres_sql_text = "select ST_Y(wp_geom) as \"Latitude\", ST_X(wp_geom) as \"Longitude\", * " + \
-                        "from star order by airport_ident,procedure_ident,\"Transition\",\"ID\""
+                        "from star_wp order by airport_ident,procedure_ident,\"Transition\",\"ID\""
 
     print(postgres_sql_text)
 

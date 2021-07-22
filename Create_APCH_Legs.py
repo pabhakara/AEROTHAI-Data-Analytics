@@ -48,7 +48,7 @@ with conn:
                 "\"Type\", " \
                 "\"Transition\", " \
                 "\"TrackCode\" " \
-                "FROM apch " \
+                "FROM apch_wp " \
                 "WHERE \"TrackCode\" like \'IF\' or " \
                 "\"TrackCode\" like \'DF\' or " \
                 "\"TrackCode\" like \'CF\' or " \
