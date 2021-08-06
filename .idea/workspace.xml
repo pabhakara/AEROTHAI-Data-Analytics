@@ -5,15 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b70db43c-7c4d-4b3e-9e46-199adf2487f4" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Copy_from_CSV_to_PostgreSQL.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Create_APCH_Legs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_APCH_Legs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Create_SID_Legs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_SID_Legs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Create_STAR_Legs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_STAR_Legs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Create_FlightPath.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_FlightPath.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Create_FlightPath_From_CSV.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MySQL_Database_to_PostGres.py" beforeDir="false" afterPath="$PROJECT_DIR$/MySQL_Database_to_PostGres.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MySQL_Table_to_PostGres.py" beforeDir="false" afterPath="$PROJECT_DIR$/MySQL_Table_to_PostGres.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -52,8 +61,8 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Create_APCH_Legs">
-    <configuration name="ConnectMDB" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python.Copy_from_CSV_to_PostgreSQL">
+    <configuration name="Copy_from_CSV_to_PostgreSQL" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AEROTHAI_Data_Analytics" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -65,7 +74,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ConnectMDB.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Copy_from_CSV_to_PostgreSQL.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -95,7 +104,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Create_ATS_Route" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="Create_FlightPath" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AEROTHAI_Data_Analytics" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -107,28 +116,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Create_ATS_Route.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Create_SID_Legs" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="AEROTHAI_Data_Analytics" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Create_SID_Legs.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Create_FlightPath.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -150,6 +138,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Create_STAR_Legs.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="MySQL_Table_to_PostGres" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AEROTHAI_Data_Analytics" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MySQL_Table_to_PostGres.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -181,11 +190,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.Copy_from_CSV_to_PostgreSQL" />
+        <item itemvalue="Python.Create_FlightPath" />
+        <item itemvalue="Python.MySQL_Table_to_PostGres" />
         <item itemvalue="Python.Create_APCH_Legs" />
         <item itemvalue="Python.Create_STAR_Legs" />
-        <item itemvalue="Python.Create_SID_Legs" />
-        <item itemvalue="Python.Create_ATS_Route" />
-        <item itemvalue="Python.ConnectMDB" />
       </list>
     </recent_temporary>
   </component>
@@ -415,7 +424,14 @@
       <option name="project" value="LOCAL" />
       <updated>1626341685773</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="test2">
+      <created>1626926309324</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1626926309324</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">

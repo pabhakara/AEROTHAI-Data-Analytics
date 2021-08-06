@@ -2,7 +2,7 @@ import mysql.connector
 import psycopg2
 import time
 
-mysql_db = 'flight_vtsp'
+mysql_db = 'flight'
 
 #from magic import Connect #Private mysql connect information - I COMMENTED THIS LINE to use direct connection
 db = mysql.connector.connect(host='172.16.101.32',
@@ -23,7 +23,7 @@ mysql='show tables from ' + mysql_db
 dbx.execute(mysql); ts=dbx.fetchall(); tables=[]
 for table in ts: tables.append(table[0])
 for table in tables:
-    mysql='''describe flight_vtsp.%s'''%(table)
+    mysql='''describe flight.%s'''%(table)
     dbx.execute(mysql); rows=dbx.fetchall()
     psql='drop table if exists \"' + table +  '\"'
     DC.execute(psql); DB.commit()
@@ -47,7 +47,7 @@ for table in tables:
         print(e)
         DB.rollback()
 
-    msql = '''select * from flight_vtsp.%s''' % (table)
+    msql = '''select * from flight.%s''' % (table)
     dbx.execute(msql)
     rows = dbx.fetchall()
     n = len(rows)

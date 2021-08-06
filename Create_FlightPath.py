@@ -7,7 +7,6 @@ import time
 from mysql.connector import Error
 # Need to connect to AEROTHAI's MySQL Server
 
-
 # Try to connect to the local PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
 conn_postgres = psycopg2.connect(user = "postgres",
                                   password = "password",
@@ -19,7 +18,7 @@ with conn_postgres:
     cursor_postgres = conn_postgres.cursor()
 
     year_list = ['2021']
-    month_list = ['06']
+    month_list = ['07']
     #month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
 
     for year in year_list:
