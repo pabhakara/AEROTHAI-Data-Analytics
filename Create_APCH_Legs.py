@@ -6,7 +6,7 @@ conn = psycopg2.connect(user = "postgres",
                                 password = "password",
                                 host = "127.0.0.1",
                                 port = "5432",
-                                database = "airac_2021_07")
+                                database = "airac_2021_08")
 
 with conn:
     cur = conn.cursor()
