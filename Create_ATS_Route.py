@@ -104,8 +104,6 @@ with conn:
 
             k = k + 1
 
-
-
             sql_text = "INSERT INTO " + table_name + " (ats_route_id," + \
                        "sub_route_id,geom) " + \
                        "VALUES('" + str(ats_route_id[k]) + "'," + \
