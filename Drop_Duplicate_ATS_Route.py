@@ -16,16 +16,11 @@ with conn:
     cur.execute(sql_query)
     conn.commit()
 
-    sql_query = "CREATE TABLE " + table_name \
-                + '(ats_route_id character varying, ' \
-                + 'sub_route_id character varying,' \
-                + 'length double precision,' \
-                + 'geom geometry) ' \
-                + 'WITH (OIDS=FALSE);' \
-                + 'ALTER TABLE "' + table_name + '"'  \
-                + 'OWNER TO postgres;'
-
-    #print(sql_query)
+    sql_query = "SELECT *, ST_Length(ST_Transform(geom, 3857)) / 1852 as length " \
+                + 'into ' + table_name + ' from ' \
+                + 'ats_route;' \
+ \
+        #print(sql_query)
 
     cur.execute(sql_query)
     conn.commit()
