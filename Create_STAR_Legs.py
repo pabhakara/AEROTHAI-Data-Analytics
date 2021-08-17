@@ -70,7 +70,7 @@ with conn_postgres:
         while (temp_1['procedure_ident'] == temp_2['procedure_ident']) and \
             (temp_1['Transition'] == temp_2['Transition']):
             postgres_sql_text = postgres_sql_text + \
-                                longitude_1 + " " + latitude_1 +  ","
+                                longitude_1 + " " + latitude_1 + ","
             k = k + 1
             print(k)
             temp_1 = record[k]

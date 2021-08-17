@@ -4,7 +4,7 @@ path = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/NavData/simtoo
 
 sqdb = path + 'navdata.s3db'
 sqlike = '%'
-pgdb = 'airac_2021_08_simtoolkit'
+pgdb = 'airac_2021_06_simtoolkit'
 pguser = 'postgres'
 pgpswd = 'password'
 pghost = 'localhost'
