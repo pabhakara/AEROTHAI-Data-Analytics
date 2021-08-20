@@ -37,19 +37,19 @@ with conn_postgres:
                         "ALTER TABLE " + table_name + " " \
                         "OWNER TO postgres;"
 
-    print(postgres_sql_text)
+    #print(postgres_sql_text)
 
     cursor_postgres.execute(postgres_sql_text)
 
     conn_postgres.commit()
 
     postgres_sql_text = " SELECT * FROM public.tbl_iaps " + \
-                        " where airport_identifier like 'VT%'  " + \
+                        " where airport_identifier like '%'  " + \
                         " and (path_termination like 'H%') "
 
     #postgres_sql_text = "SELECT * from public.tbl_holdings WHERE icao_code like 'VT%'"
 
-    print(postgres_sql_text)
+    #print(postgres_sql_text)
 
     cursor_postgres.execute(postgres_sql_text)
 
