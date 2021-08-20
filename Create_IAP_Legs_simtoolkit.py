@@ -9,7 +9,7 @@ conn_postgres = psycopg2.connect(user="postgres",
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    table_name = 'iap_legs'
+    table_name = 'iap_legs_without_af_or_rf'
 
     postgres_sql_text = "DROP TABLE IF EXISTS " + table_name + "; \n" + \
                         "CREATE TABLE " + table_name + " " + \
@@ -35,7 +35,7 @@ with conn_postgres:
     #                     " route_type, transition_identifier, seqno"
 
     postgres_sql_text = "SELECT * from public.tbl_iaps " \
-                        "WHERE airport_identifier like 'VT%'" \
+                        "WHERE airport_identifier like '%'" \
                         "and not(waypoint_identifier is null)" \
                         "and NOT(procedure_identifier IN" \
                         "(SELECT DISTINCT procedure_identifier " \

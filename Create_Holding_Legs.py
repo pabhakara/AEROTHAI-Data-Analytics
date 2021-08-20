@@ -57,7 +57,7 @@ with conn_postgres:
     #                     " order by airport_identifier, procedure_identifier, " \
     #                     " route_type, transition_identifier, seqno"
 
-    postgres_sql_text = "SELECT * from public.tbl_holdings WHERE icao_code like 'VT%'"
+    postgres_sql_text = "SELECT * from public.tbl_holdings WHERE icao_code like '%'"
 
     print(postgres_sql_text)
 
@@ -86,6 +86,14 @@ with conn_postgres:
         inbound_holding_course = str(temp_1['inbound_holding_course'])
         turn_direction = str(temp_1['turn_direction'])
 
+        leg_time = str(temp_1['leg_time'])
+        leg_length = str(temp_1['leg_length'])
+
+        if leg_time == "None":
+            leg_time = '0'
+
+        if leg_length == "None":
+            leg_length = '0'
 
         minimum_altitude = str(temp_1['minimum_altitude'])
         if minimum_altitude == 'None':
