@@ -71,7 +71,7 @@ with conn_postgres:
                         "FROM public.tbl_iaps " \
                         "where path_termination like 'AF') " \
                         "and not(waypoint_identifier is null) " \
-                        "and ((airport_identifier like '%'))"
+                        "and ((airport_identifier like 'VT%'))"
 
     print(postgres_sql_text)
 

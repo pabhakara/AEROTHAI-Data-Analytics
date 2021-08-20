@@ -27,23 +27,15 @@ conn_postgres = psycopg2.connect(user="postgres",
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    table_name = 'holding_legs'
+    table_name = 'holding_iap_legs'
     table_name2 = table_name + '_geom'
 
     postgres_sql_text = "DROP TABLE IF EXISTS " + table_name + "; \n" + \
                         "CREATE TABLE " + table_name + " " + \
-                        "(LIKE holdings)" + \
+                        "(LIKE holdings) " + \
                         "WITH (OIDS=FALSE); \n" + \
                         "ALTER TABLE " + table_name + " " \
                         "OWNER TO postgres;"
-
-    postgres_sql_text = postgres_sql_text + "DROP TABLE IF EXISTS " + table_name2 + "; \n" + \
-                        "CREATE TABLE " + table_name2 + " " + \
-                        "(waypoint_name character varying, " + \
-                        "geom geometry)" + \
-                        "WITH (OIDS=FALSE); \n" + \
-                        "ALTER TABLE " + table_name2 + " " \
-                                                      "OWNER TO postgres;"
 
     print(postgres_sql_text)
 
@@ -51,13 +43,11 @@ with conn_postgres:
 
     conn_postgres.commit()
 
-    # postgres_sql_text = " SELECT * FROM public.tbl_iaps " + \
-    #                     " where airport_identifier like '%'  " + \
-    #                     " and not(waypoint_identifier is null) " + \
-    #                     " order by airport_identifier, procedure_identifier, " \
-    #                     " route_type, transition_identifier, seqno"
+    postgres_sql_text = " SELECT * FROM public.tbl_iaps " + \
+                        " where airport_identifier like 'VT%'  " + \
+                        " and (path_termination like 'H%') "
 
-    postgres_sql_text = "SELECT * from public.tbl_holdings WHERE icao_code like 'VT%'"
+    #postgres_sql_text = "SELECT * from public.tbl_holdings WHERE icao_code like 'VT%'"
 
     print(postgres_sql_text)
 
@@ -76,24 +66,33 @@ with conn_postgres:
         temp_1 = record[k]
 
         area_code = str(temp_1['area_code'])
-        region_code = str(temp_1['region_code'])
-        icao_code = str(temp_1['icao_code'])
+        region_code = str(temp_1['airport_identifier'])
+        icao_code = str(temp_1['procedure_identifier'])
         waypoint_identifier = str(temp_1['waypoint_identifier'])
-        holding_name = str(temp_1['holding_name'])
+        holding_name = str(temp_1['waypoint_description_code'])
         waypoint_latitude = str(temp_1['waypoint_latitude'])
         waypoint_longitude = str(temp_1['waypoint_longitude'])
-        duplicate_identifier = str(temp_1['duplicate_identifier'])
-        inbound_holding_course = str(temp_1['inbound_holding_course'])
+        duplicate_identifier = "0"
+        inbound_holding_course = str(temp_1['magnetic_course'])
         turn_direction = str(temp_1['turn_direction'])
 
+        route_distance_holding_distance_time = str(temp_1['route_distance_holding_distance_time'])
+        distance_time = str(temp_1['distance_time'])
 
-        minimum_altitude = str(temp_1['minimum_altitude'])
+        if distance_time == "T":
+            leg_time = route_distance_holding_distance_time
+            leg_length = '0'
+        else:
+            leg_length = route_distance_holding_distance_time
+            leg_time = '0'
+
+        minimum_altitude = str(temp_1['altitude1'])
         if minimum_altitude == 'None':
             minimum_altitude = '-1'
-        maximum_altitude = str(temp_1['maximum_altitude'])
+        maximum_altitude = str(temp_1['altitude2'])
         if maximum_altitude == 'None':
             maximum_altitude = '-1'
-        holding_speed = str(temp_1['holding_speed'])
+        holding_speed = str(temp_1['speed_limit'])
         if holding_speed == 'None':
             holding_speed = '-1'
 
@@ -127,8 +126,8 @@ with conn_postgres:
                             + waypoint_identifier + "','" \
                             + holding_name + "'," \
                             + waypoint_latitude + "," \
-                            + waypoint_longitude + ",'" \
-                            + duplicate_identifier + "'," \
+                            + waypoint_longitude + "," \
+                            + duplicate_identifier + "," \
                             + inbound_holding_course + ",'" \
                             + turn_direction + "'," \
                             + leg_length + "," \
@@ -138,15 +137,12 @@ with conn_postgres:
                             + holding_speed + "," \
                             + "ST_Transform(ST_SetSRID(ST_GeomFromEWKT('CIRCULARSTRING("
 
-        UTM_zone = convert_wgs_to_utm(temp_1['waypoint_longitude'], temp_1['waypoint_latitude'])
 
-        transformer = Transformer.from_crs("epsg:4326", "epsg:" + str(UTM_zone))
-
-        course_deg = (temp_1['inbound_holding_course'])
+        course_deg = (temp_1['magnetic_course'])
 
         turn = str(temp_1['turn_direction'])
-        length = (temp_1['leg_length'])
-        time = (temp_1['leg_time'])
+        length = leg_length
+        time = leg_time
 
         diameter = 1852 * 2
         distance = 1852 * 3
@@ -166,12 +162,12 @@ with conn_postgres:
         course_rad = course_deg / 180 * math.pi
 
         # For CIRCULARSTRING, a holding pattern is defined by 8 waypoints.
-        if turn == "R" :
-            if north_bound and (east_bound): #NE
+        if turn == "R":
+            if north_bound and (east_bound):  # NE
                 point_1 = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
                 point_3 = (point_1[0] + diameter * math.cos(course_rad), point_1[1] - diameter * math.sin(course_rad))
                 point_5 = (point_3[0] - distance * math.cos(math.pi / 2 - course_rad),
-                       point_3[1] - distance * math.sin(math.pi / 2 - course_rad))
+                           point_3[1] - distance * math.sin(math.pi / 2 - course_rad))
                 point_7 = (point_5[0] - diameter * math.cos(course_rad), point_5[1] + diameter * math.sin(course_rad))
 
                 point_2 = ((point_1[0] + point_3[0]) / 2 + diameter * math.cos(course_rad) / 2
@@ -179,11 +175,11 @@ with conn_postgres:
                 point_6 = ((point_5[0] + point_7[0]) / 2 - diameter * math.cos(course_rad) / 2,
                            (point_5[1] + point_7[1]) / 2 - diameter * math.sin(course_rad) / 2)
 
-            elif not(north_bound) and not(east_bound): #SW
+            elif not (north_bound) and not (east_bound):  # SW
                 point_1 = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
                 point_3 = (point_1[0] + diameter * math.cos(course_rad), point_1[1] - diameter * math.sin(course_rad))
                 point_5 = (point_3[0] - distance * math.cos(math.pi / 2 - course_rad),
-                       point_3[1] - distance * math.sin(math.pi / 2 - course_rad))
+                           point_3[1] - distance * math.sin(math.pi / 2 - course_rad))
                 point_7 = (point_5[0] - diameter * math.cos(course_rad), point_5[1] + diameter * math.sin(course_rad))
 
                 point_2 = ((point_1[0] + point_3[0]) / 2 + diameter * math.cos(course_rad) / 2
@@ -191,22 +187,22 @@ with conn_postgres:
                 point_6 = ((point_5[0] + point_7[0]) / 2 - diameter * math.cos(course_rad) / 2,
                            (point_5[1] + point_7[1]) / 2 - diameter * math.sin(course_rad) / 2)
 
-            elif not(north_bound) and (east_bound): #SE
+            elif not (north_bound) and (east_bound):  # SE
                 point_1 = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
                 point_3 = (point_1[0] + diameter * math.cos(course_rad), point_1[1] - diameter * math.sin(course_rad))
                 point_5 = (point_3[0] - distance * math.cos(math.pi / 2 - course_rad),
-                       point_3[1] - distance * math.sin(math.pi / 2 - course_rad))
+                           point_3[1] - distance * math.sin(math.pi / 2 - course_rad))
                 point_7 = (point_5[0] - diameter * math.cos(course_rad), point_5[1] + diameter * math.sin(course_rad))
 
                 point_2 = ((point_1[0] + point_3[0]) / 2 - diameter * math.cos(course_rad) / 2
                            , (point_1[1] + point_3[1]) / 2 - diameter * math.sin(course_rad) / 2)
                 point_6 = ((point_5[0] + point_7[0]) / 2 + diameter * math.cos(course_rad) / 2,
                            (point_5[1] + point_7[1]) / 2 + diameter * math.sin(course_rad) / 2)
-            else: #NW
+            else:  # NW
                 point_1 = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
                 point_3 = (point_1[0] + diameter * math.cos(course_rad), point_1[1] - diameter * math.sin(course_rad))
                 point_5 = (point_3[0] - distance * math.cos(math.pi / 2 - course_rad),
-                       point_3[1] - distance * math.sin(math.pi / 2 - course_rad))
+                           point_3[1] - distance * math.sin(math.pi / 2 - course_rad))
                 point_7 = (point_5[0] - diameter * math.cos(course_rad), point_5[1] + diameter * math.sin(course_rad))
 
                 point_2 = ((point_1[0] + point_3[0]) / 2 - diameter * math.cos(course_rad) / 2
@@ -214,8 +210,8 @@ with conn_postgres:
                 point_6 = ((point_5[0] + point_7[0]) / 2 + diameter * math.cos(course_rad) / 2,
                            (point_5[1] + point_7[1]) / 2 + diameter * math.sin(course_rad) / 2)
 
-        else: # turn == "L" :
-            if north_bound and (east_bound): #NE
+        else:  # turn == "L" :
+            if north_bound and (east_bound):  # NE
                 point_1 = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
                 point_3 = (point_1[0] - diameter * math.cos(course_rad), point_1[1] + diameter * math.sin(course_rad))
                 point_5 = (point_3[0] - distance * math.cos(math.pi / 2 - course_rad),
@@ -227,7 +223,7 @@ with conn_postgres:
                 point_6 = ((point_5[0] + point_7[0]) / 2 - diameter * math.cos(course_rad) / 2,
                            (point_5[1] + point_7[1]) / 2 - diameter * math.sin(course_rad) / 2)
 
-            elif not (north_bound) and not (east_bound): #SW
+            elif not (north_bound) and not (east_bound):  # SW
                 point_1 = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
                 point_3 = (point_1[0] - diameter * math.cos(course_rad), point_1[1] + diameter * math.sin(course_rad))
                 point_5 = (point_3[0] - distance * math.cos(math.pi / 2 - course_rad),
@@ -239,7 +235,7 @@ with conn_postgres:
                 point_6 = ((point_5[0] + point_7[0]) / 2 - diameter * math.cos(course_rad) / 2,
                            (point_5[1] + point_7[1]) / 2 - diameter * math.sin(course_rad) / 2)
 
-            elif not (north_bound) and (east_bound): #SE
+            elif not (north_bound) and (east_bound):  # SE
                 point_1 = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
                 point_3 = (point_1[0] - diameter * math.cos(course_rad), point_1[1] + diameter * math.sin(course_rad))
                 point_5 = (point_3[0] - distance * math.cos(math.pi / 2 - course_rad),
@@ -250,7 +246,7 @@ with conn_postgres:
                            , (point_1[1] + point_3[1]) / 2 - diameter * math.sin(course_rad) / 2)
                 point_6 = ((point_5[0] + point_7[0]) / 2 + diameter * math.cos(course_rad) / 2,
                            (point_5[1] + point_7[1]) / 2 + diameter * math.sin(course_rad) / 2)
-            else: #NW
+            else:  # NW
                 point_1 = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
                 point_3 = (point_1[0] - diameter * math.cos(course_rad), point_1[1] + diameter * math.sin(course_rad))
                 point_5 = (point_3[0] - distance * math.cos(math.pi / 2 - course_rad),
@@ -282,22 +278,21 @@ with conn_postgres:
             point_6 = ((point_5[0] + point_7[0]) / 2,
                        (point_5[1] + point_7[1]) / 2 + diameter / 2)
 
+        point_4 = ((point_3[0] + point_5[0]) / 2, (point_3[1] + point_5[1]) / 2)
+        point_8 = ((point_7[0] + point_1[0]) / 2, (point_7[1] + point_1[1]) / 2)
 
-        point_4 = ((point_3[0] + point_5[0])/2 , (point_3[1] + point_5[1])/2)
-        point_8 = ((point_7[0] + point_1[0])/2 , (point_7[1] + point_1[1])/2)
-
-        postgres_sql_text2 = "INSERT INTO \"" + table_name2 + "\" " + \
-                             "(\"waypoint_name\"," + \
-                             "\"geom\") " + \
-                             " VALUES('point_3_" + str(temp_1['waypoint_identifier']) + "'," \
-                             + "ST_Transform(ST_SetSRID(ST_MakePoint(" \
-                             + str(point_3[0]) + "," + str(point_3[1]) + ")," \
-                             + str(UTM_zone) + "), 4326));"
-        print(postgres_sql_text2)
-
-        cursor_postgres.execute(postgres_sql_text2)
-
-        conn_postgres.commit()
+        # postgres_sql_text2 = "INSERT INTO \"" + table_name2 + "\" " + \
+        #                      "(\"waypoint_name\"," + \
+        #                      "\"geom\") " + \
+        #                      " VALUES('point_3_" + str(temp_1['waypoint_identifier']) + "'," \
+        #                      + "ST_Transform(ST_SetSRID(ST_MakePoint(" \
+        #                      + str(point_3[0]) + "," + str(point_3[1]) + ")," \
+        #                      + str(UTM_zone) + "), 4326));"
+        # print(postgres_sql_text2)
+        #
+        # cursor_postgres.execute(postgres_sql_text2)
+        #
+        # conn_postgres.commit()
 
         postgres_sql_text = postgres_sql_text + \
                             str(point_1[0]) + " " + str(point_1[1]) + "," + \

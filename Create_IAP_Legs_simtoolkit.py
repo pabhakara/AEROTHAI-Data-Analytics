@@ -28,11 +28,31 @@ with conn_postgres:
 
     conn_postgres.commit()
 
-    postgres_sql_text = " SELECT * FROM public.tbl_iaps " + \
-                        " where airport_identifier like '%'  " + \
-                        " and not(waypoint_identifier is null) " + \
-                        " order by airport_identifier, procedure_identifier, " \
-                        " route_type, transition_identifier, seqno"
+    # postgres_sql_text = " SELECT * FROM public.tbl_iaps " + \
+    #                     " where airport_identifier like 'VT%'  " + \
+    #                     " and not(waypoint_identifier is null)" + \
+    #                     " order by airport_identifier, procedure_identifier, " \
+    #                     " route_type, transition_identifier, seqno"
+
+    postgres_sql_text = "SELECT * from public.tbl_iaps " \
+                        "WHERE airport_identifier like 'VT%'" \
+                        "and not(waypoint_identifier is null)" \
+                        "and NOT(procedure_identifier IN" \
+                        "(SELECT DISTINCT procedure_identifier " \
+                        "FROM public.tbl_iaps " \
+                        "where path_termination like 'AF') " \
+                        "and airport_identifier " \
+                        "IN (SELECT DISTINCT airport_identifier " \
+                        "FROM public.tbl_iaps " \
+                        "where path_termination like 'AF'))"\
+                        "and NOT(procedure_identifier IN" \
+                        "(SELECT DISTINCT procedure_identifier " \
+                        "FROM public.tbl_iaps " \
+                        "where path_termination like 'RF') " \
+                        "and airport_identifier " \
+                        "IN (SELECT DISTINCT airport_identifier " \
+                        "FROM public.tbl_iaps " \
+                        "where path_termination like 'RF'))"
 
     print(postgres_sql_text)
 
