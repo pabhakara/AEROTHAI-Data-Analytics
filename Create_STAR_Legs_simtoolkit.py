@@ -5,7 +5,7 @@ conn_postgres = psycopg2.connect(user="postgres",
                                  password="password",
                                  host="127.0.0.1",
                                  port="5432",
-                                 database="airac_2021_06_simtoolkit")
+                                 database="airac_2021_08_simtoolkit")
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
@@ -101,6 +101,7 @@ with conn_postgres:
     while k < num_of_records - 1:
         while (temp_1['procedure_identifier'] == temp_2['procedure_identifier']) and \
                 (temp_1['transition_identifier'] == temp_2['transition_identifier']) and \
+                not(temp_2['path_termination'] == 'VM') and \
                 (temp_1['path_termination'] == 'TF' or \
                  temp_1['path_termination'] == 'DF' or \
                  temp_1['path_termination'] == 'CF' or \

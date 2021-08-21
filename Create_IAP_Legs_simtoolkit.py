@@ -52,7 +52,9 @@ with conn_postgres:
                         "and airport_identifier " \
                         "IN (SELECT DISTINCT airport_identifier " \
                         "FROM public.tbl_iaps " \
-                        "where path_termination like 'RF'))"
+                        "where path_termination like 'RF'))" \
+                        " order by airport_identifier, procedure_identifier, " \
+                        " route_type, transition_identifier, seqno"
 
     print(postgres_sql_text)
 
@@ -120,6 +122,7 @@ with conn_postgres:
     while k < num_of_records - 1:
         while (temp_1['procedure_identifier'] == temp_2['procedure_identifier']) and \
                 (temp_1['transition_identifier'] == temp_2['transition_identifier']) and \
+                not (temp_2['path_termination'] == 'VM') and \
                 (temp_1['path_termination'] == 'TF' or \
                  temp_1['path_termination'] == 'DF' or \
                  temp_1['path_termination'] == 'CF' or \
