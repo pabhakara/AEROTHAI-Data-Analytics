@@ -38,7 +38,7 @@ with conn_postgres:
                         "geom geometry)" + \
                         "WITH (OIDS=FALSE); \n" + \
                         "ALTER TABLE " + table_name + " " \
-                        "OWNER TO postgres;"
+                                                      "OWNER TO postgres;"
 
     print(postgres_sql_text)
 
@@ -52,21 +52,13 @@ with conn_postgres:
     #                     " order by airport_identifier, procedure_identifier, " \
     #                     " route_type, transition_identifier, seqno"
 
-    postgres_sql_text = "SELECT * from public.tbl_iaps " \
-                        "WHERE procedure_identifier IN" \
-                        "(SELECT DISTINCT procedure_identifier " \
-                        "FROM public.tbl_iaps " \
-                        "where path_termination like 'RF') " \
-                        "and airport_identifier " \
-                        "IN (SELECT DISTINCT airport_identifier " \
-                        "FROM public.tbl_iaps " \
-                        "where path_termination like 'RF') " \
-                        "and not(waypoint_identifier is null) " \
-                        "and (airport_identifier like '%')" \
-                        " order by airport_identifier, procedure_identifier, " \
-                        " route_type, transition_identifier, seqno"
-
-
+    postgres_sql_text = "select * " \
+                        "from public.tbl_iaps " \
+                        "where concat(airport_identifier,procedure_identifier,transition_identifier) in " \
+                        "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from public.tbl_iaps " \
+                        "WHERE path_termination = 'RF') " \
+                        "and not(waypoint_identifier is null)" \
+                        "order by airport_identifier, procedure_identifier,route_type, transition_identifier, seqno " \
 
     print(postgres_sql_text)
 
@@ -165,14 +157,14 @@ with conn_postgres:
                 theta = math.atan((mid_wp_xy[1] - arc_center_xy[1]) / (mid_wp_xy[0] - arc_center_xy[0]))
 
                 if ((end_wp_xy[0] > start_wp_xy[0]) and
-                        (end_wp_xy[1] < start_wp_xy[1]) and
-                        str(temp_2['turn_direction']) == 'L') or \
+                    (end_wp_xy[1] < start_wp_xy[1]) and
+                    str(temp_2['turn_direction']) == 'L') or \
                         ((end_wp_xy[0] > start_wp_xy[0]) and
-                        (end_wp_xy[1] > start_wp_xy[1]) and
-                        str(temp_2['turn_direction']) == 'R') or \
+                         (end_wp_xy[1] > start_wp_xy[1]) and
+                         str(temp_2['turn_direction']) == 'R') or \
                         ((end_wp_xy[0] < start_wp_xy[0]) and
-                        (end_wp_xy[1] < start_wp_xy[1]) and
-                        str(temp_2['turn_direction']) == 'L') or \
+                         (end_wp_xy[1] < start_wp_xy[1]) and
+                         str(temp_2['turn_direction']) == 'L') or \
                         ((end_wp_xy[0] < start_wp_xy[0]) and
                          (end_wp_xy[1] > start_wp_xy[1]) and
                          str(temp_2['turn_direction']) == 'R'):
@@ -189,7 +181,7 @@ with conn_postgres:
                                     str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + "," + \
                                     str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + "," + \
                                     str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + ","
-                #k = k + 1
+                # k = k + 1
 
             else:
                 waypoint_xy = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])

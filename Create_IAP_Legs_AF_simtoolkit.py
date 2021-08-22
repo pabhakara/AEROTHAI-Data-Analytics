@@ -61,19 +61,14 @@ with conn_postgres:
     #                     " order by airport_identifier, procedure_identifier, " \
     #                     " route_type, transition_identifier, seqno"
 
-    postgres_sql_text = "SELECT * from public.tbl_iaps " \
-                        "WHERE procedure_identifier IN" \
-                        "(SELECT DISTINCT procedure_identifier " \
-                        "FROM public.tbl_iaps " \
-                        "where path_termination like 'AF') " \
-                        "and airport_identifier " \
-                        "IN (SELECT DISTINCT airport_identifier " \
-                        "FROM public.tbl_iaps " \
-                        "where path_termination like 'AF') " \
-                        "and not(waypoint_identifier is null) " \
-                        "and ((airport_identifier like '%'))" \
-                        " order by airport_identifier, procedure_identifier, " \
-                        " route_type, transition_identifier, seqno"
+    postgres_sql_text = "select * " \
+                        "from public.tbl_iaps " \
+                        "where concat(airport_identifier,procedure_identifier,transition_identifier) in " \
+                        "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from public.tbl_iaps " \
+                        "WHERE path_termination = 'AF') " \
+                        "and not(waypoint_identifier is null)" \
+                        "order by airport_identifier, procedure_identifier,route_type, transition_identifier, seqno " \
+
 
     print(postgres_sql_text)
 

@@ -37,13 +37,13 @@ with conn_postgres:
                         "ALTER TABLE " + table_name + " " \
                         "OWNER TO postgres;"
 
-    postgres_sql_text = postgres_sql_text + "DROP TABLE IF EXISTS " + table_name2 + "; \n" + \
-                        "CREATE TABLE " + table_name2 + " " + \
-                        "(waypoint_name character varying, " + \
-                        "geom geometry)" + \
-                        "WITH (OIDS=FALSE); \n" + \
-                        "ALTER TABLE " + table_name2 + " " \
-                                                      "OWNER TO postgres;"
+    # postgres_sql_text = postgres_sql_text + "DROP TABLE IF EXISTS " + table_name2 + "; \n" + \
+    #                     "CREATE TABLE " + table_name2 + " " + \
+    #                     "(waypoint_name character varying, " + \
+    #                     "geom geometry)" + \
+    #                     "WITH (OIDS=FALSE); \n" + \
+    #                     "ALTER TABLE " + table_name2 + " " \
+    #                                                   "OWNER TO postgres;"
 
     print(postgres_sql_text)
 
@@ -57,7 +57,7 @@ with conn_postgres:
     #                     " order by airport_identifier, procedure_identifier, " \
     #                     " route_type, transition_identifier, seqno"
 
-    postgres_sql_text = "SELECT * from public.tbl_holdings WHERE icao_code like '%'"
+    postgres_sql_text = "SELECT * from public.tbl_holdings;"
 
     print(postgres_sql_text)
 
@@ -294,18 +294,18 @@ with conn_postgres:
         point_4 = ((point_3[0] + point_5[0])/2 , (point_3[1] + point_5[1])/2)
         point_8 = ((point_7[0] + point_1[0])/2 , (point_7[1] + point_1[1])/2)
 
-        postgres_sql_text2 = "INSERT INTO \"" + table_name2 + "\" " + \
-                             "(\"waypoint_name\"," + \
-                             "\"geom\") " + \
-                             " VALUES('point_3_" + str(temp_1['waypoint_identifier']) + "'," \
-                             + "ST_Transform(ST_SetSRID(ST_MakePoint(" \
-                             + str(point_3[0]) + "," + str(point_3[1]) + ")," \
-                             + str(UTM_zone) + "), 4326));"
-        print(postgres_sql_text2)
-
-        cursor_postgres.execute(postgres_sql_text2)
-
-        conn_postgres.commit()
+        # postgres_sql_text2 = "INSERT INTO \"" + table_name2 + "\" " + \
+        #                      "(\"waypoint_name\"," + \
+        #                      "\"geom\") " + \
+        #                      " VALUES('point_3_" + str(temp_1['waypoint_identifier']) + "'," \
+        #                      + "ST_Transform(ST_SetSRID(ST_MakePoint(" \
+        #                      + str(point_3[0]) + "," + str(point_3[1]) + ")," \
+        #                      + str(UTM_zone) + "), 4326));"
+        # print(postgres_sql_text2)
+        #
+        # cursor_postgres.execute(postgres_sql_text2)
+        #
+        # conn_postgres.commit()
 
         postgres_sql_text = postgres_sql_text + \
                             str(point_1[0]) + " " + str(point_1[1]) + "," + \

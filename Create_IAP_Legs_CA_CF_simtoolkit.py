@@ -1,4 +1,22 @@
 import psycopg2.extras
+import psycopg2
+from functools import partial
+from pyproj import Proj, transform
+from pyproj import Transformer
+import math
+
+
+def convert_wgs_to_utm(lon: float, lat: float):
+    """Based on lat and lng, return best utm epsg-code"""
+    utm_band = str((math.floor((lon + 180) / 6) % 60) + 1)
+    if len(utm_band) == 1:
+        utm_band = '0' + utm_band
+    if lat >= 0:
+        epsg_code = '326' + utm_band
+        return epsg_code
+    epsg_code = '327' + utm_band
+    return epsg_code
+
 
 # Try to connect to the local PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
 conn_postgres = psycopg2.connect(user="postgres",
@@ -9,7 +27,7 @@ conn_postgres = psycopg2.connect(user="postgres",
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    table_name = 'iap_legs_without_af_or_rf'
+    table_name = 'iap_legs_rf'
 
     postgres_sql_text = "DROP TABLE IF EXISTS " + table_name + "; \n" + \
                         "CREATE TABLE " + table_name + " " + \
@@ -29,23 +47,26 @@ with conn_postgres:
     conn_postgres.commit()
 
     # postgres_sql_text = " SELECT * FROM public.tbl_iaps " + \
-    #                     " where airport_identifier like 'VT%'  " + \
-    #                     " and not(waypoint_identifier is null)" + \
+    #                     " where airport_identifier like '%'  " + \
+    #                     " and not(waypoint_identifier is null) " + \
     #                     " order by airport_identifier, procedure_identifier, " \
     #                     " route_type, transition_identifier, seqno"
 
     postgres_sql_text = "SELECT * from public.tbl_iaps " \
-                        "WHERE airport_identifier like '%'" \
-                        "and not(waypoint_identifier is null)" \
-                        "and NOT(concat(airport_identifier,procedure_identifier,transition_identifier) in " \
-                        "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from public.tbl_iaps " \
-                        "WHERE path_termination = 'RF')) " \
-                        "and NOT(concat(airport_identifier,procedure_identifier,transition_identifier) in " \
-                        "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from public.tbl_iaps " \
-                        "WHERE path_termination = 'AF') " \
-                        "and not(waypoint_identifier is null))" \
+                        "WHERE procedure_identifier IN" \
+                        "(SELECT DISTINCT procedure_identifier " \
+                        "FROM public.tbl_iaps " \
+                        "where path_termination like 'RF') " \
+                        "and airport_identifier " \
+                        "IN (SELECT DISTINCT airport_identifier " \
+                        "FROM public.tbl_iaps " \
+                        "where path_termination like 'RF') " \
+                        "and not(waypoint_identifier is null) " \
+                        "and (airport_identifier like '%')" \
                         " order by airport_identifier, procedure_identifier, " \
                         " route_type, transition_identifier, seqno"
+
+
 
     print(postgres_sql_text)
 
@@ -94,8 +115,13 @@ with conn_postgres:
     speed_limit = str(temp_1['speed_limit'])
     vertical_angle = str(temp_1['vertical_angle'])
     center_waypoint = str(temp_1['center_waypoint'])
-    center_waypoint_latitude = str(temp_1['center_waypoint_latitude'])
-    center_waypoint_longitude = str(temp_1['center_waypoint_longitude'])
+    center_waypoint_latitude = (temp_1['center_waypoint_latitude'])
+
+    UTM_zone = convert_wgs_to_utm(temp_1['waypoint_longitude'], temp_1['waypoint_latitude'])
+
+    # transformer = partial(transform, proj_4326, proj_UTM)
+
+    transformer = Transformer.from_crs("epsg:4326", "epsg:" + str(UTM_zone))
 
     postgres_sql_text = "INSERT INTO \"" + table_name + "\" " + \
                         "(\"area_code\"," + \
@@ -104,26 +130,77 @@ with conn_postgres:
                         "\"transition_identifier\"," + \
                         "\"geom\")"
 
+    waypoint_xy = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
+
     postgres_sql_text = postgres_sql_text + " VALUES('" + area_code + "','" \
                         + airport_identifier + "','" \
                         + procedure_identifier + "','" \
                         + transition_identifier + "'," \
-                        + "ST_LineFromText('LINESTRING("
+                        + "ST_Transform(ST_SetSRID(ST_GeomFromEWKT('CIRCULARSTRING(" \
+                        + str(waypoint_xy[0]) + " " + str(waypoint_xy[1]) + ","
 
     while k < num_of_records - 1:
         while (temp_1['procedure_identifier'] == temp_2['procedure_identifier']) and \
                 (temp_1['transition_identifier'] == temp_2['transition_identifier']) and \
-                not (temp_2['path_termination'] == 'VM') and \
-                (temp_1['path_termination'] == 'TF' or \
-                 temp_1['path_termination'] == 'DF' or \
-                 temp_1['path_termination'] == 'CF' or \
-                 temp_1['path_termination'] == 'FD' or \
-                 temp_1['path_termination'] == 'FA' or \
+                (temp_1['path_termination'] == 'TF' or
+                 temp_1['path_termination'] == 'DF' or
+                 temp_1['path_termination'] == 'CF' or
+                 temp_1['path_termination'] == 'FD' or
+                 temp_1['path_termination'] == 'RF' or
                  temp_1['path_termination'] == 'IF'):
-            postgres_sql_text = postgres_sql_text + \
-                                waypoint_longitude + " " + waypoint_latitude + ","
+            if temp_2['path_termination'] == 'RF':
+                arc_center_latlong = (temp_2['center_waypoint_latitude'], temp_2['center_waypoint_longitude'])
+                start_wp_latlong = (temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
+                end_wp_latlong = (temp_2['waypoint_latitude'], temp_2['waypoint_longitude'])
+
+                start_wp_xy = transformer.transform(start_wp_latlong[0], start_wp_latlong[1])
+                end_wp_xy = transformer.transform(end_wp_latlong[0], end_wp_latlong[1])
+                arc_center_xy = transformer.transform(arc_center_latlong[0], arc_center_latlong[1])
+
+                mid_wp_xy = ((start_wp_xy[0] + end_wp_xy[0]) / 2, (start_wp_xy[1] + end_wp_xy[1]) / 2)
+
+                arc_radius = math.sqrt(
+                    (start_wp_xy[0] - arc_center_xy[0]) ** 2 + (start_wp_xy[1] - arc_center_xy[1]) ** 2)
+
+                theta = math.atan((mid_wp_xy[1] - arc_center_xy[1]) / (mid_wp_xy[0] - arc_center_xy[0]))
+
+                if ((end_wp_xy[0] > start_wp_xy[0]) and
+                        (end_wp_xy[1] < start_wp_xy[1]) and
+                        str(temp_2['turn_direction']) == 'L') or \
+                        ((end_wp_xy[0] > start_wp_xy[0]) and
+                        (end_wp_xy[1] > start_wp_xy[1]) and
+                        str(temp_2['turn_direction']) == 'R') or \
+                        ((end_wp_xy[0] < start_wp_xy[0]) and
+                        (end_wp_xy[1] < start_wp_xy[1]) and
+                        str(temp_2['turn_direction']) == 'L') or \
+                        ((end_wp_xy[0] < start_wp_xy[0]) and
+                         (end_wp_xy[1] > start_wp_xy[1]) and
+                         str(temp_2['turn_direction']) == 'R'):
+                    x_comp = -math.cos(theta) * arc_radius + arc_center_xy[0]
+                    y_comp = -math.sin(theta) * arc_radius + arc_center_xy[1]
+                else:
+                    x_comp = math.cos(theta) * arc_radius + arc_center_xy[0]
+                    y_comp = math.sin(theta) * arc_radius + arc_center_xy[1]
+
+                postgres_sql_text = postgres_sql_text + \
+                                    str(start_wp_xy[0]) + " " + str(start_wp_xy[1]) + "," + \
+                                    str(start_wp_xy[0]) + " " + str(start_wp_xy[1]) + "," + \
+                                    str(x_comp) + " " + str(y_comp) + "," + \
+                                    str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + "," + \
+                                    str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + "," + \
+                                    str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + ","
+                #k = k + 1
+
+            else:
+                waypoint_xy = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
+
+                postgres_sql_text = postgres_sql_text + \
+                                    str(waypoint_xy[0]) + " " + str(waypoint_xy[1]) + ","
+                postgres_sql_text = postgres_sql_text + \
+                                    str(waypoint_xy[0]) + " " + str(waypoint_xy[1]) + ","
+
             k = k + 1
-            print(k)
+            # print(k)
             temp_1 = record[k]
             if k == num_of_records - 1:
                 break
@@ -132,15 +209,17 @@ with conn_postgres:
             waypoint_latitude = str(float(temp_1['waypoint_latitude']))
             waypoint_longitude = str(float(temp_1['waypoint_longitude']))
 
-        postgres_sql_text = postgres_sql_text + \
-                            waypoint_longitude + " " + waypoint_latitude + ","
+        waypoint_xy = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
 
         postgres_sql_text = postgres_sql_text + \
-                            waypoint_longitude + " " + waypoint_latitude + ")'" + \
-                            ",4326))"
+                            str(waypoint_xy[0]) + " " + str(waypoint_xy[1]) + ","
+        postgres_sql_text = postgres_sql_text + \
+                            str(waypoint_xy[0]) + " " + str(waypoint_xy[1]) + ")'), " + \
+                            str(UTM_zone) + "), 4326)); "
+
+        # print(postgres_sql_text)
 
         cursor_postgres.execute(postgres_sql_text)
-        print(postgres_sql_text)
 
         conn_postgres.commit()
         print(str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
@@ -208,11 +287,18 @@ with conn_postgres:
             center_waypoint_latitude = str(temp_1['center_waypoint_latitude'])
             center_waypoint_longitude = str(temp_1['center_waypoint_longitude'])
 
+            UTM_zone = convert_wgs_to_utm(temp_1['waypoint_longitude'], temp_1['waypoint_latitude'])
+
+            transformer = Transformer.from_crs("epsg:4326", "epsg:" + str(UTM_zone))
+
+            waypoint_xy = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
+
             postgres_sql_text = postgres_sql_text + " VALUES('" + area_code + "','" \
                                 + airport_identifier + "','" \
                                 + procedure_identifier + "','" \
                                 + transition_identifier + "'," \
-                                + "ST_LineFromText('LINESTRING("
+                                + "ST_Transform(ST_SetSRID(ST_GeomFromEWKT('CIRCULARSTRING(" \
+                                + str(waypoint_xy[0]) + " " + str(waypoint_xy[1]) + ","
 
         else:
             break
