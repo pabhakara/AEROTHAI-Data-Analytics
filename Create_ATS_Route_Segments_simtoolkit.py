@@ -2,11 +2,11 @@ import psycopg2
 
 table_name = 'airways_segments'
 
-conn = psycopg2.connect(user = "postgres",
-                        password = "password",
-                        host = "127.0.0.1",
-                        port = "5432",
-                        database = "airac_2021_08_simtoolkit")
+conn = psycopg2.connect(user="postgres",
+                        password="password",
+                        host="127.0.0.1",
+                        port="5432",
+                        database="current_airac")
 
 with conn:
     cur = conn.cursor()
@@ -31,10 +31,9 @@ with conn:
     cur.execute(sql_query)
     conn.commit()
 
-    sql_query = "select * " \
-                "from tbl_enroute_airways " \
-
-    # query
+    sql_query = "SELECT * " \
+                "FROM public.tbl_enroute_airways "
+        # query
     cur.execute(sql_query)
 
     print(sql_query)
@@ -131,63 +130,61 @@ with conn:
     else:
         outbound_course_temp = outbound_course[k]
 
-
-
-    sql_text =  "INSERT INTO " + table_name + \
-                "(area_code," + \
-                "route_identifier," + \
-                "seqno," + \
-                "icao_code," + \
-                "waypoint_identifier," + \
-                "waypoint_latitude," + \
-                "waypoint_longitude," + \
-                "waypoint_description_code," + \
-                "route_type," + \
-                "flightlevel," + \
-                "direction_restriction," + \
-                "crusing_table_identifier," + \
-                "minimum_altitude_a," + \
-                "minimum_altitude_b," + \
-                "maximum_altitude," + \
-                "outbound_course," + \
-                "inbound_course," + \
-                "inbound_distance," + \
-                "waypoint_identifier_2," + \
-                "waypoint_latitude_2," + \
-                "waypoint_longitude_2," + \
-                "geom) " + \
-                "VALUES('" + \
-                str(area_code[k]) + "','" + \
-                str(route_identifier[k]) + "'," + \
-                str(seqno[k]) + ",'" + \
-                str(icao_code[k]) + "','" + \
-                str(waypoint_identifier[k]) + "'," + \
-                str(waypoint_latitude[k]) + "," + \
-                str(waypoint_longitude[k]) + ",'" + \
-                str(waypoint_description_code[k]) + "','" + \
-                str(route_type[k]) + "','" + \
-                str(flightlevel[k]) + "','" + \
-                str(direction_restriction[k]) + "','" + \
-                str(crusing_table_identifier[k]) + "'," + \
-                str(minimum_altitude_a_temp) + "," + \
-                str(minimum_altitude_b_temp) + "," + \
-                str(maximum_altitude_temp) + "," + \
-                str(outbound_course_temp) + "," + \
-                str(inbound_course_temp) + "," + \
-                str(inbound_distance[k]) + ",'" + \
-                str(waypoint_identifier[k+1]) + "'," + \
-                str(waypoint_latitude[k+1]) + "," + \
-                str(waypoint_longitude[k+1]) + "," + \
-                "ST_LineFromText('LINESTRING(" + \
-                str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + "," + \
-                str(float(waypoint_longitude[k+1])) + " " + str(float(waypoint_latitude[k+1])) + ")',4326));"
+    sql_text = "INSERT INTO " + table_name + \
+               "(area_code," + \
+               "route_identifier," + \
+               "seqno," + \
+               "icao_code," + \
+               "waypoint_identifier," + \
+               "waypoint_latitude," + \
+               "waypoint_longitude," + \
+               "waypoint_description_code," + \
+               "route_type," + \
+               "flightlevel," + \
+               "direction_restriction," + \
+               "crusing_table_identifier," + \
+               "minimum_altitude_a," + \
+               "minimum_altitude_b," + \
+               "maximum_altitude," + \
+               "outbound_course," + \
+               "inbound_course," + \
+               "inbound_distance," + \
+               "waypoint_identifier_2," + \
+               "waypoint_latitude_2," + \
+               "waypoint_longitude_2," + \
+               "geom) " + \
+               "VALUES('" + \
+               str(area_code[k]) + "','" + \
+               str(route_identifier[k]) + "'," + \
+               str(seqno[k]) + ",'" + \
+               str(icao_code[k]) + "','" + \
+               str(waypoint_identifier[k]) + "'," + \
+               str(waypoint_latitude[k]) + "," + \
+               str(waypoint_longitude[k]) + ",'" + \
+               str(waypoint_description_code[k]) + "','" + \
+               str(route_type[k]) + "','" + \
+               str(flightlevel[k]) + "','" + \
+               str(direction_restriction[k]) + "','" + \
+               str(crusing_table_identifier[k]) + "'," + \
+               str(minimum_altitude_a_temp) + "," + \
+               str(minimum_altitude_b_temp) + "," + \
+               str(maximum_altitude_temp) + "," + \
+               str(outbound_course_temp) + "," + \
+               str(inbound_course_temp) + "," + \
+               str(inbound_distance[k]) + ",'" + \
+               str(waypoint_identifier[k + 1]) + "'," + \
+               str(waypoint_latitude[k + 1]) + "," + \
+               str(waypoint_longitude[k + 1]) + "," + \
+               "ST_LineFromText('LINESTRING(" + \
+               str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + "," + \
+               str(float(waypoint_longitude[k + 1])) + " " + str(float(waypoint_latitude[k + 1])) + ")',4326));"
     print(sql_text)
 
     cur.execute(sql_text)
     conn.commit()
 
     while k < num_of_ids:
-        if (inbound_distance[k+1] == 0):
+        if (inbound_distance[k + 1] == 0):
             k = k + 1
         else:
             k = k + 1

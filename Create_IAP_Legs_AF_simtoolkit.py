@@ -1,7 +1,5 @@
 import psycopg2.extras
 import psycopg2
-from functools import partial
-from pyproj import Proj, transform
 from pyproj import Transformer
 import math
 
@@ -23,7 +21,7 @@ conn_postgres = psycopg2.connect(user="postgres",
                                  password="password",
                                  host="127.0.0.1",
                                  port="5432",
-                                 database="airac_2021_08_simtoolkit")
+                                 database="current_airac")
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
@@ -39,7 +37,7 @@ with conn_postgres:
                         "geom geometry)" + \
                         "WITH (OIDS=FALSE); \n" + \
                         "ALTER TABLE " + table_name + " " \
-                        "OWNER TO postgres;"
+                                                      "OWNER TO postgres;"
 
     postgres_sql_text = postgres_sql_text + "DROP TABLE IF EXISTS " + table_name2 + "; \n" + \
                         "CREATE TABLE " + table_name2 + " " + \
@@ -47,7 +45,7 @@ with conn_postgres:
                         "geom geometry)" + \
                         "WITH (OIDS=FALSE); \n" + \
                         "ALTER TABLE " + table_name2 + " " \
-                                                      "OWNER TO postgres;"
+                                                       "OWNER TO postgres;"
 
     print(postgres_sql_text)
 
@@ -64,11 +62,11 @@ with conn_postgres:
     postgres_sql_text = "select * " \
                         "from public.tbl_iaps " \
                         "where concat(airport_identifier,procedure_identifier,transition_identifier) in " \
-                        "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from public.tbl_iaps " \
+                        "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from " \
+                        "public.tbl_iaps " \
                         "WHERE path_termination = 'AF') " \
                         "and not(waypoint_identifier is null)" \
                         "order by airport_identifier, procedure_identifier,route_type, transition_identifier, seqno " \
-
 
     print(postgres_sql_text)
 
@@ -163,7 +161,7 @@ with conn_postgres:
                 arc_radius = math.sqrt(
                     (end_wp_xy[0] - arc_center_xy[0]) ** 2 + (end_wp_xy[1] - arc_center_xy[1]) ** 2)
 
-                if not(start_wp_xy[0] == arc_center_xy[0]):
+                if not (start_wp_xy[0] == arc_center_xy[0]):
 
                     gamma = math.atan((start_wp_xy[1] - arc_center_xy[1]) / (start_wp_xy[0] - arc_center_xy[0]))
 
@@ -171,7 +169,7 @@ with conn_postgres:
                     intermediate_y_comp = math.sin(gamma) * arc_radius + arc_center_xy[1]
 
                     start_to_intermediate_distance = math.sqrt(
-                    (start_wp_xy[0] - intermediate_x_comp) ** 2 + (start_wp_xy[1] - intermediate_y_comp) ** 2)
+                        (start_wp_xy[0] - intermediate_x_comp) ** 2 + (start_wp_xy[1] - intermediate_y_comp) ** 2)
 
                     if start_to_intermediate_distance > arc_radius:
                         # flip the intermediate point to the other side of the circle
@@ -211,9 +209,10 @@ with conn_postgres:
                     arc_direction = "CW"
 
                 postgres_sql_text2 = "INSERT INTO \"" + table_name2 + "\" " + \
-                                    "(\"waypoint_name\"," + \
-                                    "\"geom\") " + \
-                                     " VALUES('mid_" + str(temp_1['waypoint_identifier']) + "_" + str(temp_2['waypoint_identifier']) +"'," \
+                                     "(\"waypoint_name\"," + \
+                                     "\"geom\") " + \
+                                     " VALUES('mid_" + str(temp_1['waypoint_identifier']) + "_" + str(
+                    temp_2['waypoint_identifier']) + "'," \
                                      + "ST_Transform(ST_SetSRID(ST_MakePoint(" \
                                      + str(mid_wp_xy[0]) + "," + str(mid_wp_xy[1]) + ")," \
                                      + str(UTM_zone) + "), 4326));"
@@ -251,7 +250,7 @@ with conn_postgres:
                         x_comp = math.cos(theta) * arc_radius + arc_center_xy[0]
                         y_comp = math.sin(theta) * arc_radius + arc_center_xy[1]
 
-                else: #(arc_direction == 'CCW'):
+                else:  # (arc_direction == 'CCW'):
                     # mid_wp is NE of arc_center
                     if mid_wp_xy[0] > arc_center_xy[0] and mid_wp_xy[1] > arc_center_xy[1]:
                         x_comp = math.cos(theta) * arc_radius + arc_center_xy[0]
@@ -300,7 +299,7 @@ with conn_postgres:
                                     str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + "," + \
                                     str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + "," + \
                                     str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + ","
-                #k = k + 1
+                # k = k + 1
 
             else:
                 waypoint_xy = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])

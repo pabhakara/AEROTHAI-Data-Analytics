@@ -1,11 +1,10 @@
 import psycopg2.extras
 
-# Try to connect to the local PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
 conn_postgres = psycopg2.connect(user="postgres",
                                  password="password",
                                  host="127.0.0.1",
                                  port="5432",
-                                 database="airac_2021_08_simtoolkit")
+                                 database="current_airac")
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
@@ -20,7 +19,7 @@ with conn_postgres:
                         "geom geometry)" + \
                         "WITH (OIDS=FALSE); \n" + \
                         "ALTER TABLE " + table_name + " " \
-                        "OWNER TO postgres;"
+                                                      "OWNER TO postgres;"
 
     print(postgres_sql_text)
 
@@ -38,10 +37,12 @@ with conn_postgres:
                         "WHERE airport_identifier like '%'" \
                         "and not(waypoint_identifier is null)" \
                         "and NOT(concat(airport_identifier,procedure_identifier,transition_identifier) in " \
-                        "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from public.tbl_iaps " \
+                        "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from " \
+                        "public.tbl_iaps " \
                         "WHERE path_termination = 'RF')) " \
                         "and NOT(concat(airport_identifier,procedure_identifier,transition_identifier) in " \
-                        "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from public.tbl_iaps " \
+                        "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from " \
+                        "public.tbl_iaps " \
                         "WHERE path_termination = 'AF') " \
                         "and not(waypoint_identifier is null))" \
                         " order by airport_identifier, procedure_identifier, " \
@@ -114,11 +115,11 @@ with conn_postgres:
         while (temp_1['procedure_identifier'] == temp_2['procedure_identifier']) and \
                 (temp_1['transition_identifier'] == temp_2['transition_identifier']) and \
                 not (temp_2['path_termination'] == 'VM') and \
-                (temp_1['path_termination'] == 'TF' or \
-                 temp_1['path_termination'] == 'DF' or \
-                 temp_1['path_termination'] == 'CF' or \
-                 temp_1['path_termination'] == 'FD' or \
-                 temp_1['path_termination'] == 'FA' or \
+                (temp_1['path_termination'] == 'TF' or
+                 temp_1['path_termination'] == 'DF' or
+                 temp_1['path_termination'] == 'CF' or
+                 temp_1['path_termination'] == 'FD' or
+                 temp_1['path_termination'] == 'FA' or
                  temp_1['path_termination'] == 'IF'):
             postgres_sql_text = postgres_sql_text + \
                                 waypoint_longitude + " " + waypoint_latitude + ","

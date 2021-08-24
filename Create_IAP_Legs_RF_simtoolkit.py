@@ -1,7 +1,5 @@
 import psycopg2.extras
 import psycopg2
-from functools import partial
-from pyproj import Proj, transform
 from pyproj import Transformer
 import math
 
@@ -23,7 +21,7 @@ conn_postgres = psycopg2.connect(user="postgres",
                                  password="password",
                                  host="127.0.0.1",
                                  port="5432",
-                                 database="airac_2021_08_simtoolkit")
+                                 database="current_airac")
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
@@ -55,7 +53,8 @@ with conn_postgres:
     postgres_sql_text = "select * " \
                         "from public.tbl_iaps " \
                         "where concat(airport_identifier,procedure_identifier,transition_identifier) in " \
-                        "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from public.tbl_iaps " \
+                        "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from " \
+                        "public.tbl_iaps " + \
                         "WHERE path_termination = 'RF') " \
                         "and not(waypoint_identifier is null)" \
                         "order by airport_identifier, procedure_identifier,route_type, transition_identifier, seqno " \

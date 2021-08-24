@@ -1,7 +1,5 @@
 import psycopg2.extras
 import psycopg2
-from functools import partial
-from pyproj import Proj, transform
 from pyproj import Transformer
 import math
 
@@ -23,7 +21,7 @@ conn_postgres = psycopg2.connect(user="postgres",
                                  password="password",
                                  host="127.0.0.1",
                                  port="5432",
-                                 database="airac_2021_08_simtoolkit")
+                                 database="current_airac")
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
