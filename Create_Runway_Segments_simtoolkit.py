@@ -1,6 +1,20 @@
 import psycopg2
+from pyproj import Transformer
+import math
 
-table_name = 'runway_segments_x'
+
+def convert_wgs_to_utm(lon: float, lat: float):
+    """Based on lat and lng, return best utm epsg-code"""
+    utm_band = str((math.floor((lon + 180) / 6) % 60) + 1)
+    if len(utm_band) == 1:
+        utm_band = '0' + utm_band
+    if lat >= 0:
+        epsg_code = '326' + utm_band
+        return epsg_code
+    epsg_code = '327' + utm_band
+    return epsg_code
+
+table_name = 'runway_segments'
 
 conn = psycopg2.connect(user="postgres",
                         password="password",
@@ -83,7 +97,6 @@ with conn:
 
             results = cur.fetchone()
 
-
             # initialize parameters
             area_code = results[0]
             icao_code = results[1]
@@ -102,25 +115,6 @@ with conn:
             llz_identifier = results[14]
             llz_mls_gls_category = results[15]
 
-            # # populate the parameters with the query results, row by row
-            # for row in results:
-            #     area_code.append(row[0])
-            #     icao_code.append(row[1])
-            #     airport_identifier.append(row[2])
-            #     runway_identifier.append(row[3])
-            #     runway_latitude.append(row[4])
-            #     runway_longitude.append(row[5])
-            #     runway_gradient.append(row[6])
-            #     runway_magnetic_bearing.append(row[7])
-            #     runway_true_bearing.append(row[8])
-            #     landing_threshold_elevation.append(row[9])
-            #     displaced_threshold_distance.append(row[10])
-            #     threshold_crossing_height.append(row[11])
-            #     runway_length.append(row[12])
-            #     runway_width.append(row[13])
-            #     llz_identifier.append(row[14])
-            #     llz_mls_gls_category.append(row[15])
-
             if str(runway_gradient) == 'None':
                 runway_gradient_temp = -1
             else:
@@ -138,7 +132,47 @@ with conn:
 
             runway_a = runway_identifier
 
-            sql_text_2 = "INSERT INTO " + table_name + \
+            rwy_dir_1 = int(runway_id_1[2:4])
+
+            if rwy_dir_1 < 18:
+                rwy_dir_2 = rwy_dir_1 + 18
+            else:
+                rwy_dir_2 = rwy_dir_1 - 18
+
+            if rwy_dir_2 < 10:
+                if rwy_dir_2 == 0:
+                    runway_id_2 = 'RW36'
+                else:
+                    runway_id_2 = 'RW0' + str(rwy_dir_2)
+            else:
+                runway_id_2 = 'RW' + str(rwy_dir_2)
+
+            if len(runway_id_1) >= 5:
+                if runway_id_1[4] == 'L':
+                    runway_id_2 = runway_id_2 + 'R'
+                elif runway_id_1[4] == 'R':
+                    runway_id_2 = runway_id_2 + 'L'
+                elif runway_id_1[4] == 'T':
+                    runway_id_2 = runway_id_2 + 'T'
+                else:
+                    runway_id_2 = runway_id_2 + 'C'
+
+            if len(runway_id_1) == 6:
+                runway_id_2 = runway_id_2 + 'T'
+
+            sql_query = "SELECT runway_latitude, runway_longitude " \
+                        "FROM public.tbl_runways " \
+                        "where airport_identifier like '" + airport_id + "'  " \
+                        "and runway_identifier like '" + runway_id_2 + "'; "
+
+            cur.execute(sql_query)
+
+            results = cur.fetchmany()
+
+            if not (len(results) == 0):
+                runway_latitude_2 = results[0][0]
+                runway_longitude_2 = results[0][1]
+                sql_text_2 = "INSERT INTO " + table_name + \
                          "(area_code," + \
                          "icao_code," + \
                          "airport_identifier," + \
@@ -174,66 +208,83 @@ with conn:
                          str(llz_identifier_temp) + "','" + \
                          str(llz_mls_gls_category_temp) + "'," + \
                          "ST_LineFromText('LINESTRING(" + \
-                         str(float(runway_longitude)) + " " + str(float(runway_latitude)) + ","
-
-            rwy_dir_1 = int(runway_id_1[2:4])
-
-            if rwy_dir_1 < 18:
-                rwy_dir_2 = rwy_dir_1 + 18
+                         str(float(runway_longitude)) + " " + str(float(runway_latitude)) + "," + \
+                         str(float(runway_longitude_2)) + " " + str(
+                         float(runway_latitude_2)) + ")',4326));"
+                cur.execute(sql_text_2)
+                conn.commit()
             else:
-                rwy_dir_2 = rwy_dir_1 - 18
 
-            if rwy_dir_2 < 10:
-                if rwy_dir_2 == 0:
-                    runway_id_2 = 'RW36'
+                UTM_zone = convert_wgs_to_utm(runway_longitude, runway_latitude)
+
+                transformer = Transformer.from_crs("epsg:4326", "epsg:" + str(UTM_zone))
+
+                runway_1_xy = transformer.transform(runway_latitude, runway_longitude)
+
+                print(runway_1_xy)
+
+                runway_length_m = runway_length / 3.048
+
+                if 0 < runway_true_bearing < 90:
+                    runway_2_x = runway_1_xy[0] + runway_length_m * math.cos(runway_true_bearing * math.pi/180)
+                    runway_2_y = runway_1_xy[1] + runway_length_m * math.sin(runway_true_bearing * math.pi/180)
+                elif 90 < runway_true_bearing < 180:
+                    runway_2_x = runway_1_xy[0] + runway_length_m * math.cos((runway_true_bearing - 90) * math.pi / 180)
+                    runway_2_y = runway_1_xy[1] - runway_length_m * math.sin((runway_true_bearing - 90) * math.pi / 180)
+                elif 180 < runway_true_bearing < 270:
+                    runway_2_x = runway_1_xy[0] - runway_length_m * math.cos((runway_true_bearing - 180) * math.pi/180)
+                    runway_2_y = runway_1_xy[1] - runway_length_m * math.sin((runway_true_bearing - 180) * math.pi/180)
                 else:
-                    runway_id_2 = 'RW0' + str(rwy_dir_2)
-            else:
-                runway_id_2 = 'RW' + str(rwy_dir_2)
-
-            if len(runway_id_1) >= 5:
-                if runway_id_1[4] == 'L':
-                    runway_id_2 = runway_id_2 + 'R'
-                elif runway_id_1[4] == 'R':
-                    runway_id_2 = runway_id_2 + 'L'
-                elif runway_id_1[4] == 'T':
-                    runway_id_2 = runway_id_2 + 'T'
-                else:
-                    runway_id_2 = runway_id_2 + 'C'
-
-            if len(runway_id_1) == 6:
-                runway_id_2 = runway_id_2 + 'T'
+                    runway_2_x = runway_1_xy[0] - runway_length_m * math.cos((runway_true_bearing - 270) * math.pi / 180)
+                    runway_2_y = runway_1_xy[1] + runway_length_m * math.sin((runway_true_bearing - 270) * math.pi / 180)
 
 
-            sql_query = "SELECT runway_latitude, runway_longitude " \
-                        "FROM public.tbl_runways " \
-                        "where airport_identifier like '" + airport_id + "'  " \
-                        "and runway_identifier like '" + runway_id_2 + "'; "
+                print(runway_1_xy)
+                print([runway_2_x,runway_2_y])
 
-            cur.execute(sql_query)
+                print([runway_2_x - runway_1_xy[0] , runway_2_y - runway_1_xy[1]])
 
-            results = cur.fetchmany()
-
-            #print(results)
-
-            # initialize parameters
-
-            # # populate the parameters with the query results, row by row
-            # for row in results:
-            #     runway_latitude_2.append(row[0])
-            #     runway_longitude_2.append(row[1])
-
-            if not (len(results) == 0):
-                runway_latitude_2 = results[0][0]
-                runway_longitude_2 = results[0][1]
-                sql_text_2 = sql_text_2 + str(float(runway_longitude_2)) + " " + str(
-                    float(runway_latitude_2)) + ")',4326));"
-            else:
-                sql_text_2 = sql_text_2 + str(float(runway_longitude)) + " " + str(
-                    float(runway_latitude)) + ")',4326));"
+                sql_text_2 = "INSERT INTO " + table_name + \
+                             "(area_code," + \
+                             "icao_code," + \
+                             "airport_identifier," + \
+                             "runway_identifier," + \
+                             "runway_latitude," + \
+                             "runway_longitude," + \
+                             "runway_gradient," + \
+                             "runway_magnetic_bearing," + \
+                             "runway_true_bearing," + \
+                             "landing_threshold_elevation," + \
+                             "displaced_threshold_distance," + \
+                             "threshold_crossing_height," + \
+                             "runway_length," + \
+                             "runway_width," + \
+                             "llz_identifier," + \
+                             "llz_mls_gls_category ," + \
+                             "geom) " + \
+                             "VALUES('" + \
+                             str(area_code) + "','" + \
+                             str(icao_code) + "','" + \
+                             str(airport_identifier) + "','" + \
+                             str(runway_identifier) + "'," + \
+                             str(runway_latitude) + "," + \
+                             str(runway_longitude) + "," + \
+                             str(runway_gradient_temp) + "," + \
+                             str(runway_magnetic_bearing) + "," + \
+                             str(runway_true_bearing) + "," + \
+                             str(landing_threshold_elevation) + "," + \
+                             str(displaced_threshold_distance) + "," + \
+                             str(threshold_crossing_height) + "," + \
+                             str(runway_length) + "," + \
+                             str(runway_width) + ",'" + \
+                             str(llz_identifier_temp) + "','" + \
+                             str(llz_mls_gls_category_temp) + "'," + \
+                             "ST_Transform(ST_LineFromText('LINESTRING(" + \
+                             str(runway_1_xy[0]) + " " + str(runway_1_xy[1]) + "," + \
+                             str(runway_2_x) + " " + str(runway_2_y) + ")'," + UTM_zone + "),4326));"
                 weird_airport_list.append(airport_identifier)
-
-            cur.execute(sql_text_2)
-            conn.commit()
+                print(sql_text_2)
+                cur.execute(sql_text_2)
+                conn.commit()
     print(str("{:.3f}".format((k / total) * 100, 2)) + "% Completed")
     print(weird_airport_list)

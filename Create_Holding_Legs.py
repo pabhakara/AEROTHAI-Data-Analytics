@@ -144,10 +144,6 @@ with conn_postgres:
                             + holding_speed + "," \
                             + "ST_Transform(ST_SetSRID(ST_GeomFromEWKT('CIRCULARSTRING("
 
-        UTM_zone = convert_wgs_to_utm(temp_1['waypoint_longitude'], temp_1['waypoint_latitude'])
-
-        transformer = Transformer.from_crs("epsg:4326", "epsg:" + str(UTM_zone))
-
         course_deg = (temp_1['inbound_holding_course'])
 
         turn = str(temp_1['turn_direction'])
