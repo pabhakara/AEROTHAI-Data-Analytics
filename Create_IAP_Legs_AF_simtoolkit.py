@@ -41,13 +41,13 @@ with conn_postgres:
                         "ALTER TABLE " + table_name + " " \
                                                       "OWNER TO postgres;"
 
-    postgres_sql_text = postgres_sql_text + "DROP TABLE IF EXISTS " + table_name2 + "; \n" + \
-                        "CREATE TABLE " + table_name2 + " " + \
-                        "(waypoint_name character varying, " + \
-                        "geom geometry)" + \
-                        "WITH (OIDS=FALSE); \n" + \
-                        "ALTER TABLE " + table_name2 + " " \
-                                                       "OWNER TO postgres;"
+    # postgres_sql_text = postgres_sql_text + "DROP TABLE IF EXISTS " + table_name2 + "; \n" + \
+    #                     "CREATE TABLE " + table_name2 + " " + \
+    #                     "(waypoint_name character varying, " + \
+    #                     "geom geometry)" + \
+    #                     "WITH (OIDS=FALSE); \n" + \
+    #                     "ALTER TABLE " + table_name2 + " " \
+    #                                                    "OWNER TO postgres;"
 
     print(postgres_sql_text)
 
@@ -282,17 +282,17 @@ with conn_postgres:
                         x_comp = math.cos(theta) * arc_radius + arc_center_xy[0]
                         y_comp = math.sin(theta) * arc_radius + arc_center_xy[1]
 
-                postgres_sql_text2 = "INSERT INTO \"" + table_name2 + "\" " + \
-                                     "(\"waypoint_name\"," + \
-                                     "\"geom\") " + \
-                                     " VALUES('xy_comp_" + str(temp_1['waypoint_identifier']) \
-                                     + "_" + str(temp_2['waypoint_identifier']) + "'," \
-                                     + "ST_Transform(ST_SetSRID(ST_MakePoint(" \
-                                     + str(x_comp) + "," + str(y_comp) + ")," \
-                                     + str(UTM_zone) + "), 4326));"
-                cursor_postgres.execute(postgres_sql_text2)
-
-                conn_postgres.commit()
+                # postgres_sql_text2 = "INSERT INTO \"" + table_name2 + "\" " + \
+                #                      "(\"waypoint_name\"," + \
+                #                      "\"geom\") " + \
+                #                      " VALUES('xy_comp_" + str(temp_1['waypoint_identifier']) \
+                #                      + "_" + str(temp_2['waypoint_identifier']) + "'," \
+                #                      + "ST_Transform(ST_SetSRID(ST_MakePoint(" \
+                #                      + str(x_comp) + "," + str(y_comp) + ")," \
+                #                      + str(UTM_zone) + "), 4326));"
+                # cursor_postgres.execute(postgres_sql_text2)
+                #
+                # conn_postgres.commit()
 
                 postgres_sql_text = postgres_sql_text + \
                                     str(start_wp_xy[0]) + " " + str(start_wp_xy[1]) + "," + \
