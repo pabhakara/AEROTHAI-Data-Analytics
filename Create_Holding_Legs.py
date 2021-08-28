@@ -155,7 +155,7 @@ with conn_postgres:
         diameter = 1852 * 2
         distance = 1852 * 3
 
-        print(course_deg)
+        #print(course_deg)
 
         if course_deg >= 270 or course_deg <= 90:
             north_bound = True
@@ -315,7 +315,7 @@ with conn_postgres:
                             str(point_1[0]) + " " + str(point_1[1]) + ")'), " + \
                             str(UTM_zone) + "), 4326)); "
 
-        print(postgres_sql_text)
+        #print(postgres_sql_text)
 
         cursor_postgres.execute(postgres_sql_text)
 
