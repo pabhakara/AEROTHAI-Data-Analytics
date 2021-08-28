@@ -1,12 +1,14 @@
 import psycopg2
 
+from run_auto import db_name
+
 table_name = 'airways_segments'
 
 conn = psycopg2.connect(user="postgres",
                         password="password",
                         host="127.0.0.1",
                         port="5432",
-                        database="current_airac")
+                        database=db_name)
 
 with conn:
     cur = conn.cursor()
@@ -183,7 +185,7 @@ with conn:
     cur.execute(sql_text)
     conn.commit()
 
-    while k < num_of_ids:
+    while k < num_of_ids - 1:
         if (inbound_distance[k + 1] == 0):
             k = k + 1
         else:
