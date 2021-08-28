@@ -2,6 +2,8 @@ import psycopg2
 from pyproj import Transformer
 import math
 
+from run_auto import db_name
+
 
 def convert_wgs_to_utm(lon: float, lat: float):
     """Based on lat and lng, return best utm epsg-code"""
@@ -20,7 +22,7 @@ conn = psycopg2.connect(user="postgres",
                         password="password",
                         host="127.0.0.1",
                         port="5432",
-                        database="current_airac")
+                        database=db_name)
 
 with conn:
     cur = conn.cursor()

@@ -6,7 +6,7 @@ conn = psycopg2.connect(user = "postgres",
                                 password = "password",
                                 host = "127.0.0.1",
                                 port = "5432",
-                                database = "current_airac")
+                                database = db_name)
 
 with conn:
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -39,8 +39,6 @@ with conn:
     cur.execute(sql_query)
 
     num_of_rows = cur.rowcount
-
-    print(cur.rowcount)
 
     results = cur.fetchall()
 
@@ -102,78 +100,10 @@ with conn:
                          str(starting_longitude_int + 1) + " " +  str(starting_latitude_int) + "," + \
                          str(starting_longitude_int) + " " +  str(starting_latitude_int) + "))',4326));"
             cur.execute(sql_text_2)
-            print(sql_text_2)
 
             conn.commit()
             print(str("{:.3f}".format((k / num_of_rows) * 100, 2)) + "% Completed")
 
             m = m + 1
 
-        print(k)
-
         k = k + 1
-
-    # mora01_txt = str(temp['mora01'])
-    # mora02_txt = str(temp['mora02'])
-    # mora03_txt = str(temp['mora03'])
-    # mora04_txt = str(temp['mora04'])
-    # mora05_txt = str(temp['mora05'])
-    # mora06_txt = str(temp['mora06'])
-    # mora07_txt = str(temp['mora07'])
-    # mora08_txt = str(temp['mora08'])
-    # mora09_txt = str(temp['mora09'])
-    # mora10_txt = str(temp['mora10'])
-    # mora11_txt = str(temp['mora11'])
-    # mora12_txt = str(temp['mora12'])
-    # mora13_txt = str(temp['mora13'])
-    # mora14_txt = str(temp['mora14'])
-    # mora15_txt = str(temp['mora15'])
-    # mora16_txt = str(temp['mora16'])
-    # mora17_txt = str(temp['mora17'])
-    # mora18_txt = str(temp['mora18'])
-    # mora19_txt = str(temp['mora19'])
-    # mora20_txt = str(temp['mora20'])
-    # mora21_txt = str(temp['mora21'])
-    # mora22_txt = str(temp['mora22'])
-    # mora23_txt = str(temp['mora23'])
-    # mora24_txt = str(temp['mora24'])
-    # mora25_txt = str(temp['mora25'])
-    # mora26_txt = str(temp['mora26'])
-    # mora27_txt = str(temp['mora27'])
-    # mora28_txt = str(temp['mora28'])
-    # mora29_txt = str(temp['mora29'])
-    # mora30_txt = str(temp['mora30'])
-    #
-    # mora01_int = int(temp['mora01'])
-    # mora02_txt = int(temp['mora02'])
-    # mora03_txt = int(temp['mora03'])
-    # mora04_txt = int(temp['mora04'])
-    # mora05_txt = int(temp['mora05'])
-    # mora06_txt = int(temp['mora06'])
-    # mora07_txt = int(temp['mora07'])
-    # mora08_txt = int(temp['mora08'])
-    # mora09_txt = int(temp['mora09'])
-    # mora10_txt = int(temp['mora10'])
-    # mora11_txt = int(temp['mora11'])
-    # mora12_txt = int(temp['mora12'])
-    # mora13_txt = int(temp['mora13'])
-    # mora14_txt = int(temp['mora14'])
-    # mora15_txt = int(temp['mora15'])
-    # mora16_txt = int(temp['mora16'])
-    # mora17_txt = int(temp['mora17'])
-    # mora18_txt = int(temp['mora18'])
-    # mora19_txt = int(temp['mora19'])
-    # mora20_txt = int(temp['mora20'])
-    # mora21_txt = int(temp['mora21'])
-    # mora22_txt = int(temp['mora22'])
-    # mora23_txt = int(temp['mora23'])
-    # mora24_txt = int(temp['mora24'])
-    # mora25_txt = int(temp['mora25'])
-    # mora26_txt = int(temp['mora26'])
-    # mora27_txt = int(temp['mora27'])
-    # mora28_txt = int(temp['mora28'])
-    # mora29_txt = int(temp['mora29'])
-    # mora30_txt = int(temp['mora30'])
-
-
-

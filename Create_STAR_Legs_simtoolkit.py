@@ -1,11 +1,13 @@
 import psycopg2.extras
 
 # Try to connect to the local PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
+from run_auto import db_name
+
 conn_postgres = psycopg2.connect(user="postgres",
                                  password="password",
                                  host="127.0.0.1",
                                  port="5432",
-                                 database="current_airac")
+                                 database=db_name)
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 

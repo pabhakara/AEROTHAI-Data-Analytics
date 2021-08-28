@@ -1,10 +1,9 @@
 import psycopg2, sqlite3, sys, re
 
-path = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/NavData/simtoolkitpro_native_2108/'
-
-sqdb = path + 'navdata.s3db'
+sqdb = path_db + 'navdata.s3db'
 sqlike = '%'
-pgdb = 'current_airac'
+#pgdb = 'current_airac'
+pgdb = db_name
 pguser = 'postgres'
 pgpswd = 'password'
 pghost = 'localhost'
@@ -32,7 +31,6 @@ for table in tabnames:
     create = create.replace("double", "double precision")
     create = create.replace("DOUBLE", "double precision")
 
-
     create = re.sub(r"""\bTEXT\b""", "VARCHAR", create)
     create = re.sub(r"""(\(\d+\))""", "", create)
 
@@ -43,7 +41,6 @@ for table in tabnames:
     newholder = pholder[:-1]
 
     try:
-
         conpg = psycopg2.connect(database=pgdb, user=pguser, password=pgpswd,
                                  host=pghost, port=pgport)
         curpg = conpg.cursor()

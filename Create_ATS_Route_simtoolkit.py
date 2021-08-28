@@ -1,12 +1,14 @@
 import psycopg2
 
+from run_auto import db_name
+
 table_name = 'airways'
 
 conn = psycopg2.connect(user = "postgres",
                         password = "password",
                         host = "127.0.0.1",
                         port = "5432",
-                        database = "current_airac")
+                        database = db_name)
 
 with conn:
     cur = conn.cursor()
@@ -77,7 +79,7 @@ with conn:
                 "ST_LineFromText('LINESTRING(" + \
                str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + ","
 
-    while k < num_of_ids:
+    while k < num_of_ids - 1:
         if (inbound_distance[k] == 0) or \
                 not(str(route_identifier[k]) == str(route_identifier[k+1])):
 
