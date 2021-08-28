@@ -3,7 +3,7 @@ import psycopg2
 from pyproj import Transformer
 import math
 
-from run_auto import db_name
+from autoprocess_simtoolkit import db_name
 
 
 def convert_wgs_to_utm(lon: float, lat: float):
