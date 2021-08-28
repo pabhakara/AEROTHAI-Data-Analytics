@@ -114,7 +114,7 @@ with conn_postgres:
             postgres_sql_text = postgres_sql_text + \
                                 waypoint_longitude + " " + waypoint_latitude + ","
             k = k + 1
-            print(k)
+            #print(k)
             temp_1 = record[k]
             if k == num_of_records - 1:
                 break
@@ -130,10 +130,10 @@ with conn_postgres:
                             waypoint_longitude + " " + waypoint_latitude + ")'), 4326))"
 
         cursor_postgres.execute(postgres_sql_text)
-        print(postgres_sql_text)
+        #print(postgres_sql_text)
 
         conn_postgres.commit()
-        print(str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
+        print("STAR Legs: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
 
         k = k + 1
 

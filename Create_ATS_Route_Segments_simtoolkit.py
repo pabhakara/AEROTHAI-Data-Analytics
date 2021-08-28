@@ -264,6 +264,7 @@ with conn:
                        "ST_LineFromText('LINESTRING(" + \
                        str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + "," + \
                        str(float(waypoint_longitude[k + 1])) + " " + str(float(waypoint_latitude[k + 1])) + ")',4326));"
-            print(sql_text)
             cur.execute(sql_text)
             conn.commit()
+            #print(sql_text)
+            print("Airways Segments: "+str("{:.3f}".format((k / num_of_ids) * 100, 2)) + "% Completed")

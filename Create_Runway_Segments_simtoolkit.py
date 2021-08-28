@@ -36,7 +36,7 @@ with conn:
                 "ALTER TABLE " + table_name + \
                 " ADD geom geometry;"
 
-    print(sql_query)
+    #print(sql_query)
 
     cur.execute(sql_query)
     conn.commit()
@@ -48,7 +48,7 @@ with conn:
                 "group by airport_identifier) a " \
                 "where count >= 2 " \
                 "order by airport_identifier desc " \
- \
+
     # query
     cur.execute(sql_query)
 
@@ -61,7 +61,7 @@ with conn:
     for row in results:
         airport_identifier_list.append(row[0])
 
-    print(airport_identifier_list)
+    #print(airport_identifier_list)
 
     print("Total number of airports is:  ", len(results))
 
@@ -70,8 +70,8 @@ with conn:
     k = 0
 
     for airport_id in airport_identifier_list:  # each airport identifier
-        print(str("{:.3f}".format((k / total) * 100, 2)) + "% Completed")
-        print(airport_id)
+        print("Runway Segments: " + str("{:.3f}".format((k / total) * 100, 2)) + "% Completed")
+        #print(airport_id)
 
         k = k + 1
 
@@ -223,7 +223,7 @@ with conn:
 
                 runway_1_xy = transformer.transform(runway_latitude, runway_longitude)
 
-                print(runway_1_xy)
+                #print(runway_1_xy)
 
                 runway_length_m = runway_length / 3.048
 
@@ -241,10 +241,10 @@ with conn:
                     runway_2_y = runway_1_xy[1] + runway_length_m * math.sin((runway_true_bearing - 270) * math.pi / 180)
 
 
-                print(runway_1_xy)
-                print([runway_2_x,runway_2_y])
+                #print(runway_1_xy)
+                #print([runway_2_x,runway_2_y])
 
-                print([runway_2_x - runway_1_xy[0] , runway_2_y - runway_1_xy[1]])
+                #print([runway_2_x - runway_1_xy[0] , runway_2_y - runway_1_xy[1]])
 
                 sql_text_2 = "INSERT INTO " + table_name + \
                              "(area_code," + \
@@ -285,8 +285,8 @@ with conn:
                              str(runway_1_xy[0]) + " " + str(runway_1_xy[1]) + "," + \
                              str(runway_2_x) + " " + str(runway_2_y) + ")'," + UTM_zone + "),4326));"
                 weird_airport_list.append(airport_identifier)
-                print(sql_text_2)
+                #print(sql_text_2)
                 cur.execute(sql_text_2)
                 conn.commit()
-    print(str("{:.3f}".format((k / total) * 100, 2)) + "% Completed")
-    print(weird_airport_list)
+    print("Runway Segments: " + str("{:.3f}".format((k / total) * 100, 2)) + "% Completed")
+    #print(weird_airport_list)

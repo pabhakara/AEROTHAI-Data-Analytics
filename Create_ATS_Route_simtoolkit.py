@@ -79,20 +79,25 @@ with conn:
                 "ST_LineFromText('LINESTRING(" + \
                str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + ","
 
-    while k < num_of_ids - 1:
+    while k < num_of_ids:
         if (inbound_distance[k] == 0) or \
                 not(str(route_identifier[k]) == str(route_identifier[k+1])):
 
             sql_text = sql_text + str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + ")',4326));"
 
-            print(sql_text)
+            print("Airways: " + str("{:.3f}".format((k / num_of_ids) * 100, 2)) + "% Completed")
+
+            #print(sql_text)
 
             cur.execute(sql_text)
             conn.commit()
 
             k = k + 1
 
-            sql_text = "INSERT INTO " + table_name + \
+            if k == num_of_ids:
+                break
+            else:
+                sql_text = "INSERT INTO " + table_name + \
                        "(route_identifier," + \
                        "area_code," + \
                        "seqno," + \
@@ -104,10 +109,8 @@ with conn:
                        "ST_LineFromText('LINESTRING(" + \
                        str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + ","
 
-            k = k + 1
+                k = k + 1
 
         else:
             sql_text = sql_text + str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + ","
             k = k + 1
-
-    print(sql_text)

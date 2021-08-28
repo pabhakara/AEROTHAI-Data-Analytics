@@ -215,7 +215,7 @@ with conn_postgres:
         cursor_postgres.execute(postgres_sql_text)
 
         conn_postgres.commit()
-        print(str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
+        print("IAP Legs RF: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
 
         k = k + 1
 

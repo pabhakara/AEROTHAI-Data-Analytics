@@ -1,5 +1,7 @@
 import psycopg2.extras
 
+from run_auto import db_name
+
 table_name = 'mora_grid'
 
 conn = psycopg2.connect(user = "postgres",
@@ -65,7 +67,7 @@ with conn:
                 m_txt = '0' + str(m)
             else:
                 m_txt = str(m)
-            print(temp['mora' + m_txt])
+            #print(temp['mora' + m_txt])
 
             if temp['mora' + m_txt] == 'UNK':
                 mora_value = - 1
@@ -102,7 +104,7 @@ with conn:
             cur.execute(sql_text_2)
 
             conn.commit()
-            print(str("{:.3f}".format((k / num_of_rows) * 100, 2)) + "% Completed")
+            print("Grid MORA: " + str("{:.3f}".format((k / num_of_rows) * 100, 2)) + "% Completed")
 
             m = m + 1
 
