@@ -28,7 +28,7 @@ with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     table_name = 'iap_legs_af'
-    table_name2 = table_name + '_geom'
+    #table_name2 = table_name + '_geom'
 
     postgres_sql_text = "DROP TABLE IF EXISTS " + table_name + "; \n" + \
                         "CREATE TABLE " + table_name + " " + \
@@ -181,17 +181,17 @@ with conn_postgres:
                     intermediate_x_comp = arc_center_xy[0]
                     intermediate_y_comp = arc_center_xy[1]
 
-                postgres_sql_text2 = "INSERT INTO \"" + table_name2 + "\" " + \
-                                     "(\"waypoint_name\"," + \
-                                     "\"geom\") " + \
-                                     " VALUES('intermediate_" + str(temp_1['waypoint_identifier']) + "_" + str(
-                    temp_2['waypoint_identifier']) + "'," \
-                                     + "ST_Transform(ST_SetSRID(ST_MakePoint(" \
-                                     + str(intermediate_x_comp) + "," + str(intermediate_y_comp) + ")," \
-                                     + str(UTM_zone) + "), 4326));"
-                cursor_postgres.execute(postgres_sql_text2)
-
-                conn_postgres.commit()
+                # postgres_sql_text2 = "INSERT INTO \"" + table_name2 + "\" " + \
+                #                      "(\"waypoint_name\"," + \
+                #                      "\"geom\") " + \
+                #                      " VALUES('intermediate_" + str(temp_1['waypoint_identifier']) + "_" + str(
+                #     temp_2['waypoint_identifier']) + "'," \
+                #                      + "ST_Transform(ST_SetSRID(ST_MakePoint(" \
+                #                      + str(intermediate_x_comp) + "," + str(intermediate_y_comp) + ")," \
+                #                      + str(UTM_zone) + "), 4326));"
+                # cursor_postgres.execute(postgres_sql_text2)
+                #
+                # conn_postgres.commit()
 
                 intermediate_wp_xy = [intermediate_x_comp, intermediate_y_comp]
 
@@ -210,17 +210,17 @@ with conn_postgres:
                 else:
                     arc_direction = "CW"
 
-                postgres_sql_text2 = "INSERT INTO \"" + table_name2 + "\" " + \
-                                     "(\"waypoint_name\"," + \
-                                     "\"geom\") " + \
-                                     " VALUES('mid_" + str(temp_1['waypoint_identifier']) + "_" + str(
-                    temp_2['waypoint_identifier']) + "'," \
-                                     + "ST_Transform(ST_SetSRID(ST_MakePoint(" \
-                                     + str(mid_wp_xy[0]) + "," + str(mid_wp_xy[1]) + ")," \
-                                     + str(UTM_zone) + "), 4326));"
-                cursor_postgres.execute(postgres_sql_text2)
-
-                conn_postgres.commit()
+                # postgres_sql_text2 = "INSERT INTO \"" + table_name2 + "\" " + \
+                #                      "(\"waypoint_name\"," + \
+                #                      "\"geom\") " + \
+                #                      " VALUES('mid_" + str(temp_1['waypoint_identifier']) + "_" + str(
+                #     temp_2['waypoint_identifier']) + "'," \
+                #                      + "ST_Transform(ST_SetSRID(ST_MakePoint(" \
+                #                      + str(mid_wp_xy[0]) + "," + str(mid_wp_xy[1]) + ")," \
+                #                      + str(UTM_zone) + "), 4326));"
+                # cursor_postgres.execute(postgres_sql_text2)
+                #
+                # conn_postgres.commit()
 
                 if (arc_direction == 'CW'):
                     # mid_wp is NE of arc_center

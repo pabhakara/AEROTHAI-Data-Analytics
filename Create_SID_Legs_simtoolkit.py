@@ -110,7 +110,7 @@ with conn_postgres:
             postgres_sql_text = postgres_sql_text + \
                                 waypoint_longitude + " " + waypoint_latitude + ","
             k = k + 1
-            print(k)
+            #print(k)
             temp_1 = record[k]
             if k == num_of_records - 1:
                 break
