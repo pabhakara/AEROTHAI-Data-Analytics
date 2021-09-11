@@ -1,5 +1,7 @@
 import psycopg2, sqlite3, sys, re
 
+from autoprocess_simtoolkit import db_name, path_db
+
 sqdb = path_db + 'navdata.s3db'
 sqlike = '%'
 #pgdb = 'current_airac'

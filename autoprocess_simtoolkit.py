@@ -13,46 +13,44 @@ def toc():
     else:
         print("Toc: start time not set")
 
-#
-# #establishing the connection
-# conn = psycopg2.connect(
-#    database="postgres", user='postgres', password='password', host='127.0.0.1', port= '5432'
-# )
-# conn.autocommit = True
-#
-# #Creating a cursor object using the cursor() method
-# cursor = conn.cursor()
+
+#establishing the connection
+conn = psycopg2.connect(
+   database="postgres", user='postgres', password='password', host='127.0.0.1', port= '5432'
+)
+conn.autocommit = True
+
+#Creating a cursor object using the cursor() method
+cursor = conn.cursor()
 
 
 # import psycopg2
 
-db_name = 'temp'
-#
-# #Preparing query to create a database
-# sql = 'CREATE database ' + db_name + ';'
-#
-# #Creating a database
-# cursor.execute(sql)
-# print("Database created successfully........")
-# conn.close()
-#
-path_script = "/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics/"
-path_db = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/NavData/simtoolkitpro_native_2108/'
-#
-# #Populating the database
-# exec(open(path_script + 'SQLite_File_to_PostgreSQL.py').read())
-#
-# #establishing the connection
-# conn2 = psycopg2.connect(
-#    database=db_name, user='postgres', password='password', host='127.0.0.1', port='5432'
-# )
-# conn2.autocommit = True
-# cursor2 = conn2.cursor()
-# sql_file = open(path_script + 'create_wp.sql', 'r')
-# cursor2.execute(sql_file.read())
-# conn2.close()
-#
+db_name = 'airac_2109'
 
+#Preparing query to create a database
+sql = 'CREATE database ' + db_name + ';'
+
+#Creating a database
+cursor.execute(sql)
+print("Database created successfully........")
+conn.close()
+
+path_script = "/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics/"
+path_db = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/NavData/simtoolkitpro_native_2109/'
+
+#Populating the database
+exec(open(path_script + 'SQLite_File_to_PostgreSQL.py').read())
+
+#establishing the connection
+conn2 = psycopg2.connect(
+   database=db_name, user='postgres', password='password', host='127.0.0.1', port='5432'
+)
+conn2.autocommit = True
+cursor2 = conn2.cursor()
+sql_file = open(path_script + 'create_wp.sql', 'r')
+cursor2.execute(sql_file.read())
+conn2.close()
 
 tic()
 #

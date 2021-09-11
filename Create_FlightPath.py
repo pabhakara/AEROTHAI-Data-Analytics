@@ -12,13 +12,13 @@ conn_postgres = psycopg2.connect(user = "postgres",
                                   password = "password",
                                   host = "127.0.0.1",
                                   port = "5432",
-                                  database = "flight_track")
+                                  database = "los_2021_08")
 with conn_postgres:
 
     cursor_postgres = conn_postgres.cursor()
 
     year_list = ['2021']
-    month_list = ['07']
+    month_list = ['08']
     #month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
 
     for year in year_list:
@@ -173,7 +173,7 @@ with conn_postgres:
                                         "\"flevel\",\"entry_flevel\",\"maintain_flevel\",\"exit_flevel\"," + \
                                         "\"geom\",\"end_time\")"
 
-                    postgres_sql_text = postgres_sql_text + " VALUES('" + callsign + "'," \
+                    postgres_sql_text += " VALUES('" + callsign + "'," \
                             + flight_id_1 + ",'" \
                             + app_time + "'," \
                             + etd + "," \
@@ -251,16 +251,13 @@ with conn_postgres:
 
                             temp_2 = record[k + 1]
 
-                        postgres_sql_text = postgres_sql_text + \
-                                                longitude_1 + " " + latitude_1 + " " + \
+                        postgres_sql_text += longitude_1 + " " + latitude_1 + " " + \
                                                 actual_flight_level_1 + ","
 
-                        postgres_sql_text = postgres_sql_text + \
-                                            longitude_1 + " " + latitude_1 + " " + \
+                        postgres_sql_text += longitude_1 + " " + latitude_1 + " " + \
                                             actual_flight_level_1 + ")',4326),'"
 
-                        postgres_sql_text = postgres_sql_text + \
-                                            app_time_1 +"')"
+                        postgres_sql_text += app_time_1 +"')"
 
                         #print(postgres_sql_text)
                         cursor_postgres.execute(postgres_sql_text)
@@ -385,7 +382,7 @@ with conn_postgres:
 
                             flight_id_1 = str(temp_1['flight_id'])
 
-                            postgres_sql_text = postgres_sql_text + " VALUES('" + callsign + "'," \
+                            postgres_sql_text += " VALUES('" + callsign + "'," \
                             + flight_id_1 + ",'" \
                             + app_time + "'," \
                             + etd + "," \

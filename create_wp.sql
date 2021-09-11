@@ -1,4 +1,4 @@
-CREATE EXTENSION postgis;
+create extension postgis;
 
 drop table if exists "airports";
 select *,
@@ -77,7 +77,7 @@ from "tbl_stars";
 drop table if exists "iaps_wp";
 select *,
 ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
-into "tbl_wp"
+into "iaps_wp"
 from "tbl_iaps";
 
 drop table if exists "terminal_ndb";
