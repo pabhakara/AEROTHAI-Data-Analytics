@@ -145,8 +145,8 @@ with conn:
                "flightlevel," + \
                "direction_restriction," + \
                "crusing_table_identifier," + \
-               "minimum_altitude1," + \
-               "minimum_altitude2," + \
+               "minimum_altitude_a," + \
+               "minimum_altitude_b," + \
                "maximum_altitude," + \
                "outbound_course," + \
                "inbound_course," + \
@@ -229,8 +229,8 @@ with conn:
                        "flightlevel," + \
                        "direction_restriction," + \
                        "crusing_table_identifier," + \
-                       "minimum_altitude1," + \
-                       "minimum_altitude2," + \
+                       "minimum_altitude_a," + \
+                       "minimum_altitude_b," + \
                        "maximum_altitude," + \
                        "outbound_course," + \
                        "inbound_course," + \
