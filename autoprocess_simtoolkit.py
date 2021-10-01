@@ -61,4 +61,16 @@ exec(open(path_script + 'Create_Runway_Segments_simtoolkit.py').read())
 exec(open(path_script + 'Create_Holding_Legs.py').read())
 exec(open(path_script + 'Create_Holding_Legs_from_IAPs.py').read())
 
+#establishing the connection
+conn3 = psycopg2.connect(
+   database=db_name, user='postgres', password='password', host='127.0.0.1', port='5432'
+)
+
+conn3.autocommit = True
+cursor3 = conn3.cursor()
+sql_file = open(path_script + 'clean_up_legs.sql', 'r')
+cursor3.execute(sql_file.read())
+conn3.close()
+# #
+
 toc()

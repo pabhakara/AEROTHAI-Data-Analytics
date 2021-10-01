@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b70db43c-7c4d-4b3e-9e46-199adf2487f4" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/clean_up_legs.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/drop_long_legs.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create_wp.sql" beforeDir="false" afterPath="$PROJECT_DIR$/create_wp.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/autoprocess_simtoolkit.py" beforeDir="false" afterPath="$PROJECT_DIR$/autoprocess_simtoolkit.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -202,13 +204,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1621414845806</updated>
-    </task>
-    <task id="LOCAL-00014" summary="test2">
-      <created>1622721098151</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1622721098151</updated>
     </task>
     <task id="LOCAL-00015" summary="test2">
       <created>1622807437749</created>
@@ -546,8 +541,18 @@
       <option name="project" value="LOCAL" />
       <updated>1632992203665</updated>
     </task>
-    <option name="localTasksCounter" value="63" />
+    <task id="LOCAL-00063" summary="test2">
+      <created>1633050186465</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1633050186465</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
     <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.sql" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
