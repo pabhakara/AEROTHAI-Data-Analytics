@@ -101,3 +101,9 @@ select *,
 ST_SetSRID(ST_MakePoint(dme_longitude,dme_latitude),4326) AS geom
 into "dme"
 from "tbl_vhfnavaids";
+
+drop table if exists "airways_wp";
+select *,
+ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+into "airways_wp"
+from "tbl_enroute_airways";
