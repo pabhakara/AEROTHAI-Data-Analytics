@@ -1,3 +1,17 @@
+drop table if exists iap_legs;
+
+select *
+into iap_legs
+from
+(select *
+from iap_legs_without_af_or_rf
+union
+select *
+from iap_legs_af
+union
+select *
+from iap_legs_rf) a;
+
 delete
 from iap_legs
 where st_length(geom) > 300;
