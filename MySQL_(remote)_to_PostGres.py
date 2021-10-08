@@ -13,11 +13,11 @@ db = mysql.connector.connect(host='172.16.101.32',
 encoding = 'Latin1'
 
 dbx = db.cursor()
-DB = psycopg2.connect("dbname='tecos'")
+DB = psycopg2.connect("dbname='los_2021_09'")
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
 
-mysql_db = 'flight_vtbs'
+mysql_db = 'flight'
 
 #mysql = '''show tables from flight_vtbd'''
 
@@ -37,11 +37,13 @@ tables = []
 
 years = ['2021']
 #postfix = '_vtbd_tecos_dep'
-postfix = '_vtbs_tecos_arr'
+postfix = '_radar'
 prefix = ''
+#prefix = 'target_'
+
 
 for year in years:
-    for month in ['08']:
+    for month in ['09']:
         text = (prefix + year + '_' + month + postfix)
         print(text)
         tables = tables + [text]

@@ -71,8 +71,8 @@ with conn:
     flightlevel = []
     direction_restriction = []
     crusing_table_identifier = []
-    minimum_altitude_a = []
-    minimum_altitude_b = []
+    minimum_altitude1 = []
+    minimum_altitude2 = []
     maximum_altitude = []
     outbound_course = []
     inbound_course = []
@@ -92,8 +92,8 @@ with conn:
         flightlevel.append(row[9])
         direction_restriction.append(row[10])
         crusing_table_identifier.append(row[11])
-        minimum_altitude_a.append(row[12])
-        minimum_altitude_b.append(row[13])
+        minimum_altitude1.append(row[12])
+        minimum_altitude2.append(row[13])
         maximum_altitude.append(row[14])
         outbound_course.append(row[15])
         inbound_course.append(row[16])
@@ -107,15 +107,15 @@ with conn:
     print(waypoint_latitude[k])
     print(waypoint_longitude[k])
 
-    if str(minimum_altitude_a[k]) == 'None':
-        minimum_altitude_a_temp = 0
+    if str(minimum_altitude1[k]) == 'None':
+        minimum_altitude1_temp = 0
     else:
-        minimum_altitude_a_temp = minimum_altitude_a[k]
+        minimum_altitude1_temp = minimum_altitude1[k]
 
-    if str(minimum_altitude_b[k]) == 'None':
-        minimum_altitude_b_temp = 0
+    if str(minimum_altitude2[k]) == 'None':
+        minimum_altitude2_temp = 0
     else:
-        minimum_altitude_b_temp = minimum_altitude_b[k]
+        minimum_altitude2_temp = minimum_altitude2[k]
 
     if str(maximum_altitude[k]) == 'None':
         maximum_altitude_temp = 0
@@ -145,8 +145,8 @@ with conn:
                "flightlevel," + \
                "direction_restriction," + \
                "crusing_table_identifier," + \
-               "minimum_altitude_a," + \
-               "minimum_altitude_b," + \
+               "minimum_altitude1," + \
+               "minimum_altitude2," + \
                "maximum_altitude," + \
                "outbound_course," + \
                "inbound_course," + \
@@ -168,8 +168,8 @@ with conn:
                str(flightlevel[k]) + "','" + \
                str(direction_restriction[k]) + "','" + \
                str(crusing_table_identifier[k]) + "'," + \
-               str(minimum_altitude_a_temp) + "," + \
-               str(minimum_altitude_b_temp) + "," + \
+               str(minimum_altitude1_temp) + "," + \
+               str(minimum_altitude2_temp) + "," + \
                str(maximum_altitude_temp) + "," + \
                str(outbound_course_temp) + "," + \
                str(inbound_course_temp) + "," + \
@@ -191,15 +191,15 @@ with conn:
         else:
             k = k + 1
 
-            if str(minimum_altitude_a[k]) == 'None':
-                minimum_altitude_a_temp = 0
+            if str(minimum_altitude1[k]) == 'None':
+                minimum_altitude1_temp = 0
             else:
-                minimum_altitude_a_temp = minimum_altitude_a[k]
+                minimum_altitude1_temp = minimum_altitude1[k]
 
-            if str(minimum_altitude_b[k]) == 'None':
-                minimum_altitude_b_temp = 0
+            if str(minimum_altitude2[k]) == 'None':
+                minimum_altitude2_temp = 0
             else:
-                minimum_altitude_b_temp = minimum_altitude_b[k]
+                minimum_altitude2_temp = minimum_altitude2[k]
 
             if str(maximum_altitude[k]) == 'None':
                 maximum_altitude_temp = 0
@@ -229,8 +229,8 @@ with conn:
                        "flightlevel," + \
                        "direction_restriction," + \
                        "crusing_table_identifier," + \
-                       "minimum_altitude_a," + \
-                       "minimum_altitude_b," + \
+                       "minimum_altitude1," + \
+                       "minimum_altitude2," + \
                        "maximum_altitude," + \
                        "outbound_course," + \
                        "inbound_course," + \
@@ -252,8 +252,8 @@ with conn:
                        str(flightlevel[k]) + "','" + \
                        str(direction_restriction[k]) + "','" + \
                        str(crusing_table_identifier[k]) + "'," + \
-                       str(minimum_altitude_a_temp) + "," + \
-                       str(minimum_altitude_b_temp) + "," + \
+                       str(minimum_altitude1_temp) + "," + \
+                       str(minimum_altitude2_temp) + "," + \
                        str(maximum_altitude_temp) + "," + \
                        str(outbound_course_temp) + "," + \
                        str(inbound_course_temp) + "," + \
