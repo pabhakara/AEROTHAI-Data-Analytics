@@ -13,7 +13,7 @@ db = mysql.connector.connect(host='172.16.101.32',
 encoding = 'Latin1'
 
 dbx = db.cursor()
-DB = psycopg2.connect("dbname='los_2021_09'")
+DB = psycopg2.connect("dbname='los_2021_10'")
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
 
@@ -36,14 +36,14 @@ ts = dbx.fetchall()
 tables = []
 
 years = ['2021']
-#postfix = '_vtbd_tecos_dep'
+# postfix = '_vtbd_tecos_dep'
 postfix = '_radar'
 prefix = ''
-#prefix = 'target_'
-
+# prefix = 'target_'
+# postfix = ''
 
 for year in years:
-    for month in ['09']:
+    for month in ['10']:
         text = (prefix + year + '_' + month + postfix)
         print(text)
         tables = tables + [text]
