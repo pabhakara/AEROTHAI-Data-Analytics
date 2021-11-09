@@ -12,7 +12,7 @@ conn_postgres = psycopg2.connect(user = "postgres",
                                   password = "password",
                                   host = "127.0.0.1",
                                   port = "5432",
-                                  database = "los_2021_10")
+                                  database = "flight_track")
 with conn_postgres:
 
     cursor_postgres = conn_postgres.cursor()
