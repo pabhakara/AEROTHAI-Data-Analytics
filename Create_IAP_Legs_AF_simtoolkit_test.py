@@ -3,7 +3,11 @@ import psycopg2
 from pyproj import Transformer
 import math
 
-from autoprocess_simtoolkit import db_name
+#from autoprocess_simtoolkit import db_name
+db_name = 'current_airac'
+
+path_script = "/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics/"
+path_db = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/NavData/simtoolkitpro_native_2111/'
 
 
 def convert_wgs_to_utm(lon: float, lat: float):
@@ -27,7 +31,7 @@ conn_postgres = psycopg2.connect(user="postgres",
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    table_name = 'iap_legs_af'
+    table_name = 'iap_legs_af_vtuk_old'
     #table_name2 = table_name + '_geom'
 
     postgres_sql_text = "DROP TABLE IF EXISTS " + table_name + "; \n" + \
@@ -68,6 +72,7 @@ with conn_postgres:
                         "public.tbl_iaps " \
                         "WHERE path_termination = 'AF') " \
                         "and not(waypoint_identifier is null)" \
+                        "and airport_identifier = 'VTUK' " \
                         "order by airport_identifier, procedure_identifier,route_type, transition_identifier, seqno " \
 
     print(postgres_sql_text)
