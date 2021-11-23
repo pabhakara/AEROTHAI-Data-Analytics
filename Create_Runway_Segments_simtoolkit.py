@@ -60,8 +60,6 @@ with conn:
     for row in results:
         airport_identifier_list.append(row[0])
 
-    #print(airport_identifier_list)
-
     print("Total number of airports is:  ", len(results))
 
     total = len(results)
@@ -70,7 +68,6 @@ with conn:
 
     for airport_id in airport_identifier_list:  # each airport identifier
         print("Runway Segments: " + str("{:.3f}".format((k / total) * 100, 2)) + "% Completed")
-        #print(airport_id)
 
         k = k + 1
 
@@ -215,7 +212,6 @@ with conn:
                 cur.execute(sql_text_2)
                 conn.commit()
             else:
-
                 UTM_zone = convert_wgs_to_utm(runway_longitude, runway_latitude)
 
                 transformer = Transformer.from_crs("epsg:4326", "epsg:" + str(UTM_zone))
@@ -238,7 +234,6 @@ with conn:
                 else:
                     runway_2_x = runway_1_xy[0] - runway_length_m * math.cos((runway_true_bearing - 270) * math.pi / 180)
                     runway_2_y = runway_1_xy[1] + runway_length_m * math.sin((runway_true_bearing - 270) * math.pi / 180)
-
 
                 #print(runway_1_xy)
                 #print([runway_2_x,runway_2_y])

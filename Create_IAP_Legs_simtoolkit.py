@@ -1,6 +1,6 @@
 import psycopg2.extras
 
-from autoprocess_simtoolkit import db_name
+from dbname_and_paths import db_name
 
 conn_postgres = psycopg2.connect(user="postgres",
                                  password="password",

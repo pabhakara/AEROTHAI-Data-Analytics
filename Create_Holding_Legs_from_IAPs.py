@@ -5,7 +5,7 @@ from pyproj import Proj, transform
 from pyproj import Transformer
 import math
 
-from autoprocess_simtoolkit import db_name
+from dbname_and_paths import db_name
 
 
 def convert_wgs_to_utm(lon: float, lat: float):

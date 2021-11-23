@@ -1,6 +1,6 @@
 import psycopg2
 
-from autoprocess_simtoolkit import db_name
+from dbname_and_paths import db_name
 
 table_name = 'airways'
 
