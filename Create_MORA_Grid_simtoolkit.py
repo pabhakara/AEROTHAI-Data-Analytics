@@ -1,8 +1,8 @@
 import psycopg2.extras
 
-from dbname_and_paths import db_name
+from dbname_and_paths import db_name,airac
 
-table_name = 'mora_grid'
+table_name = 'mora_grid_' + airac
 
 conn = psycopg2.connect(user = "postgres",
                                 password = "password",

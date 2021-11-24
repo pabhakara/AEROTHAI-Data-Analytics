@@ -1,7 +1,6 @@
 import psycopg2, sqlite3, sys, re
 
-from dbname_and_paths import db_name, path_db
-
+from dbname_and_paths import db_name, path_db, airac
 
 sqdb = path_db + 'navdata.s3db'
 sqlike = '%'
@@ -47,14 +46,17 @@ for table in tabnames:
         conpg = psycopg2.connect(database=pgdb, user=pguser, password=pgpswd,
                                  host=pghost, port=pgport)
         curpg = conpg.cursor()
+
+        table_temp = table + "_" + airac
+
         #curpg.execute("SET search_path TO %s;" % pgschema)
-        curpg.execute("DROP TABLE IF EXISTS %s;" % table)
+        curpg.execute("DROP TABLE IF EXISTS %s;" % table_temp)
         #print(create)
 
         curpg.execute(create)
-        curpg.executemany("INSERT INTO %s VALUES (%s);" % (table, newholder), rows)
+        curpg.executemany("INSERT INTO %s VALUES (%s);" % (table_temp, newholder), rows)
         conpg.commit()
-        print('Created', table)
+        print('Created', table_temp)
 
     except psycopg2.DatabaseError as e:
         print('Error %s' % e)

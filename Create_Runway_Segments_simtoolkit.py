@@ -2,7 +2,7 @@ import psycopg2
 from pyproj import Transformer
 import math
 
-from dbname_and_paths import db_name
+from dbname_and_paths import db_name, airac
 
 def convert_wgs_to_utm(lon: float, lat: float):
     """Based on lat and lng, return best utm epsg-code"""
@@ -15,7 +15,7 @@ def convert_wgs_to_utm(lon: float, lat: float):
     epsg_code = '327' + utm_band
     return epsg_code
 
-table_name = 'runway_segments'
+table_name = 'runway_segments_' + airac
 
 conn = psycopg2.connect(user="postgres",
                         password="password",

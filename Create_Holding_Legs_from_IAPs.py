@@ -5,7 +5,7 @@ from pyproj import Proj, transform
 from pyproj import Transformer
 import math
 
-from dbname_and_paths import db_name
+from dbname_and_paths import db_name,airac
 
 
 def convert_wgs_to_utm(lon: float, lat: float):
@@ -29,7 +29,7 @@ conn_postgres = psycopg2.connect(user="postgres",
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    table_name = 'holding_iap_legs'
+    table_name = 'holding_iap_legs_' + airac
     table_name2 = table_name + '_geom'
 
     postgres_sql_text = "DROP TABLE IF EXISTS " + table_name + "; \n" + \
