@@ -47,16 +47,15 @@ for table in tabnames:
                                  host=pghost, port=pgport)
         curpg = conpg.cursor()
 
-        table_temp = table + "_" + airac
 
         #curpg.execute("SET search_path TO %s;" % pgschema)
-        curpg.execute("DROP TABLE IF EXISTS %s;" % table_temp)
+        curpg.execute("DROP TABLE IF EXISTS %s;" % table)
         #print(create)
 
         curpg.execute(create)
-        curpg.executemany("INSERT INTO %s VALUES (%s);" % (table_temp, newholder), rows)
+        curpg.executemany("INSERT INTO %s VALUES (%s);" % (table, newholder), rows)
         conpg.commit()
-        print('Created', table_temp)
+        print('Created', table)
 
     except psycopg2.DatabaseError as e:
         print('Error %s' % e)

@@ -2,7 +2,7 @@ import psycopg2
 
 from dbname_and_paths import db_name,airac
 
-table_name = 'airways_segments_' + airac
+table_name = 'airways_segments' + airac
 
 conn = psycopg2.connect(user="postgres",
                         password="password",

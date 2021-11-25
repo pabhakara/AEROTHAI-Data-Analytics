@@ -15,7 +15,7 @@ def convert_wgs_to_utm(lon: float, lat: float):
     epsg_code = '327' + utm_band
     return epsg_code
 
-table_name = 'runway_segments_' + airac
+table_name = 'runway_segments' + airac
 
 conn = psycopg2.connect(user="postgres",
                         password="password",
