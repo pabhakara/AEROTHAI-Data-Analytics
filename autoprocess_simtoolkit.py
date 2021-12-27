@@ -42,10 +42,10 @@ conn2 = psycopg2.connect(
 )
 conn2.autocommit = True
 cursor2 = conn2.cursor()
-sql_file = open(path_script + 'create_wp.sql', 'r')
+sql_file = open(path_script + 'create_wp_with_airac.sql', 'r')
 cursor2.execute(sql_file.read())
 conn2.close()
-# # #
+# #
 
 exec(open(path_script + 'Create_MORA_Grid_simtoolkit.py').read())
 exec(open(path_script + 'Create_SID_Legs_simtoolkit.py').read())
