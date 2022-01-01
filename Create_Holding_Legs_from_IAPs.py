@@ -34,7 +34,7 @@ with conn_postgres:
 
     postgres_sql_text = "DROP TABLE IF EXISTS " + table_name + "; \n" + \
                         "CREATE TABLE " + table_name + " " + \
-                        "(LIKE holdings) " + \
+                        "(LIKE holdings" + airac + ")" + \
                         "WITH (OIDS=FALSE); \n" + \
                         "ALTER TABLE " + table_name + " " \
                         "OWNER TO postgres;"
