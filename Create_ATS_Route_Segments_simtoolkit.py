@@ -70,7 +70,7 @@ with conn:
     route_type = []
     flightlevel = []
     direction_restriction = []
-    crusing_table_identifier = []
+    cruising_table_identifier = []
     minimum_altitude1 = []
     minimum_altitude2 = []
     maximum_altitude = []
@@ -91,7 +91,7 @@ with conn:
         route_type.append(row[8])
         flightlevel.append(row[9])
         direction_restriction.append(row[10])
-        crusing_table_identifier.append(row[11])
+        cruising_table_identifier.append(row[11])
         minimum_altitude1.append(row[12])
         minimum_altitude2.append(row[13])
         maximum_altitude.append(row[14])
@@ -144,7 +144,7 @@ with conn:
                "route_type," + \
                "flightlevel," + \
                "direction_restriction," + \
-               "crusing_table_identifier," + \
+               "cruising_table_identifier," + \
                "minimum_altitude1," + \
                "minimum_altitude2," + \
                "maximum_altitude," + \
@@ -167,7 +167,7 @@ with conn:
                str(route_type[k]) + "','" + \
                str(flightlevel[k]) + "','" + \
                str(direction_restriction[k]) + "','" + \
-               str(crusing_table_identifier[k]) + "'," + \
+               str(cruising_table_identifier[k]) + "'," + \
                str(minimum_altitude1_temp) + "," + \
                str(minimum_altitude2_temp) + "," + \
                str(maximum_altitude_temp) + "," + \
@@ -228,7 +228,7 @@ with conn:
                        "route_type," + \
                        "flightlevel," + \
                        "direction_restriction," + \
-                       "crusing_table_identifier," + \
+                       "cruising_table_identifier," + \
                        "minimum_altitude1," + \
                        "minimum_altitude2," + \
                        "maximum_altitude," + \
@@ -251,7 +251,7 @@ with conn:
                        str(route_type[k]) + "','" + \
                        str(flightlevel[k]) + "','" + \
                        str(direction_restriction[k]) + "','" + \
-                       str(crusing_table_identifier[k]) + "'," + \
+                       str(cruising_table_identifier[k]) + "'," + \
                        str(minimum_altitude1_temp) + "," + \
                        str(minimum_altitude2_temp) + "," + \
                        str(maximum_altitude_temp) + "," + \

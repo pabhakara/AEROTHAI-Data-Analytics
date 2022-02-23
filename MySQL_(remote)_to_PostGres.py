@@ -18,7 +18,7 @@ DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
 
 mysql_db = 'flight'
-# mysql_db = 'flight_vtbd'
+#mysql_db = 'flight_vtbd'
 
 #mysql = '''show tables from flight_vtbd'''
 
@@ -37,9 +37,12 @@ ts = dbx.fetchall()
 tables = []
 
 years = ['2021']
+
+#prefix = ''
 #postfix = '_vtbd_tecos_dep'
+
+#prefix = ''
 #postfix = '_radar'
-prefix = ''
 
 prefix = 'target_'
 postfix = ''
