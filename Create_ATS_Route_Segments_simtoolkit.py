@@ -26,7 +26,9 @@ with conn:
                 "ALTER TABLE " + table_name + \
                 " ADD waypoint_longitude_2 double precision;" + \
                 "ALTER TABLE " + table_name + \
-                " ADD geom geometry;"
+                " ADD geom geometry;" \
+                "ALTER TABLE " + table_name + \
+                " RENAME COLUMN crusing_table_identifier TO cruising_table_identifier;"
 
     print(sql_query)
 

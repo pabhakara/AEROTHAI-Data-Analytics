@@ -1,3 +1,4 @@
+
 drop table if exists "airports";
 select *,
 ST_SetSRID(ST_MakePoint(airport_ref_longitude,airport_ref_latitude),4326) AS geom

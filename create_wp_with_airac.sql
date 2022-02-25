@@ -1,105 +1,105 @@
-drop table if exists "airports_2201";
+drop table if exists "airports_2202";
 select *,
 ST_SetSRID(ST_MakePoint(airport_ref_longitude,airport_ref_latitude),4326) AS geom
-into "airports_2201"
+into "airports_2202"
 from "tbl_airports";
 
-drop table if exists "enroute_ndb_2201";
+drop table if exists "enroute_ndb_2202";
 select *,
 ST_SetSRID(ST_MakePoint(ndb_longitude,ndb_latitude),4326) AS geom
-into "enroute_ndb_2201"
+into "enroute_ndb_2202"
 from "tbl_enroute_ndbnavaids";
 
-drop table if exists "enroute_waypoints_2201";
+drop table if exists "enroute_waypoints_2202";
 select *,
 ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
-into "enroute_waypoints_2201"
+into "enroute_waypoints_2202"
 from "tbl_enroute_waypoints";
 
-drop table if exists "gate_2201";
+drop table if exists "gate_2202";
 select *,
 ST_SetSRID(ST_MakePoint(gate_longitude,gate_latitude),4326) AS geom
-into "gate_2201"
+into "gate_2202"
 from "tbl_gate";
 
-drop table if exists "gls_2201";
+drop table if exists "gls_2202";
 select *,
 ST_SetSRID(ST_MakePoint(station_longitude,station_latitude),4326) AS geom
-into "gls_2201"
+into "gls_2202"
 from "tbl_gls";
 
-drop table if exists "holdings_2201";
+drop table if exists "holdings_2202";
 select *,
 ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
-into "holdings_2201"
+into "holdings_2202"
 from "tbl_holdings";
 
-drop table if exists "localizer_marker_2201";
+drop table if exists "localizer_marker_2202";
 select *,
 ST_SetSRID(ST_MakePoint(marker_longitude,marker_latitude),4326) AS geom
-into "localizer_marker_2201"
+into "localizer_marker_2202"
 from "tbl_localizer_marker";
 
-drop table if exists "localizers_2201";
+drop table if exists "localizers_2202";
 select *,
 ST_SetSRID(ST_MakePoint(llz_longitude,llz_latitude),4326) AS geom
-into "localizers_2201"
+into "localizers_2202"
 from "tbl_localizers_glideslopes";
 
-drop table if exists "glideslopes_2201";
+drop table if exists "glideslopes_2202";
 select *,
 ST_SetSRID(ST_MakePoint(gs_longitude,gs_latitude),4326) AS geom
-into "glideslopes_2201"
+into "glideslopes_2202"
 from "tbl_localizers_glideslopes";
 
 
-drop table if exists "runways_2201";
+drop table if exists "runways_2202";
 select *,
 ST_SetSRID(ST_MakePoint(runway_longitude,runway_latitude),4326) AS geom
-into "runways_2201"
+into "runways_2202"
 from "tbl_runways";
 
 
-drop table if exists "sids_wp_2201";
+drop table if exists "sids_wp_2202";
 select *,
 ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
-into "sids_wp_2201"
+into "sids_wp_2202"
 from "tbl_sids";
 
-drop table if exists "stars_wp_2201";
+drop table if exists "stars_wp_2202";
 select *,
 ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
-into "stars_wp_2201"
+into "stars_wp_2202"
 from "tbl_stars";
 
-drop table if exists "iaps_wp_2201";
+drop table if exists "iaps_wp_2202";
 select *,
 ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
-into "iaps_wp_2201"
+into "iaps_wp_2202"
 from "tbl_iaps";
 
-drop table if exists "terminal_ndb_2201";
+drop table if exists "terminal_ndb_2202";
 select *,
 ST_SetSRID(ST_MakePoint(ndb_longitude,ndb_latitude),4326) AS geom
-into "terminal_ndb_2201"
+into "terminal_ndb_2202"
 from "tbl_terminal_ndbnavaids";
 
-drop table if exists "terminal_waypoints_2201";
+drop table if exists "terminal_waypoints_2202";
 select *,
 ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
-into "terminal_waypoints_2201"
+into "terminal_waypoints_2202"
 from "tbl_terminal_waypoints";
 
-drop table if exists "vor_2201";
+drop table if exists "vor_2202";
 select *,
 ST_SetSRID(ST_MakePoint(vor_longitude,vor_latitude),4326) AS geom
-into "vor_2201"
+into "vor_2202"
 from "tbl_vhfnavaids";
 
-drop table if exists "dme_2201";
+drop table if exists "dme_2202";
 select *,
 ST_SetSRID(ST_MakePoint(dme_longitude,dme_latitude),4326) AS geom
-into "dme_2201"
+into "dme_2202"
 from "tbl_vhfnavaids";
 
 drop table if exists "airways_wp_2113";
