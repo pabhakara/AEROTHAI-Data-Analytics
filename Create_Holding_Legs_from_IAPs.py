@@ -39,10 +39,25 @@ with conn_postgres:
                         "ALTER TABLE " + table_name + " " \
                         "OWNER TO postgres;"
 
-    #print(postgres_sql_text)
+    cursor_postgres.execute(postgres_sql_text)
+    conn_postgres.commit()
+
+    postgres_sql_text = "ALTER TABLE " + table_name + " \n" + \
+                        "RENAME COLUMN region_code to airport_identifier;"
 
     cursor_postgres.execute(postgres_sql_text)
+    conn_postgres.commit()
 
+    postgres_sql_text = "ALTER TABLE " + table_name + " \n" + \
+                        "RENAME COLUMN icao_code to procedure_identifier;"
+
+    cursor_postgres.execute(postgres_sql_text)
+    conn_postgres.commit()
+
+    postgres_sql_text = "ALTER TABLE " + table_name + " \n" + \
+                        "RENAME COLUMN holding_name to waypoint_description_code;"
+
+    cursor_postgres.execute(postgres_sql_text)
     conn_postgres.commit()
 
     postgres_sql_text = " SELECT * FROM public.tbl_iaps " + \
@@ -68,10 +83,10 @@ with conn_postgres:
         temp_1 = record[k]
 
         area_code = str(temp_1['area_code'])
-        region_code = str(temp_1['airport_identifier'])
-        icao_code = str(temp_1['procedure_identifier'])
+        airport_identifier = str(temp_1['airport_identifier'])
+        procedure_identifier = str(temp_1['procedure_identifier'])
         waypoint_identifier = str(temp_1['waypoint_identifier'])
-        holding_name = str(temp_1['waypoint_description_code'])
+        waypoint_description_code = str(temp_1['waypoint_description_code'])
         waypoint_latitude = str(temp_1['waypoint_latitude'])
         waypoint_longitude = str(temp_1['waypoint_longitude'])
         duplicate_identifier = "0"
@@ -90,13 +105,13 @@ with conn_postgres:
 
         minimum_altitude = str(temp_1['altitude1'])
         if minimum_altitude == 'None':
-            minimum_altitude = '-1'
+            minimum_altitude = '0'
         maximum_altitude = str(temp_1['altitude2'])
         if maximum_altitude == 'None':
-            maximum_altitude = '-1'
+            maximum_altitude = '99999'
         holding_speed = str(temp_1['speed_limit'])
         if holding_speed == 'None':
-            holding_speed = '-1'
+            holding_speed = '999'
 
         UTM_zone = convert_wgs_to_utm(temp_1['waypoint_longitude'], temp_1['waypoint_latitude'])
 
@@ -104,10 +119,10 @@ with conn_postgres:
 
         postgres_sql_text = "INSERT INTO \"" + table_name + "\" " + \
                             "(\"area_code\"," + \
-                            "\"region_code\"," + \
-                            "\"icao_code\"," + \
+                            "\"airport_identifier\"," + \
+                            "\"procedure_identifier\"," + \
                             "\"waypoint_identifier\"," + \
-                            "\"holding_name\"," + \
+                            "\"waypoint_description_code\"," + \
                             "\"waypoint_latitude\"," + \
                             "\"waypoint_longitude\"," + \
                             "\"duplicate_identifier\"," + \
@@ -123,10 +138,10 @@ with conn_postgres:
         waypoint_xy = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
 
         postgres_sql_text = postgres_sql_text + " VALUES('" + area_code + "','" \
-                            + region_code + "','" \
-                            + icao_code + "','" \
+                            + airport_identifier + "','" \
+                            + procedure_identifier + "','" \
                             + waypoint_identifier + "','" \
-                            + holding_name + "'," \
+                            + waypoint_description_code + "'," \
                             + waypoint_latitude + "," \
                             + waypoint_longitude + "," \
                             + duplicate_identifier + "," \

@@ -94,7 +94,8 @@ drop table if exists "vor";
 select *,
 ST_SetSRID(ST_MakePoint(vor_longitude,vor_latitude),4326) AS geom
 into "vor"
-from "tbl_vhfnavaids";
+from "tbl_vhfnavaids"
+where navaid_class like '%V%';
 
 drop table if exists "dme";
 select *,

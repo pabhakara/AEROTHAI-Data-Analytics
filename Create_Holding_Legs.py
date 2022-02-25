@@ -97,13 +97,13 @@ with conn_postgres:
 
         minimum_altitude = str(temp_1['minimum_altitude'])
         if minimum_altitude == 'None':
-            minimum_altitude = '-1'
+            minimum_altitude = '0'
         maximum_altitude = str(temp_1['maximum_altitude'])
         if maximum_altitude == 'None':
-            maximum_altitude = '-1'
+            maximum_altitude = '99999'
         holding_speed = str(temp_1['holding_speed'])
         if holding_speed == 'None':
-            holding_speed = '-1'
+            holding_speed = '999'
 
         UTM_zone = convert_wgs_to_utm(temp_1['waypoint_longitude'], temp_1['waypoint_latitude'])
 
