@@ -13,7 +13,7 @@ db = mysql.connector.connect(host='172.16.101.32',
 encoding = 'Latin1'
 
 dbx = db.cursor()
-DB = psycopg2.connect("dbname='los_2021_11'")
+DB = psycopg2.connect("dbname='flight_track'")
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
 
@@ -36,19 +36,27 @@ ts = dbx.fetchall()
 # '2021_11_vtbs_tecos_arr','2021_12_vtbs_tecos_arr']
 tables = []
 
-years = ['2021']
+years = ['2018','2017','2016','2015','2014','2013']
+# years = ['2020','2021','2022']
 
 #prefix = ''
 #postfix = '_vtbd_tecos_dep'
 
-#prefix = ''
-#postfix = '_radar'
+prefix = ''
+postfix = '_radar'
 
-prefix = 'target_'
-postfix = ''
+# prefix = ''
+# postfix = '_fdmc'
+
+# prefix = 'target_'
+# postfix = ''
+
+# prefix = 'distances_'
+# postfix = ''
+
 
 for year in years:
-    for month in ['11']:
+    for month in ['01','02','03','04','05','06','07','08','09','10','11','12']:
         text = (prefix + year + '_' + month + postfix)
         print(text)
         tables = tables + [text]
