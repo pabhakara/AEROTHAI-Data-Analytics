@@ -139,6 +139,7 @@ with conn_postgres:
                  temp_1['path_termination'] == 'DF' or
                  temp_1['path_termination'] == 'CF' or
                  temp_1['path_termination'] == 'FD' or
+                 temp_1['path_termination'] == 'FC' or
                  temp_1['path_termination'] == 'RF' or
                  temp_1['path_termination'] == 'IF'):
             if temp_2['path_termination'] == 'RF':

@@ -121,6 +121,7 @@ with conn_postgres:
                  temp_1['path_termination'] == 'DF' or
                  temp_1['path_termination'] == 'CF' or
                  temp_1['path_termination'] == 'FD' or
+                 temp_1['path_termination'] == 'FC' or
                  temp_1['path_termination'] == 'FA' or
                  temp_1['path_termination'] == 'IF'):
             postgres_sql_text = postgres_sql_text + \

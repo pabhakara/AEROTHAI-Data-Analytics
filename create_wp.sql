@@ -109,3 +109,17 @@ select *,
 ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "airways_wp"
 from "tbl_enroute_airways";
+
+drop table if exists localizer_marker_new;
+
+SELECT a.*,b.llz_bearing,b.station_declination
+into localizer_marker_new
+FROM localizer_marker a, localizers b
+where a.airport_identifier = b.airport_identifier and
+a.runway_identifier = b.runway_identifier and
+a.llz_identifier = b.llz_identifier;
+
+drop table if exists localizer_marker;
+
+alter table localizer_marker_new
+rename to localizer_marker;

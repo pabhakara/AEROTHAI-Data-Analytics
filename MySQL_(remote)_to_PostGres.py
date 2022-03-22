@@ -36,14 +36,14 @@ ts = dbx.fetchall()
 # '2021_11_vtbs_tecos_arr','2021_12_vtbs_tecos_arr']
 tables = []
 
-years = ['2018','2017','2016','2015','2014','2013']
-# years = ['2020','2021','2022']
+years = ['2019']
+#years = ['2018','2017','2016','2015','2014','2013']
 
 #prefix = ''
 #postfix = '_vtbd_tecos_dep'
 
-prefix = ''
-postfix = '_radar'
+# prefix = ''
+# postfix = '_radar'
 
 # prefix = ''
 # postfix = '_fdmc'
@@ -51,12 +51,16 @@ postfix = '_radar'
 # prefix = 'target_'
 # postfix = ''
 
-# prefix = 'distances_'
-# postfix = ''
+prefix = 'distances_'
+postfix = ''
+
+# prefix = ''
+# postfix = '_radar_position_at_fix'
 
 
 for year in years:
-    for month in ['01','02','03','04','05','06','07','08','09','10','11','12']:
+    # for month in ['01','02','03','04','05','06','07','08','09','10','11','12']:
+    for month in ['04_new','05','06','07_new','08','09','10','11','12']:
         text = (prefix + year + '_' + month + postfix)
         print(text)
         tables = tables + [text]
