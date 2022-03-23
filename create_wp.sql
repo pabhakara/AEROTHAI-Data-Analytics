@@ -123,3 +123,55 @@ drop table if exists localizer_marker;
 
 alter table localizer_marker_new
 rename to localizer_marker;
+
+drop table if exists airways_wp_distinct;
+SELECT distinct waypoint_identifier, waypoint_description_code, geom
+INTO airways_wp_distinct
+FROM public.airways_wp;
+
+drop table if exists airways_reporting_point;
+SELECT *
+into airways_reporting_point
+FROM public.airways_wp_distinct
+where not "waypoint_description_code" like '%V%'
+and not "waypoint_description_code" like '%L%'
+and not "waypoint_description_code" like '%R%';
+
+drop table if exists airways_reporting_point_distinct;
+SELECT distinct waypoint_identifier,geom
+into airways_reporting_point_distinct
+FROM public.airways_reporting_point;
+
+drop table if exists airways_reporting_point;
+alter table airways_reporting_point_distinct
+rename to airways_reporting_point;
+
+drop table if exists airways_waypoint;
+SELECT *
+into airways_waypoint
+FROM public.airways_wp_distinct
+where "waypoint_description_code" like '%R%';
+
+drop table if exists airways_waypoint_distinct;
+SELECT distinct waypoint_identifier,geom
+into airways_waypoint_distinct
+FROM public.airways_waypoint;
+
+drop table if exists airways_waypoint;
+alter table airways_waypoint_distinct
+rename to airways_waypoint;
+
+drop table if exists airways_vor;
+SELECT *
+into airways_vor
+FROM public.airways_wp_distinct
+where "waypoint_description_code" like '%V%';
+
+drop table if exists airways_vor_distinct;
+SELECT distinct waypoint_identifier,geom
+into airways_vor_distinct
+FROM public.airways_vor;
+
+drop table if exists airways_vor;
+alter table airways_vor_distinct
+rename to airways_vor;
