@@ -68,8 +68,8 @@ conn3 = psycopg2.connect(
 
 conn3.autocommit = True
 cursor3 = conn3.cursor()
-sql_file = open(path_script + 'clean_up_legs.sql', 'r')
-#sql_file = open(path_script + 'clean_up_legs_with_airac.sql', 'r')
+#sql_file = open(path_script + 'clean_up_legs.sql', 'r')
+sql_file = open(path_script + 'clean_up_legs_with_airac.sql', 'r')
 cursor3.execute(sql_file.read())
 conn3.close()
 #
