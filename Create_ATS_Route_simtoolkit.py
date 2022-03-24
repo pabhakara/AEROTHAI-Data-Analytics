@@ -33,8 +33,8 @@ with conn:
     conn.commit()
 
     sql_query = "SELECT route_identifier,area_code,seqno,waypoint_latitude,waypoint_longitude,inbound_distance " + \
-                "FROM public.tbl_enroute_airways"
-
+                "FROM public.tbl_enroute_airways " \
+                "order by route_identifier,seqno; "
     # query
     cur.execute(sql_query)
 
