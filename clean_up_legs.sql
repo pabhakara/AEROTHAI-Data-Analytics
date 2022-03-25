@@ -54,3 +54,19 @@ union
 SELECT * FROM public.iap_legs_rf
 union
 SELECT * FROM public.iap_legs_af) a;
+
+drop table if exists inbound_distance;
+select distinct inbound_distance,geom
+into inbound_distance
+from airways_segments;
+
+drop table if exists inbound_course;
+select distinct inbound_course,geom
+into inbound_course
+from airways_segments;
+
+
+drop table if exists minimum_altitude;
+select distinct minimum_altitude1,geom
+into minimum_altitude
+from airways_segments;
