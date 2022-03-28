@@ -67,11 +67,59 @@ ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "sids_wp"
 from "tbl_sids";
 
+drop table if exists "sids_wp_without_rf";
+select *,
+ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+into "sids_wp_without_rf"
+from public.tbl_sids
+                        WHERE airport_identifier like '%'
+                        and not(waypoint_identifier is null)
+                        and NOT(concat(airport_identifier,procedure_identifier,transition_identifier) in
+                        (SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from
+                        public.tbl_sids
+                        WHERE path_termination = 'RF'));
+
+drop table if exists "sids_wp_with_rf";
+select *,
+ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+into "sids_wp_with_rf"
+from public.tbl_sids
+                        WHERE airport_identifier like '%'
+                        and not(waypoint_identifier is null)
+                        and (concat(airport_identifier,procedure_identifier,transition_identifier) in
+                        (SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from
+                        public.tbl_sids
+                        WHERE path_termination = 'RF'));
+
 drop table if exists "stars_wp";
 select *,
 ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "stars_wp"
 from "tbl_stars";
+
+drop table if exists "stars_wp_without_rf";
+select *,
+ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+into "stars_wp_without_rf"
+from public.tbl_stars
+                        WHERE airport_identifier like '%'
+                        and not(waypoint_identifier is null)
+                        and NOT(concat(airport_identifier,procedure_identifier,transition_identifier) in
+                        (SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from
+                        public.tbl_stars
+                        WHERE path_termination = 'RF'));
+
+drop table if exists "stars_wp_with_rf";
+select *,
+ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+into "stars_wp_with_rf"
+from public.tbl_stars
+                        WHERE airport_identifier like '%'
+                        and not(waypoint_identifier is null)
+                        and (concat(airport_identifier,procedure_identifier,transition_identifier) in
+                        (SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from
+                        public.tbl_stars
+                        WHERE path_termination = 'RF'));
 
 drop table if exists "iaps_wp";
 select *,
@@ -175,3 +223,19 @@ FROM public.airways_vor;
 drop table if exists airways_vor;
 alter table airways_vor_distinct
 rename to airways_vor;
+
+drop table if exists "sbas_path";
+select *,
+ST_SetSRID(ST_MakePoint(landing_threshold_longitude,landing_threshold_latitude),4326) AS landing_threshold,
+ST_SetSRID(ST_MakePoint(flightpath_alignment_longitude,flightpath_alignment_latitude),4326) AS flightpath_alignment,
+ST_SetSRID(ST_MakeLine(
+ST_MakePoint(landing_threshold_longitude,landing_threshold_latitude),
+ST_MakePoint(flightpath_alignment_longitude,flightpath_alignment_latitude))
+,4326) AS flightpath,
+ST_Azimuth(
+ST_SetSRID(ST_MakePoint(landing_threshold_longitude,landing_threshold_latitude),4326)::geography,
+ST_SetSRID(ST_MakePoint(flightpath_alignment_longitude,flightpath_alignment_latitude),4326)::geography
+)*180/pi()
+AS azimuth
+into "sbas_path"
+from "tbl_pathpoints";
