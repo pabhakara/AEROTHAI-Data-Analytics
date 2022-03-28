@@ -70,3 +70,19 @@ drop table if exists minimum_altitude;
 select distinct minimum_altitude1,geom
 into minimum_altitude
 from airways_segments;
+
+delete
+from sid_legs_rf
+where st_length(geom) > 300;
+
+delete
+from sid_legs_without_rf
+where st_length(geom) > 300;
+
+delete
+from star_legs_rf
+where st_length(geom) > 300;
+
+delete
+from star_legs_without_rf
+where st_length(geom) > 300;
