@@ -50,11 +50,19 @@ conn2.close()
 # #
 
 exec(open(path_script + 'Create_MORA_Grid_simtoolkit.py').read())
+
 exec(open(path_script + 'Create_SID_Legs_simtoolkit.py').read())
+exec(open(path_script + 'Create_SID_Legs_RF_simtoolkit.py').read())
+exec(open(path_script + 'Create_SID_Legs_simtoolkit_without_RF.py').read())
+
 exec(open(path_script + 'Create_STAR_Legs_simtoolkit.py').read())
+exec(open(path_script + 'Create_STAR_Legs_RF_simtoolkit.py').read())
+exec(open(path_script + 'Create_STAR_Legs_simtoolkit_without_RF.py').read())
+
 exec(open(path_script + 'Create_IAP_Legs_RF_simtoolkit.py').read())
 exec(open(path_script + 'Create_IAP_Legs_AF_simtoolkit.py').read())
 exec(open(path_script + 'Create_IAP_Legs_simtoolkit.py').read())
+
 exec(open(path_script + 'Create_ATS_Route_Segments_simtoolkit.py').read())
 exec(open(path_script + 'Create_ATS_Route_simtoolkit.py').read())
 exec(open(path_script + 'Create_Runway_Segments_simtoolkit.py').read())
