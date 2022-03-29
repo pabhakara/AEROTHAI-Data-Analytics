@@ -60,7 +60,6 @@ ST_SetSRID(ST_MakePoint(runway_longitude,runway_latitude),4326) AS geom
 into "runways"
 from "tbl_runways";
 
-
 drop table if exists "sids_wp";
 select *,
 ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
