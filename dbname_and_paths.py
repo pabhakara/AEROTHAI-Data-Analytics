@@ -1,5 +1,5 @@
-#db_name = 'current_airac'
-db_name = 'airac_2204'
+db_name = 'current_airac'
+#db_name = 'airac_2204'
 
 path_script = "/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics/"
 airac = '_2204'
