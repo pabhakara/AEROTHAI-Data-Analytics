@@ -19,21 +19,21 @@ def psql_insert_copy(table, conn, keys, data_iter):
         sql = 'COPY {} ({}) FROM STDIN WITH CSV'.format(table_name, columns)
         cur.copy_expert(sql=sql, file=s_buf)
 
-filenames = next(walk('/Users/pongabha/Desktop/20191225_positions/'), (None, None, []))[2]  # [] if no file
+filenames = next(walk('/Users/pongabha/Desktop/20210201_positions/'), (None, None, []))[2]  # [] if no file
 print(filenames)
 
 engine = create_engine('postgresql://postgres:password@localhost:5432/fr24')
 df_list = list()
 
 for filename in filenames:
-    df = pandas.read_csv('/Users/pongabha/Desktop/20191225_positions/' + filename)
+    df = pandas.read_csv('/Users/pongabha/Desktop/20210201_positions/' + filename)
     df.insert(0, "date", filename[0:8] , True)
     df.insert(1, "flight_id", int(filename[9:18]), True)
     df_list.append(df)
 
 combined_df = pandas.concat(df_list)
 
-table_name = 'position_20191225'
+table_name = 'position_20210201'
 
 conn_postgres = psycopg2.connect(user = "postgres",
                                   password = "password",
@@ -65,7 +65,7 @@ with conn_postgres:
                 "\'Etc/UTC\' as position_time " + \
                 "INTO " + table_name + "_geom_mapped " + \
                 "FROM " + table_name + "_geom p " + \
-                "LEFT JOIN flight_20191225 f " + \
+                "LEFT JOIN flight_20210201 f " + \
                 "ON f.flight_id = p.flight_id_txt " + \
                 "LEFT JOIN airports a1 " + \
                 "ON a1.iata_ata_designator = f.schd_from " + \

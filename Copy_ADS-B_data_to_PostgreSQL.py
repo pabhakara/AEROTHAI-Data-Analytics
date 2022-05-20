@@ -22,7 +22,7 @@ def psql_insert_copy(table, conn, keys, data_iter):
 filenames = ['20210201_flights.csv']
 print(filenames)
 
-engine = create_engine('postgresql://postgres:password@localhost:5432/fr24')
+engine = create_engine('postgresql://postgres:password@localhost:5432/adsb')
 df_list = list()
 
 
@@ -40,7 +40,7 @@ conn_postgres = psycopg2.connect(user = "postgres",
                                   password = "password",
                                   host = "127.0.0.1",
                                   port = "5432",
-                                  database = "fr24")
+                                  database = "adsb")
 with conn_postgres:
     cur = conn_postgres.cursor()
     sql_query = "DROP TABLE IF EXISTS public." + table_name + ";"

@@ -21,7 +21,7 @@ with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory = psycopg2.extras.DictCursor)
 
     # create the table name that will store the radar track
-    year_month = "2019_12_25"
+    year_month = "2021_02_01"
     table_name = "track_" + year_month + "_fr24"
 
     # Create an sql query that creates a new table for radar tracks in Postgres SQL database
@@ -62,7 +62,7 @@ with conn_postgres:
                         "b.equip," + \
                         "b.schd_from," + \
                         "b.schd_to " + \
-                        "from position_20191225_geom_mapped b " + \
+                        "from position_20210201_geom_mapped b " + \
                         "order by b.flight_id_txt,b.snapshot_id"
 
     print(postgres_sql_text)
@@ -262,14 +262,14 @@ with conn_postgres:
                                 "a2.airport_identifier as dest, " + \
                                 "to_timestamp(start_time_unix::INT - 7*60*60)::timestamp without time zone at time zone 'Etc/UTC' as start_time, " + \
                                 "to_timestamp(end_time_unix::INT - 7*60*60)::timestamp without time zone at time zone 'Etc/UTC' as end_time " + \
-                                "INTO track_2019_12_25_fr24_icao_code " + \
-                                "FROM public.track_2019_12_25_fr24 t " + \
+                                "INTO track_2021_02_01_fr24_icao_code " + \
+                                "FROM public.track_2021_02_01_fr24 t " + \
                                 "LEFT JOIN airports a1 " + \
                                 "ON a1.iata_ata_designator = t.adep_iata " + \
                                 "LEFT JOIN airports a2 " + \
                                 "ON a2.iata_ata_designator = t.ades_iata;" + \
-                                "DROP TABLE IF EXISTS track_2019_12_25_fr24; " + \
-                                "ALTER TABLE track_2019_12_25_fr24_icao_code RENAME TO track_2019_12_25_fr24;"
+                                "DROP TABLE IF EXISTS track_2021_02_01_fr24; " + \
+                                "ALTER TABLE track_2021_02_01_fr24_icao_code RENAME TO track_2021_02_01_fr24;"
             print(postgres_sql_text)
             cursor_postgres.execute(postgres_sql_text)
             conn_postgres.commit()
