@@ -10,6 +10,23 @@ from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 from mpl_toolkits.axes_grid1 import host_subplot
 import numpy as np
 
+def tic():
+    # Homemade version of matlab tic and toc functions
+    import time
+    global startTime_for_tictoc
+    startTime_for_tictoc = time.time()
+
+
+def toc():
+    import time
+    if 'startTime_for_tictoc' in globals():
+        print("Elapsed time is " + str(time.time() - startTime_for_tictoc) + " seconds.")
+    else:
+        print("Toc: start time not set")
+
+
+tic()
+
 conn_postgres = psycopg2.connect(user = "postgres",
                                   password = "password",
                                   host = "127.0.0.1",
@@ -36,7 +53,7 @@ with conn_postgres:
                         "LEFT JOIN" \
                         "(SELECT _3airspace, _6actor, " \
                         " sum(_7weight / 1 / 60) / 60 * 100 as workload " \
-                        "FROM public.task_output_2022_05_20_traffic_130 " \
+                        "FROM public.task_output_2022_05_27_traffic_100 " \
                         "WHERE _6actor like \'EC\' and  " \
                         "event_time >= \'" + str(t + pd.DateOffset(minutes=-window_size/2)) + "\' and " \
                         "event_time < \'" + str(t + pd.DateOffset(minutes=window_size/2)) + "\' and " \
@@ -54,7 +71,7 @@ with conn_postgres:
                             "LEFT JOIN " \
                             "(SELECT _2sector, " \
                             " count(*) as traffic " \
-                            "FROM public.sectorcrossing_output_2022_05_20_traffic_130 " \
+                            "FROM public.sectorcrossing_output_2022_05_27_traffic_100 " \
                             "WHERE _1center like \'VTBB\' and  " \
                             "entry_time >= \'" + str(t + pd.DateOffset(minutes=-window_size/2)) + "\' and " \
                             "entry_time < \'" + str(t + pd.DateOffset(minutes=window_size/2)) + "\' and " \
@@ -69,7 +86,7 @@ with conn_postgres:
 
         postgres_sql_text = "SELECT \'" + str(t) + "\' as time, " \
                             "_2sector, count(*) as entry " \
-                            "FROM public.sectorcrossing_output_2022_05_20_traffic_130 " \
+                            "FROM public.sectorcrossing_output_2022_05_27_traffic_100 " \
                             "WHERE _1center like \'VTBB\' and " \
                             "entry_time > \'2019-12-25 00:00:00\' and entry_time <  \'" + str(t) + "\'and " \
                             "_2sector like \'SECTOR%\' group by _2sector order by _2sector ASC; "
@@ -79,7 +96,7 @@ with conn_postgres:
 
         postgres_sql_text = "SELECT \'" + str(t) + "\' as time, " \
                              "_2sector, count(*) as exit " \
-                             "FROM public.sectorcrossing_output_2022_05_20_traffic_130 " \
+                             "FROM public.sectorcrossing_output_2022_05_27_traffic_100 " \
                              "WHERE _1center like \'VTBB\' and " \
                              "exit_time > \'2019-12-25 00:00:00\' and exit_time <  \'" + str(t) + "\' and " \
                              "_2sector like \'SECTOR%\' group by _2sector order by _2sector ASC; "
@@ -152,9 +169,11 @@ with conn_postgres:
         # ax2.yaxis.set_minor_locator(AutoMinorLocator(1))
         # ax2.set_ylim([0, 120])
 
-        plt.title( "Scenario Traffic 130% " + "EC Workload: Sector " + sector[-2:])
+        plt.title( "Scenario Traffic 100% " + "EC Workload: Sector " + sector[-2:])
         plt.xticks(rotation=90)
         plt.legend()
         plt.grid()
         plt.tight_layout()
-        plt.savefig(output_filepath + 'traffic_130_EC_'+sector+'.png')
+        plt.savefig(output_filepath + 'traffic_100_EC_'+sector+'.png')
+
+toc()
