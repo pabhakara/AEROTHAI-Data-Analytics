@@ -41,6 +41,7 @@ conn2 = psycopg2.connect(
     database=db_name,
     options="-c search_path=dbo," + schema_name
 )
+print(schema_name)
 conn2.autocommit = True
 cursor2 = conn2.cursor()
 #sql_file = open(path_script + 'create_wp_with_airac.sql', 'r')

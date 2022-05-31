@@ -1,6 +1,6 @@
 import psycopg2, sqlite3, sys, re
 
-from dbname_and_paths import db_name, path_db, airac
+from dbname_and_paths import db_name, path_db, schema_name
 
 sqdb = path_db + 'navdata.s3db'
 sqlike = '%'
@@ -10,7 +10,7 @@ pguser = 'postgres'
 pgpswd = 'password'
 pghost = 'localhost'
 pgport = '5432'
-pgschema = ''
+pgschema = schema_name
 
 consq = sqlite3.connect(sqdb)
 cursq = consq.cursor()
