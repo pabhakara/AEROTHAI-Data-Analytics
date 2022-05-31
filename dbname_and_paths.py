@@ -1,5 +1,6 @@
-db_name = 'navigraph'
-schema_name = 'current_airac'
+#db_name = 'navigraph'
+schema_name = 'public'
+db_name = 'current_airac'
 #db_name = 'airac_2205'
 
 path_script = "/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics/"
