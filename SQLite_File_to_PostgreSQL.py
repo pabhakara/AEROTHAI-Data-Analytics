@@ -48,7 +48,7 @@ for table in tabnames:
         curpg = conpg.cursor()
 
 
-        #curpg.execute("SET search_path TO %s;" % pgschema)
+        curpg.execute("SET search_path TO %s;" % pgschema)
         curpg.execute("DROP TABLE IF EXISTS %s;" % table)
         #print(create)
 
