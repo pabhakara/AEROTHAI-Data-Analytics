@@ -8,11 +8,18 @@ from mysql.connector import Error
 # Need to connect to AEROTHAI's MySQL Server
 
 # Try to connect to the local PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
-conn_postgres = psycopg2.connect(user = "postgres",
-                                  password = "password",
-                                  host = "127.0.0.1",
+# conn_postgres = psycopg2.connect(user = "postgres",
+#                                   password = "password",
+#                                   host = "127.0.0.1",
+#                                   port = "5432",
+#                                   database = "flight_track")
+
+conn_postgres = psycopg2.connect(user = "de_old_data",
+                                  password = "de_old_data",
+                                  host = "172.16.129.241",
                                   port = "5432",
-                                  database = "flight_track")
+                                  database = "aerothai_dwh")
+
 with conn_postgres:
 
     cursor_postgres = conn_postgres.cursor()

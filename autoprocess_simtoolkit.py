@@ -14,7 +14,7 @@ def toc():
         print("Toc: start time not set")
 tic()
 
-from dbname_and_paths import db_name,path_script
+from dbname_and_paths import db_name,path_script,schema_name
 
 #
 # # #establishing the connection
@@ -36,7 +36,10 @@ exec(open(path_script + 'SQLite_File_to_PostgreSQL.py').read())
 
 # #establishing the connection
 conn2 = psycopg2.connect(
-   database=db_name, user='postgres', password='password', host='127.0.0.1', port='5432'
+    user='postgres', password='password',
+    host='127.0.0.1', port='5432',
+    database=db_name,
+    options="-c search_path=dbo," + schema_name
 )
 conn2.autocommit = True
 cursor2 = conn2.cursor()

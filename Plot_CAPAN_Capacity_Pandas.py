@@ -3,7 +3,6 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
-import dask.dataframe as dd
 
 def tic():
     #Homemade version of matlab tic and toc functions
@@ -28,12 +27,12 @@ output_filepath = '/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capac
 
 combined_df = pd.DataFrame()
 
-for iter_num in range(1,5):
+for iter_num in range(1,10):
 
     sectorcrossing_input_file = "/RUNS/12SEC_VTBS19_NO_MIL/output/sectorcrossing.out." + str(iter_num)
     print(sectorcrossing_input_file)
 
-    sectorcrossing_df = dd.read_csv(root_path + scenario + sectorcrossing_input_file,
+    sectorcrossing_df = pd.read_csv(root_path + scenario + sectorcrossing_input_file,
                                 delimiter=';',header=0,
                                 dtype={' 13ActualEntryHH': 'S',
                                        ' 14ActualExitHH': 'S',
@@ -48,7 +47,7 @@ for iter_num in range(1,5):
     sectorcrossing_df = sectorcrossing_df[sectorcrossing_df['2Sector'].str.contains('SECTOR_')]
     column_selection = ['1Center', '2Sector','13ActualEntryHH','14ActualExitHH']
     sectorcrossing_df = sectorcrossing_df[column_selection].copy()
-    print(sectorcrossing_df)
+    #print(sectorcrossing_df)
 
     task_input_file = "/RUNS/12SEC_VTBS19_NO_MIL/output/task.out." + str(iter_num)
 
@@ -174,15 +173,15 @@ for iter_num in range(1,5):
     traffic_count_df.rename(columns={'2Sector': 'Sector'}, inplace=True)
 
     combined_df_temp = pd.merge(workload_df, traffic_count_df, how='inner', on=['Timestamp', 'Sector'])
-    print(combined_df_temp)
-    print(len(combined_df_temp))
+    # print(combined_df_temp)
+    # print(len(combined_df_temp))
 
     combined_df = pd.concat([combined_df, combined_df_temp] , ignore_index=True)
-    print(combined_df)
-    print(len(combined_df_temp))
+    # print(combined_df)
+    # print(len(combined_df_temp))
 
-# print(combined_df)
-# print(len(combined_df))
+print(combined_df)
+print(len(combined_df))
 
 for sector in sector_list:
     #
@@ -216,7 +215,7 @@ for sector in sector_list:
     # ----------------
 
     fig, ax = plt.subplots()
-    ax.plot(combined_df_temp['Entry_Count'],combined_df_temp['7Weight'] , 'k.')
+    ax.plot(combined_df_temp['Entry_Count'],combined_df_temp['7Weight'] , 'b.')
     ax.xaxis.set_major_locator(MultipleLocator(12))
     ax.yaxis.set_major_locator(MultipleLocator(10))
     ax.xaxis.set_minor_locator(AutoMinorLocator(1))

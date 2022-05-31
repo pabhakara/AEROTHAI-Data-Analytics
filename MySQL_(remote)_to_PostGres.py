@@ -13,6 +13,13 @@ db = mysql.connector.connect(host='172.16.101.32',
 encoding = 'Latin1'
 
 dbx = db.cursor()
+
+# DB = psycopg2.connect(user = "de_old_data",
+#                                   password = "de_old_data",
+#                                   host = "172.16.129.241",
+#                                   port = "5432",
+#                                   database = "old_data")
+
 DB = psycopg2.connect("dbname='los_2022_04'")
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
@@ -59,7 +66,7 @@ postfix = ''
 
 
 for year in years:
-    # for month in ['01','02','03','04','05','06','07','08','09','10','11','12']:
+    #for month in ['01','02','03','04','05','06','07','08','09','10','11','12']:
     for month in ['04']:
         text = (prefix + year + '_' + month + postfix)
         print(text)
