@@ -37,7 +37,7 @@ with conn:
     conn.commit()
 
     sql_query = "SELECT * " \
-                "FROM public.tbl_enroute_airways " \
+                "FROM tbl_enroute_airways " \
                 "order by route_identifier,seqno; "
         # query
     cur.execute(sql_query)

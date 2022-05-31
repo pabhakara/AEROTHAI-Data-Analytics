@@ -31,7 +31,7 @@ with conn_postgres:
 
     conn_postgres.commit()
 
-    postgres_sql_text = " SELECT * FROM public.tbl_sids " + \
+    postgres_sql_text = " SELECT * FROM " + schema_name +  ".tbl_sids " + \
                         " where airport_identifier like '%'  " + \
                         " and not(waypoint_identifier is null) " + \
                         " order by airport_identifier, procedure_identifier, " \

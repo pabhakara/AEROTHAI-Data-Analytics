@@ -44,7 +44,7 @@ with conn:
     sql_query = "select distinct airport_identifier " \
                 "from " \
                 "(SELECT airport_identifier,count(*) " \
-                "FROM public.tbl_runways " \
+                "FROM tbl_runways " \
                 "group by airport_identifier) a " \
                 "where count >= 2 " \
                 "order by airport_identifier desc " \
@@ -73,7 +73,7 @@ with conn:
         k = k + 1
 
         sql_query = "SELECT runway_identifier " \
-                    "FROM public.tbl_runways " \
+                    "FROM tbl_runways " \
                     "where airport_identifier like '" + airport_id + "' "
 
         cur.execute(sql_query)
@@ -88,7 +88,7 @@ with conn:
         for runway_id_1 in runway_identifier_list:  # each runway identifier
 
             sql_query = "SELECT * " \
-                        "FROM public.tbl_runways " \
+                        "FROM tbl_runways " \
                         "where airport_identifier like '" + airport_id + "'  " \
                         "and runway_identifier like '" + runway_id_1 + "'; "
             # query
@@ -160,7 +160,7 @@ with conn:
                 runway_id_2 = runway_id_2 + 'T'
 
             sql_query = "SELECT runway_latitude, runway_longitude " \
-                        "FROM public.tbl_runways " \
+                        "FROM tbl_runways " \
                         "where airport_identifier like '" + airport_id + "'  " \
                         "and runway_identifier like '" + runway_id_2 + "'; "
 

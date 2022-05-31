@@ -56,17 +56,17 @@ with conn_postgres:
 
     conn_postgres.commit()
 
-    # postgres_sql_text = " SELECT * FROM public.tbl_sids " + \
+    # postgres_sql_text = " SELECT * FROM tbl_sids " + \
     #                     " where airport_identifier like '%'  " + \
     #                     " and not(waypoint_identifier is null) " + \
     #                     " order by airport_identifier, procedure_identifier, " \
     #                     " route_type, transition_identifier, seqno"
 
     postgres_sql_text = "select * " \
-                        "from public.tbl_sids " \
+                        "from tbl_sids " \
                         "where concat(airport_identifier,procedure_identifier,transition_identifier) in " \
                         "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from " \
-                        "public.tbl_sids " \
+                        "tbl_sids " \
                         "WHERE path_termination = 'AF') " \
                         "and not(waypoint_identifier is null)" \
                         "order by airport_identifier, procedure_identifier,route_type, transition_identifier, seqno " \

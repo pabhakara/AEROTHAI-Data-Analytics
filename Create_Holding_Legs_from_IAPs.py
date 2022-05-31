@@ -61,11 +61,11 @@ with conn_postgres:
     cursor_postgres.execute(postgres_sql_text)
     conn_postgres.commit()
 
-    postgres_sql_text = " SELECT * FROM public.tbl_iaps " + \
+    postgres_sql_text = " SELECT * FROM tbl_iaps " + \
                         " where airport_identifier like '%'  " + \
                         " and (path_termination like 'H%') "
 
-    #postgres_sql_text = "SELECT * from public.tbl_holdings WHERE icao_code like 'VT%'"
+    #postgres_sql_text = "SELECT * from tbl_holdings WHERE icao_code like 'VT%'"
 
     #print(postgres_sql_text)
 

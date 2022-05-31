@@ -45,20 +45,20 @@ with conn_postgres:
 
     conn_postgres.commit()
 
-    # postgres_sql_text = " SELECT * FROM public.tbl_iaps " + \
+    # postgres_sql_text = " SELECT * FROM tbl_iaps " + \
     #                     " where airport_identifier like '%'  " + \
     #                     " and not(waypoint_identifier is null) " + \
     #                     " order by airport_identifier, procedure_identifier, " \
     #                     " route_type, transition_identifier, seqno"
 
-    postgres_sql_text = "SELECT * from public.tbl_iaps " \
+    postgres_sql_text = "SELECT * from tbl_iaps " \
                         "WHERE procedure_identifier IN" \
                         "(SELECT DISTINCT procedure_identifier " \
-                        "FROM public.tbl_iaps " \
+                        "FROM tbl_iaps " \
                         "where path_termination like 'RF') " \
                         "and airport_identifier " \
                         "IN (SELECT DISTINCT airport_identifier " \
-                        "FROM public.tbl_iaps " \
+                        "FROM tbl_iaps " \
                         "where path_termination like 'RF') " \
                         "and not(waypoint_identifier is null) " \
                         "and (airport_identifier like '%')" \

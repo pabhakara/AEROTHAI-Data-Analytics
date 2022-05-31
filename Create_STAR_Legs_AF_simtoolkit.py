@@ -63,10 +63,10 @@ with conn_postgres:
     #                     " route_type, transition_identifier, seqno"
 
     postgres_sql_text = "select * " \
-                        "from public.tbl_sids " \
+                        "from " + schema_name + ".tbl_sids " \
                         "where concat(airport_identifier,procedure_identifier,transition_identifier) in " \
-                        "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from " \
-                        "public.tbl_sids " \
+                        "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from " + \
+                         schema_name + ".tbl_sids " \
                         "WHERE path_termination = 'AF') " \
                         "and not(waypoint_identifier is null)" \
                         "order by airport_identifier, procedure_identifier,route_type, transition_identifier, seqno " \

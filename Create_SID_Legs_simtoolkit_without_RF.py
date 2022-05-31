@@ -36,12 +36,12 @@ with conn_postgres:
     #                     " order by airport_identifier, procedure_identifier, " \
     #                     " route_type, transition_identifier, seqno"
 
-    postgres_sql_text = "SELECT * from public.tbl_sids " \
+    postgres_sql_text = "SELECT * from "+ schema_name + ".tbl_sids " \
                         "WHERE airport_identifier like '%'" \
                         "and not(waypoint_identifier is null)" \
                         "and NOT(concat(airport_identifier,procedure_identifier,transition_identifier) in " \
                         "(SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from " \
-                        "public.tbl_sids " \
+                        + schema_name + ".tbl_sids " \
                         "WHERE path_termination = 'RF')) " \
                         " order by airport_identifier, procedure_identifier, " \
                         " route_type, transition_identifier, seqno"
