@@ -70,24 +70,24 @@ drop table if exists "sids_wp_without_rf";
 select *,
 ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "sids_wp_without_rf"
-from public.tbl_sids
+from tbl_sids
                         WHERE airport_identifier like '%'
                         and not(waypoint_identifier is null)
                         and NOT(concat(airport_identifier,procedure_identifier,transition_identifier) in
                         (SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from
-                        public.tbl_sids
+                        tbl_sids
                         WHERE path_termination = 'RF'));
 
 drop table if exists "sids_wp_with_rf";
 select *,
 ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "sids_wp_with_rf"
-from public.tbl_sids
+from tbl_sids
                         WHERE airport_identifier like '%'
                         and not(waypoint_identifier is null)
                         and (concat(airport_identifier,procedure_identifier,transition_identifier) in
                         (SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from
-                        public.tbl_sids
+                        tbl_sids
                         WHERE path_termination = 'RF'));
 
 drop table if exists "stars_wp";
@@ -100,24 +100,24 @@ drop table if exists "stars_wp_without_rf";
 select *,
 ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "stars_wp_without_rf"
-from public.tbl_stars
+from tbl_stars
                         WHERE airport_identifier like '%'
                         and not(waypoint_identifier is null)
                         and NOT(concat(airport_identifier,procedure_identifier,transition_identifier) in
                         (SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from
-                        public.tbl_stars
+                        tbl_stars
                         WHERE path_termination = 'RF'));
 
 drop table if exists "stars_wp_with_rf";
 select *,
 ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "stars_wp_with_rf"
-from public.tbl_stars
+from tbl_stars
                         WHERE airport_identifier like '%'
                         and not(waypoint_identifier is null)
                         and (concat(airport_identifier,procedure_identifier,transition_identifier) in
                         (SELECT distinct concat(airport_identifier,procedure_identifier,transition_identifier) from
-                        public.tbl_stars
+                        tbl_stars
                         WHERE path_termination = 'RF'));
 
 drop table if exists "iaps_wp";
@@ -174,12 +174,12 @@ rename to localizer_marker;
 drop table if exists airways_wp_distinct;
 SELECT distinct waypoint_identifier, waypoint_description_code, geom
 INTO airways_wp_distinct
-FROM public.airways_wp;
+FROM airways_wp;
 
 drop table if exists airways_reporting_point;
 SELECT *
 into airways_reporting_point
-FROM public.airways_wp_distinct
+FROM airways_wp_distinct
 where not "waypoint_description_code" like '%V%'
 and not "waypoint_description_code" like '%L%'
 and not "waypoint_description_code" like '%R%';
@@ -187,7 +187,7 @@ and not "waypoint_description_code" like '%R%';
 drop table if exists airways_reporting_point_distinct;
 SELECT distinct waypoint_identifier,geom
 into airways_reporting_point_distinct
-FROM public.airways_reporting_point;
+FROM airways_reporting_point;
 
 drop table if exists airways_reporting_point;
 alter table airways_reporting_point_distinct
@@ -196,13 +196,13 @@ rename to airways_reporting_point;
 drop table if exists airways_waypoint;
 SELECT *
 into airways_waypoint
-FROM public.airways_wp_distinct
+FROM airways_wp_distinct
 where "waypoint_description_code" like '%R%';
 
 drop table if exists airways_waypoint_distinct;
 SELECT distinct waypoint_identifier,geom
 into airways_waypoint_distinct
-FROM public.airways_waypoint;
+FROM airways_waypoint;
 
 drop table if exists airways_waypoint;
 alter table airways_waypoint_distinct
@@ -211,13 +211,13 @@ rename to airways_waypoint;
 drop table if exists airways_vor;
 SELECT *
 into airways_vor
-FROM public.airways_wp_distinct
+FROM airways_wp_distinct
 where "waypoint_description_code" like '%V%';
 
 drop table if exists airways_vor_distinct;
 SELECT distinct waypoint_identifier,geom
 into airways_vor_distinct
-FROM public.airways_vor;
+FROM airways_vor;
 
 drop table if exists airways_vor;
 alter table airways_vor_distinct

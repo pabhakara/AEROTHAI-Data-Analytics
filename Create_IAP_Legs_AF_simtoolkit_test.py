@@ -4,7 +4,7 @@ from pyproj import Transformer
 import math
 
 #from autoprocess_simtoolkit import db_name
-from dbname_and_paths import db_name
+from dbname_and_paths import db_name,schema_name
 
 path_script = "/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics/"
 path_db = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/NavData/simtoolkitpro_native_2111/'
@@ -23,11 +23,13 @@ def convert_wgs_to_utm(lon: float, lat: float):
 
 
 # Try to connect to the local PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
-conn_postgres = psycopg2.connect(user="postgres",
-                                 password="password",
-                                 host="127.0.0.1",
-                                 port="5432",
-                                 database=db_name)
+conn_postgres = psycopg2.connect(
+    user='postgres', password='password',
+    host='127.0.0.1', port='5432',
+    database=db_name,
+    options="-c search_path=dbo," + schema_name
+)
+
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 

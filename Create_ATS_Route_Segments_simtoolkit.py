@@ -1,14 +1,15 @@
 import psycopg2
 
-from dbname_and_paths import db_name,airac
+from dbname_and_paths import db_name,airac,schema_name
 
 table_name = 'airways_segments'
 
-conn = psycopg2.connect(user="postgres",
-                        password="password",
-                        host="127.0.0.1",
-                        port="5432",
-                        database=db_name)
+conn = psycopg2.connect(
+    user='postgres', password='password',
+    host='127.0.0.1', port='5432',
+    database=db_name,
+    options="-c search_path=dbo," + schema_name
+)
 
 with conn:
     cur = conn.cursor()
