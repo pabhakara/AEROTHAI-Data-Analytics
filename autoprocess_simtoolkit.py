@@ -32,7 +32,7 @@ from dbname_and_paths import db_name,path_script,schema_name
 # conn.close()
 
 #Populating the database with simtoolkit navdata from sqlite file
-#exec(open(path_script + 'SQLite_File_to_PostgreSQL.py').read())
+exec(open(path_script + 'SQLite_File_to_PostgreSQL.py').read())
 
 # #establishing the connection
 conn2 = psycopg2.connect(
@@ -42,13 +42,13 @@ conn2 = psycopg2.connect(
     options="-c search_path=dbo," + schema_name
 )
 print(schema_name)
-# conn2.autocommit = True
-# cursor2 = conn2.cursor()
+conn2.autocommit = True
+cursor2 = conn2.cursor()
 # #sql_file = open(path_script + 'create_wp_with_airac.sql', 'r')
 #
-# sql_file = open(path_script + 'create_wp.sql', 'r')
-# cursor2.execute(sql_file.read())
-# conn2.close()
+sql_file = open(path_script + 'create_wp.sql', 'r')
+cursor2.execute(sql_file.read())
+conn2.close()
 # #
 
 exec(open(path_script + 'Create_MORA_Grid_simtoolkit.py').read())

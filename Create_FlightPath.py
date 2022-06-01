@@ -12,13 +12,15 @@ from mysql.connector import Error
 #                                   password = "password",
 #                                   host = "127.0.0.1",
 #                                   port = "5432",
-#                                   database = "flight_track")
+#                                   database = "track")
 
+# Try to connect to the remote PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
 conn_postgres = psycopg2.connect(user = "de_old_data",
                                   password = "de_old_data",
                                   host = "172.16.129.241",
                                   port = "5432",
-                                  database = "aerothai_dwh")
+                                  database = "aerothai_dwh",
+                                  options="-c search_path=dbo,public")
 
 with conn_postgres:
 
@@ -51,7 +53,7 @@ with conn_postgres:
             # lon_offset_scale = .3
 
             # Create an sql query that creates a new table for radar tracks in Postgres SQL database
-            postgres_sql_text = "\n \n DROP TABLE IF EXISTS " + table_name + "; \n" + \
+            postgres_sql_text = "\nDROP TABLE IF EXISTS " + table_name + "; \n" + \
                                 "CREATE TABLE " + table_name + " " + \
                                 "(callsign character varying, flight_id integer, geom geometry, " + \
                                 "start_time timestamp without time zone, " + \
