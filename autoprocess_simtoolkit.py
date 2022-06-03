@@ -35,12 +35,21 @@ from dbname_and_paths import db_name,path_script,schema_name
 exec(open(path_script + 'SQLite_File_to_PostgreSQL.py').read())
 
 # #establishing the connection
-conn2 = psycopg2.connect(
-    user='postgres', password='password',
-    host='127.0.0.1', port='5432',
-    database=db_name,
-    options="-c search_path=dbo," + schema_name
-)
+# conn2 = psycopg2.connect(
+#     user='postgres', password='password',
+#     host='127.0.0.1', port='5432',
+#     database=db_name,
+#     options="-c search_path=dbo," + schema_name
+# )
+
+conn2 = psycopg2.connect(user = "de_old_data",
+                                  password = "de_old_data",
+                                  host = "172.16.129.241",
+                                  port = "5432",
+                                  database = "aerothai_dwh",
+                                  options="-c search_path=dbo," + schema_name)
+
+
 print(schema_name)
 conn2.autocommit = True
 cursor2 = conn2.cursor()
