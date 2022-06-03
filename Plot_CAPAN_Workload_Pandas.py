@@ -19,7 +19,7 @@ def toc():
 
 tic()
 
-traffic_percentage = '130'
+traffic_percentage = '100'
 
 root_path = "/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capacity Study 2022"
 scenario = "/BANGKOK_ACC - 2022-05-27 - Traffic "+ traffic_percentage + "%"
@@ -198,22 +198,22 @@ for sector in sector_list:
 
     # ----------------
 
-    fig, ax = plt.subplots()
-    ax.plot(combined_df_temp['Entry_Count'],combined_df_temp['7Weight'] , 'k.')
-    ax.xaxis.set_major_locator(MultipleLocator(12))
-    ax.yaxis.set_major_locator(MultipleLocator(10))
-    ax.xaxis.set_minor_locator(AutoMinorLocator(1))
-    ax.yaxis.set_minor_locator(AutoMinorLocator(1))
-    ax.set_ylim([0, 120])
-    ax.set_xlabel('No. Flights', color='k')
-    ax.set_ylabel('Workload (%)')
-
-
-    plt.title("Scenario Traffic " + traffic_percentage + "% EC Workload: Sector " + sector[-2:])
-    #plt.xticks(rotation=90)
-    #plt.legend()
-    plt.grid()
-    plt.tight_layout()
-    plt.savefig(output_filepath + "Capacity-traffic_" + traffic_percentage + "_EC_" + sector + ".png")
+    # fig, ax = plt.subplots()
+    # ax.plot(combined_df_temp['Entry_Count'],combined_df_temp['7Weight'] , 'k.')
+    # ax.xaxis.set_major_locator(MultipleLocator(12))
+    # ax.yaxis.set_major_locator(MultipleLocator(10))
+    # ax.xaxis.set_minor_locator(AutoMinorLocator(1))
+    # ax.yaxis.set_minor_locator(AutoMinorLocator(1))
+    # ax.set_ylim([0, 120])
+    # ax.set_xlabel('No. Flights', color='k')
+    # ax.set_ylabel('Workload (%)')
+    #
+    #
+    # plt.title("Scenario Traffic " + traffic_percentage + "% EC Workload: Sector " + sector[-2:])
+    # #plt.xticks(rotation=90)
+    # #plt.legend()
+    # plt.grid()
+    # plt.tight_layout()
+    # plt.savefig(output_filepath + "Capacity-traffic_" + traffic_percentage + "_EC_" + sector + ".png")
 
 toc()

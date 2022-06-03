@@ -3,6 +3,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
+import numpy as np
 
 def tic():
     #Homemade version of matlab tic and toc functions
@@ -19,7 +20,7 @@ def toc():
 
 tic()
 
-traffic_percentage = '130'
+traffic_percentage = '150'
 
 root_path = "/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capacity Study 2022"
 scenario = "/BANGKOK_ACC - 2022-05-27 - Traffic "+ traffic_percentage + "%"
@@ -224,8 +225,17 @@ for sector in sector_list:
     ax.set_xlabel('No. Flights', color='k')
     ax.set_ylabel('Workload (%)')
 
+    z = np.polyfit(combined_df_temp['7Weight'], combined_df_temp['Entry_Count'] , 2, rcond=None, full=False, w=None, cov=False)
+    p = np.poly1d(z)
+    print(max(combined_df_temp['Entry_Count']))
 
-    plt.title("Scenario Traffic " + traffic_percentage + "% EC Workload: Sector " + sector[-2:])
+    xp = np.linspace(0, 70, 100)
+
+    ax.plot(p(xp), xp, 'r-')
+
+    plt.title("Scenario Traffic " + traffic_percentage + "% EC Workload: Sector " + sector[-2:] + \
+              "\n Capacity: " + "{:.2f}".format(p(70)) + " flight/hr")
+
     #plt.xticks(rotation=90)
     #plt.legend()
     plt.grid()

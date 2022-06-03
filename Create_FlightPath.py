@@ -8,27 +8,27 @@ from mysql.connector import Error
 # Need to connect to AEROTHAI's MySQL Server
 
 # Try to connect to the local PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
-# conn_postgres = psycopg2.connect(user = "postgres",
-#                                   password = "password",
-#                                   host = "127.0.0.1",
-#                                   port = "5432",
-#                                   database = "track")
+conn_postgres = psycopg2.connect(user = "postgres",
+                                  password = "password",
+                                  host = "127.0.0.1",
+                                  port = "5432",
+                                  database = "track")
 
 # Try to connect to the remote PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
-conn_postgres = psycopg2.connect(user = "de_old_data",
-                                  password = "de_old_data",
-                                  host = "172.16.129.241",
-                                  port = "5432",
-                                  database = "aerothai_dwh",
-                                  options="-c search_path=dbo,public")
+# conn_postgres = psycopg2.connect(user = "de_old_data",
+#                                   password = "de_old_data",
+#                                   host = "172.16.129.241",
+#                                   port = "5432",
+#                                   database = "aerothai_dwh",
+#                                   options="-c search_path=dbo,public")
 
 with conn_postgres:
 
     cursor_postgres = conn_postgres.cursor()
 
-    year_list = ['2022']
-    month_list = ['04']
-    #month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
+    year_list = ['2018']
+    #month_list = ['03']
+    month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
 
     for year in year_list:
         for month in month_list:
