@@ -19,7 +19,8 @@ def psql_insert_copy(table, conn, keys, data_iter):
         sql = 'COPY {} ({}) FROM STDIN WITH CSV'.format(table_name, columns)
         cur.copy_expert(sql=sql, file=s_buf)
 
-filenames = ['20210201_flights.csv']
+yyyymmdd = '20220321'
+filenames = ['20220321 2.txt']
 print(filenames)
 
 engine = create_engine('postgresql://postgres:password@localhost:5432/adsb')
@@ -27,14 +28,15 @@ df_list = list()
 
 
 for filename in filenames:
-    df = pandas.read_csv('/Users/pongabha/Desktop/' + filename)
+    df = pandas.read_csv('/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/Data/' + filename,low_memory=False)
     print(df)
     df.insert(0, "date", filename[0:7] , True)
     df_list.append(df)
 
 combined_df = pandas.concat(df_list)
 print(combined_df)
-table_name = 'flight_' + '20210201'
+
+table_name = 'adsb_' + yyyymmdd
 
 conn_postgres = psycopg2.connect(user = "postgres",
                                   password = "password",
@@ -47,4 +49,14 @@ with conn_postgres:
     cur.execute(sql_query)
     conn_postgres.commit()
 
+combined_df = combined_df.iloc[: , :-1]
 combined_df.to_sql(table_name, engine, schema='public', method=psql_insert_copy)
+
+with conn_postgres:
+    sql_query = "drop table if exists \"adsb_" + yyyymmdd + "_geom\"; " + \
+    "select *, " + \
+    "ST_SetSRID(ST_MakePoint(\"15:wgs_lon\",\"14:wgs_lat\"),4326) AS geom " + \
+    "into \"adsb_" + yyyymmdd + "_geom\" " + \
+    "from \"adsb_" + yyyymmdd +"\"; "
+    cur.execute(sql_query)
+    conn_postgres.commit()

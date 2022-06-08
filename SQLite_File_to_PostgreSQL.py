@@ -4,13 +4,20 @@ from dbname_and_paths import db_name, path_db, schema_name
 
 sqdb = path_db + 'navdata.s3db'
 sqlike = '%'
-#pgdb = 'current_airac'
+
 pgdb = db_name
 pguser = 'postgres'
 pgpswd = 'password'
 pghost = 'localhost'
 pgport = '5432'
 pgschema = schema_name
+
+
+# pguser =  "de_old_data"
+# pgpswd = "de_old_data"
+# pghost = "172.16.129.241"
+# pgport = "5432"
+# pgschema = schema_name
 
 consq = sqlite3.connect(sqdb)
 cursq = consq.cursor()
@@ -46,7 +53,6 @@ for table in tabnames:
         conpg = psycopg2.connect(database=pgdb, user=pguser, password=pgpswd,
                                  host=pghost, port=pgport)
         curpg = conpg.cursor()
-
 
         curpg.execute("SET search_path TO %s;" % pgschema)
         curpg.execute("DROP TABLE IF EXISTS %s;" % table)

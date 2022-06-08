@@ -20,7 +20,7 @@ def toc():
 
 tic()
 
-traffic_percentage = '150'
+traffic_percentage = '130'
 
 root_path = "/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capacity Study 2022"
 scenario = "/BANGKOK_ACC - 2022-05-27 - Traffic "+ traffic_percentage + "%"

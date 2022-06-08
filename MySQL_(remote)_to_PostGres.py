@@ -1,5 +1,5 @@
-import mysql.connector
 import psycopg2
+import mysql.connector
 import time
 
 t = time.time()

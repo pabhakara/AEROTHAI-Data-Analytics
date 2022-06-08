@@ -1,74 +1,74 @@
 
-drop table if exists "airports";
+drop table if exists airac_2204."airports";
 select *,
-ST_SetSRID(ST_MakePoint(airport_ref_longitude,airport_ref_latitude),4326) AS geom
-into "airports"
-from "tbl_airports";
+public.ST_SetSRID(public.ST_MakePoint(airac_2204.airport_ref_longitude,airac_2204.airport_ref_latitude),4326) AS geom
+into airac_2204."airports"
+from airac_2204."tbl_airports";
 
 drop table if exists "enroute_ndb";
 select *,
-ST_SetSRID(ST_MakePoint(ndb_longitude,ndb_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(ndb_longitude,ndb_latitude),4326) AS geom
 into "enroute_ndb"
 from "tbl_enroute_ndbnavaids";
 
 drop table if exists "enroute_waypoints";
 select *,
-ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "enroute_waypoints"
 from "tbl_enroute_waypoints";
 
 drop table if exists "gate";
 select *,
-ST_SetSRID(ST_MakePoint(gate_longitude,gate_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(gate_longitude,gate_latitude),4326) AS geom
 into "gate"
 from "tbl_gate";
 
 drop table if exists "gls";
 select *,
-ST_SetSRID(ST_MakePoint(station_longitude,station_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(station_longitude,station_latitude),4326) AS geom
 into "gls"
 from "tbl_gls";
 
 drop table if exists "holdings";
 select *,
-ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "holdings"
 from "tbl_holdings";
 
 drop table if exists "localizer_marker";
 select *,
-ST_SetSRID(ST_MakePoint(marker_longitude,marker_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(marker_longitude,marker_latitude),4326) AS geom
 into "localizer_marker"
 from "tbl_localizer_marker";
 
 drop table if exists "localizers";
 select *,
-ST_SetSRID(ST_MakePoint(llz_longitude,llz_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(llz_longitude,llz_latitude),4326) AS geom
 into "localizers"
 from "tbl_localizers_glideslopes";
 
 drop table if exists "glideslopes";
 select *,
-ST_SetSRID(ST_MakePoint(gs_longitude,gs_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(gs_longitude,gs_latitude),4326) AS geom
 into "glideslopes"
 from "tbl_localizers_glideslopes";
 
 
 drop table if exists "runways";
 select *,
-ST_SetSRID(ST_MakePoint(runway_longitude,runway_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(runway_longitude,runway_latitude),4326) AS geom
 into "runways"
 from "tbl_runways";
 
 drop table if exists "sids_wp";
 select *,
-ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "sids_wp"
 from "tbl_sids";
 
 drop table if exists "sids_wp_without_rf";
 select *,
-ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "sids_wp_without_rf"
 from tbl_sids
                         WHERE airport_identifier like '%'
@@ -80,7 +80,7 @@ from tbl_sids
 
 drop table if exists "sids_wp_with_rf";
 select *,
-ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "sids_wp_with_rf"
 from tbl_sids
                         WHERE airport_identifier like '%'
@@ -92,13 +92,13 @@ from tbl_sids
 
 drop table if exists "stars_wp";
 select *,
-ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "stars_wp"
 from "tbl_stars";
 
 drop table if exists "stars_wp_without_rf";
 select *,
-ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "stars_wp_without_rf"
 from tbl_stars
                         WHERE airport_identifier like '%'
@@ -110,7 +110,7 @@ from tbl_stars
 
 drop table if exists "stars_wp_with_rf";
 select *,
-ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "stars_wp_with_rf"
 from tbl_stars
                         WHERE airport_identifier like '%'
@@ -122,38 +122,38 @@ from tbl_stars
 
 drop table if exists "iaps_wp";
 select *,
-ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "iaps_wp"
 from "tbl_iaps";
 
 drop table if exists "terminal_ndb";
 select *,
-ST_SetSRID(ST_MakePoint(ndb_longitude,ndb_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(ndb_longitude,ndb_latitude),4326) AS geom
 into "terminal_ndb"
 from "tbl_terminal_ndbnavaids";
 
 drop table if exists "terminal_waypoints";
 select *,
-ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "terminal_waypoints"
 from "tbl_terminal_waypoints";
 
 drop table if exists "vor";
 select *,
-ST_SetSRID(ST_MakePoint(vor_longitude,vor_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(vor_longitude,vor_latitude),4326) AS geom
 into "vor"
 from "tbl_vhfnavaids"
 where navaid_class like '%V%';
 
 drop table if exists "dme";
 select *,
-ST_SetSRID(ST_MakePoint(dme_longitude,dme_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(dme_longitude,dme_latitude),4326) AS geom
 into "dme"
 from "tbl_vhfnavaids";
 
 drop table if exists "airways_wp";
 select *,
-ST_SetSRID(ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
+public.ST_SetSRID(public.ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
 into "airways_wp"
 from "tbl_enroute_airways";
 
@@ -225,15 +225,15 @@ rename to airways_vor;
 
 drop table if exists "sbas_path";
 select *,
-ST_SetSRID(ST_MakePoint(landing_threshold_longitude,landing_threshold_latitude),4326) AS landing_threshold,
-ST_SetSRID(ST_MakePoint(flightpath_alignment_longitude,flightpath_alignment_latitude),4326) AS flightpath_alignment,
-ST_SetSRID(ST_MakeLine(
-ST_MakePoint(landing_threshold_longitude,landing_threshold_latitude),
-ST_MakePoint(flightpath_alignment_longitude,flightpath_alignment_latitude))
+public.ST_SetSRID(public.ST_MakePoint(landing_threshold_longitude,landing_threshold_latitude),4326) AS landing_threshold,
+public.ST_SetSRID(public.ST_MakePoint(flightpath_alignment_longitude,flightpath_alignment_latitude),4326) AS flightpath_alignment,
+public.ST_SetSRID(public.ST_MakeLine(
+public.ST_MakePoint(landing_threshold_longitude,landing_threshold_latitude),
+public.ST_MakePoint(flightpath_alignment_longitude,flightpath_alignment_latitude))
 ,4326) AS flightpath,
-ST_Azimuth(
-ST_SetSRID(ST_MakePoint(landing_threshold_longitude,landing_threshold_latitude),4326)::geography,
-ST_SetSRID(ST_MakePoint(flightpath_alignment_longitude,flightpath_alignment_latitude),4326)::geography
+public.ST_Azimuth(
+public.ST_SetSRID(public.ST_MakePoint(landing_threshold_longitude,landing_threshold_latitude),4326)::geography,
+public.ST_SetSRID(public.ST_MakePoint(flightpath_alignment_longitude,flightpath_alignment_latitude),4326)::geography
 )*180/pi()
 AS azimuth
 into "sbas_path"

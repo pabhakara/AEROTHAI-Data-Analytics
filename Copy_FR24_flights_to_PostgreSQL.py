@@ -25,9 +25,10 @@ print(filenames)
 engine = create_engine('postgresql://postgres:password@localhost:5432/fr24')
 df_list = list()
 
+path = "/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/FR24/"
 
 for filename in filenames:
-    df = pandas.read_csv('/Users/pongabha/Desktop/' + filename)
+    df = pandas.read_csv(path + filename)
     print(df)
     df.insert(0, "date", filename[0:7] , True)
     df_list.append(df)
