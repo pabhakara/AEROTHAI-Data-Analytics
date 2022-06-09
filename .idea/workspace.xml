@@ -68,7 +68,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Plot_CAPAN_Workload_Pandas">
+  <component name="RunManager" selected="Python.autoprocess_simtoolkit">
     <configuration name="Create_FlightPath" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Data_Analytics" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -197,10 +197,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.autoprocess_simtoolkit" />
         <item itemvalue="Python.Plot_CAPAN_Workload_Pandas" />
         <item itemvalue="Python.Create_FlightPath" />
         <item itemvalue="Python.MySQL_(remote)_to_PostGres" />
-        <item itemvalue="Python.autoprocess_simtoolkit" />
         <item itemvalue="Python.SQLite_File_to_PostgreSQL" />
       </list>
     </recent_temporary>
