@@ -19,7 +19,7 @@ def toc():
 
 tic()
 
-traffic_percentage = '150'
+traffic_percentage = '130'
 
 root_path = "/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capacity Study 2022"
 scenario = "/BANGKOK_ACC - 2022-05-27 - Traffic "+ traffic_percentage + "%"
@@ -91,6 +91,19 @@ sector_list = ['SECTOR_1N', 'SECTOR_1S', 'SECTOR_2N', 'SECTOR_2S', 'SECTOR_3N', 
                 'SECTOR_4N', 'SECTOR_4S', 'SECTOR_5N', 'SECTOR_5S', 'SECTOR_6N', 'SECTOR_6S']
 
 sector_list_df = pd.DataFrame(sector_list)
+
+# Total sector entry counts in 24 hours
+filter = (sectorcrossing_df['entry_time'] > str(t + pd.DateOffset(minutes=0))) & \
+         (sectorcrossing_df['entry_time'] < str(t + pd.DateOffset(minutes=24*60))) & \
+         (sectorcrossing_df['2Sector'].str.contains("SECTOR_")) & \
+         (sectorcrossing_df['1Center'] == "VTBB")
+
+temp_df = sectorcrossing_df.loc[filter, ['2Sector', 'entry_time']]
+
+total_sector_crossing_df = temp_df.groupby(['2Sector'])['2Sector'].count()
+
+
+
 
 while k <= 60 * 24:
     # ------- workload count ------------
@@ -165,7 +178,7 @@ combined_df = pd.merge(workload_df, occupancy_count_df, how='inner', on=['Timest
 combined_df = pd.merge(combined_df, traffic_count_df, how='inner', on=['Timestamp', 'Sector'])
 combined_df = combined_df.set_index('Timestamp')
 
-print(combined_df)
+#print(combined_df)
 
 for sector in sector_list:
 
@@ -189,7 +202,10 @@ for sector in sector_list:
     ax.yaxis.set_minor_locator(AutoMinorLocator(1))
     ax.set_ylim([0, 120])
 
-    plt.title("Scenario Traffic " + traffic_percentage + "% EC Workload: Sector " + sector[-2:])
+    num_flights = total_sector_crossing_df.loc[sector]
+
+    plt.title("Scenario Traffic " + traffic_percentage + "% (" +str(num_flights) + \
+              " flights) EC Workload: Sector " + sector[-2:])
     plt.xticks(rotation=90)
     plt.legend()
     plt.grid()
