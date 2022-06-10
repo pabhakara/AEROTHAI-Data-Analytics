@@ -51,7 +51,7 @@ for table in tabnames:
 
     try:
         conpg = psycopg2.connect(database=pgdb, user=pguser, password=pgpswd,
-                                 host=pghost, port=pgport, options="-c search_path=dbo," + schema_name)
+                                 host=pghost, port=pgport, options="-c search_path=dbo," + pgschema)
         curpg = conpg.cursor()
 
         curpg.execute("SET search_path TO %s;" % pgschema)

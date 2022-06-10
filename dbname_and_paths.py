@@ -3,7 +3,7 @@
 #db_name = 'current_airac'
 
 db_name = 'test'
-schema_name = 'current_ariac'
+schema_name = 'current_airac'
 
 path_script = "/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics/"
 airac = '_2205'

@@ -1,76 +1,76 @@
 
-drop table if exists "airports";
+drop table if exists current_airac."airports";
 select *,
-public.ST_SetSRID(public.ST_MakePoint(airport_ref_longitude,airport_ref_latitude),4326) AS geom
-into "airports"
-from "tbl_airports";
+public.ST_SetSRID(postgis.ST_MakePoint(airport_ref_longitude,airport_ref_latitude),4326) AS geom
+into current_airac."airports"
+from current_airac."tbl_airports";
 
-drop table if exists "enroute_ndb";
+drop table if exists current_airac."enroute_ndb";
 select *,
 public.ST_SetSRID(public.ST_MakePoint(ndb_longitude,ndb_latitude),4326) AS geom
-into "enroute_ndb"
-from "tbl_enroute_ndbnavaids";
+into current_airac."enroute_ndb"
+from current_airac."tbl_enroute_ndbnavaids";
 
-drop table if exists "enroute_waypoints";
+drop table if exists current_airac."enroute_waypoints";
 select *,
 public.ST_SetSRID(public.ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
-into "enroute_waypoints"
-from "tbl_enroute_waypoints";
+into current_airac."enroute_waypoints"
+from current_airac."tbl_enroute_waypoints";
 
-drop table if exists "gate";
+drop table if exists current_airac."gate";
 select *,
 public.ST_SetSRID(public.ST_MakePoint(gate_longitude,gate_latitude),4326) AS geom
-into "gate"
-from "tbl_gate";
+into current_airac."gate"
+from current_airac."tbl_gate";
 
-drop table if exists "gls";
+drop table if exists current_airac."gls";
 select *,
 public.ST_SetSRID(public.ST_MakePoint(station_longitude,station_latitude),4326) AS geom
-into "gls"
-from "tbl_gls";
+into current_airac."gls"
+from current_airac."tbl_gls";
 
-drop table if exists "holdings";
+drop table if exists current_airac."holdings";
 select *,
 public.ST_SetSRID(public.ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
-into "holdings"
-from "tbl_holdings";
+into current_airac."holdings"
+from current_airac."tbl_holdings";
 
-drop table if exists "localizer_marker";
+drop table if exists current_airac."localizer_marker";
 select *,
 public.ST_SetSRID(public.ST_MakePoint(marker_longitude,marker_latitude),4326) AS geom
-into "localizer_marker"
-from "tbl_localizer_marker";
+into current_airac."localizer_marker"
+from current_airac."tbl_localizer_marker";
 
-drop table if exists "localizers";
+drop table if exists current_airac."localizers";
 select *,
 public.ST_SetSRID(public.ST_MakePoint(llz_longitude,llz_latitude),4326) AS geom
-into "localizers"
-from "tbl_localizers_glideslopes";
+into current_airac."localizers"
+from current_airac."tbl_localizers_glideslopes";
 
-drop table if exists "glideslopes";
+drop table if exists current_airac."glideslopes";
 select *,
 public.ST_SetSRID(public.ST_MakePoint(gs_longitude,gs_latitude),4326) AS geom
-into "glideslopes"
-from "tbl_localizers_glideslopes";
+into current_airac."glideslopes"
+from current_airac."tbl_localizers_glideslopes";
 
 
-drop table if exists "runways";
+drop table if exists current_airac."runways";
 select *,
 public.ST_SetSRID(public.ST_MakePoint(runway_longitude,runway_latitude),4326) AS geom
-into "runways"
-from "tbl_runways";
+into current_airac."runways"
+from current_airac."tbl_runways";
 
 drop table if exists "sids_wp";
 select *,
 public.ST_SetSRID(public.ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
-into "sids_wp"
-from "tbl_sids";
+into current_airac."sids_wp"
+from current_airac."tbl_sids";
 
 drop table if exists "sids_wp_without_rf";
 select *,
 public.ST_SetSRID(public.ST_MakePoint(waypoint_longitude,waypoint_latitude),4326) AS geom
-into "sids_wp_without_rf"
-from tbl_sids
+into current_airac."sids_wp_without_rf"
+from current_airac.tbl_sids
                         WHERE airport_identifier like '%'
                         and not(waypoint_identifier is null)
                         and NOT(concat(airport_identifier,procedure_identifier,transition_identifier) in

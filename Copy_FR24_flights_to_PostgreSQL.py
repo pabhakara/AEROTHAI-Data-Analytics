@@ -19,7 +19,9 @@ def psql_insert_copy(table, conn, keys, data_iter):
         sql = 'COPY {} ({}) FROM STDIN WITH CSV'.format(table_name, columns)
         cur.copy_expert(sql=sql, file=s_buf)
 
-filenames = ['20210201_flights.csv']
+yyyymmdd = '20191225'
+
+filenames = [ yyyymmdd +'_flights.csv']
 print(filenames)
 
 engine = create_engine('postgresql://postgres:password@localhost:5432/fr24')
@@ -35,7 +37,7 @@ for filename in filenames:
 
 combined_df = pandas.concat(df_list)
 print(combined_df)
-table_name = 'flight_' + '20210201'
+table_name = 'flight_' + yyyymmdd
 
 conn_postgres = psycopg2.connect(user = "postgres",
                                   password = "password",
@@ -49,3 +51,19 @@ with conn_postgres:
     conn_postgres.commit()
 
 combined_df.to_sql(table_name, engine, schema='public', method=psql_insert_copy)
+
+with conn_postgres:
+    cur = conn_postgres.cursor()
+    sql_query = "DROP TABLE IF EXISTS flight_" + yyyymmdd + "_temp; " + \
+                "SELECT *, CAST(flight_id AS text) flight_id_txt " + \
+                "INTO flight_" + yyyymmdd + "_temp " + \
+                "FROM flight_" + yyyymmdd + ";" + \
+                "ALTER TABLE flight_" + yyyymmdd + "_temp " \
+                "DROP COLUMN flight_id;" \
+                "ALTER TABLE flight_" + yyyymmdd + "_temp " \
+                "RENAME COLUMN flight_id_txt TO flight_id; " \
+                "DROP TABLE IF EXISTS flight_" + yyyymmdd +"; " \
+                "ALTER TABLE flight_" + yyyymmdd + "_temp " \
+                "RENAME TO flight_" + yyyymmdd + ";"
+    cur.execute(sql_query)
+    conn_postgres.commit()

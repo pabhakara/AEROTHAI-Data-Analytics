@@ -8,27 +8,27 @@ from mysql.connector import Error
 # Need to connect to AEROTHAI's MySQL Server
 
 # Try to connect to the local PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
-conn_postgres = psycopg2.connect(user = "postgres",
-                                  password = "password",
-                                  host = "127.0.0.1",
-                                  port = "5432",
-                                  database = "track")
+# conn_postgres = psycopg2.connect(user = "postgres",
+#                                   password = "password",
+#                                   host = "127.0.0.1",
+#                                   port = "5432",
+#                                   database = "track")
 
 # Try to connect to the remote PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
-# conn_postgres = psycopg2.connect(user = "de_old_data",
-#                                   password = "de_old_data",
-#                                   host = "172.16.129.241",
-#                                   port = "5432",
-#                                   database = "aerothai_dwh",
-#                                   options="-c search_path=dbo,public")
+conn_postgres = psycopg2.connect(user = "de_old_data",
+                                  password = "de_old_data",
+                                  host = "172.16.129.241",
+                                  port = "5432",
+                                  database = "aerothai_dwh",
+                                  options="-c search_path=dbo,track")
 
 with conn_postgres:
 
     cursor_postgres = conn_postgres.cursor()
 
-    year_list = ['2022']
-    month_list = ['01','02','03']
-    #month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
+    year_list = ['2015']
+    #month_list = ['12']
+    month_list = ['01']
 
     for year in year_list:
         for month in month_list:
@@ -74,9 +74,8 @@ with conn_postgres:
                                 "maintain_flevel integer, " + \
                                 "exit_flevel integer, " + \
                                 "comnav character varying, flevel integer,route character varying)" + \
-                                "WITH (OIDS=FALSE); \n" + \
-                                "ALTER TABLE " + table_name + " " \
-                                "OWNER TO postgres;"
+                                "WITH (OIDS=FALSE);"
+
             print(postgres_sql_text)
             cursor_postgres.execute(postgres_sql_text)
 
@@ -101,7 +100,7 @@ with conn_postgres:
                     "where (a.flight_id = b.flight_id) " + \
                     "and (day(a.entry_time) < 32) and (day(a.entry_time) >=1 ) " + \
                     "order by a.flight_id,b.app_time"
-                    #print(mysql_query)
+                    print(mysql_query)
 
                     cursor_mysql = conn_mysql.cursor(dictionary=True)
                     cursor_mysql.execute(mysql_query)
