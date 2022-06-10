@@ -5,16 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b70db43c-7c4d-4b3e-9e46-199adf2487f4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Create_FlightPath_CAT62.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/create_wp_with_schema.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Copy_FR24_flights_to_PostgreSQL.py" beforeDir="false" afterPath="$PROJECT_DIR$/Copy_FR24_flights_to_PostgreSQL.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Copy_FR24_positions_to_PostgreSQL.py" beforeDir="false" afterPath="$PROJECT_DIR$/Copy_FR24_positions_to_PostgreSQL.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Create_FlightPath.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_FlightPath.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Create_FlightPath_FR24.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_FlightPath_FR24.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SQLite_File_to_PostgreSQL.py" beforeDir="false" afterPath="$PROJECT_DIR$/SQLite_File_to_PostgreSQL.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create_wp.sql" beforeDir="false" afterPath="$PROJECT_DIR$/create_wp.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbname_and_paths.py" beforeDir="false" afterPath="$PROJECT_DIR$/dbname_and_paths.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Create_FlightPath_CAT62.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_FlightPath_CAT62.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -211,13 +203,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1621414845806</updated>
-    </task>
-    <task id="LOCAL-00025" summary="test2">
-      <created>1624120043431</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1624120043431</updated>
     </task>
     <task id="LOCAL-00026" summary="test2">
       <created>1624122215653</created>
@@ -555,7 +540,14 @@
       <option name="project" value="LOCAL" />
       <updated>1654739268151</updated>
     </task>
-    <option name="localTasksCounter" value="74" />
+    <task id="LOCAL-00074" summary="test2">
+      <created>1654854812407</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1654854812407</updated>
+    </task>
+    <option name="localTasksCounter" value="75" />
     <servers />
   </component>
   <component name="UnknownFeatures">

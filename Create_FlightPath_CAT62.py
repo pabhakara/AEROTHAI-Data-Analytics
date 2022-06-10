@@ -23,7 +23,7 @@ with conn_postgres_target:
 
     year_list = ['2022']
     month_list = ['05']
-    day_list = ['03','04','05']
+    day_list = ['01','02','03','04','05','06']
 
     for year in year_list:
         for month in month_list:
@@ -32,7 +32,11 @@ with conn_postgres_target:
 
                 yyyymmdd = year + month + day
 
+
+
                 table_name = "track_cat062_" + yyyymmdd + ""
+
+                print(table_name)
 
                 # Create an sql query that creates a new table for radar tracks in Postgres SQL database
                 postgres_sql_text = "DROP TABLE IF EXISTS " + table_name + "; \n" + \
@@ -48,7 +52,7 @@ with conn_postgres_target:
                                     "dest character varying)" + \
                                     "WITH (OIDS=FALSE);"
 
-                print(postgres_sql_text)
+                #print(postgres_sql_text)
                 cursor_postgres_target.execute(postgres_sql_text)
                 conn_postgres_target.commit()
 
@@ -75,19 +79,23 @@ with conn_postgres_target:
                                         "longitude," + \
                                         "measured_fl " + \
                                         "FROM sur_air.cat062_" + yyyymmdd + " " + \
-                                        "WHERE not(latitude is NULL)" + \
+                                        "WHERE not(latitude is NULL) " + \
+                                        "AND NOT(dep is NULL) " + \
                                         "ORDER BY track_no, time_of_track ASC"
 
-                    print(postgres_sql_text)
+                    #print(postgres_sql_text)
 
                     cursor_postgres_source.execute(postgres_sql_text)
                     record = cursor_postgres_source.fetchall()
+                    #print(record)
+
                     num_of_records = len(record)
-                    print("num_of_record: ",num_of_records)
+                    #print("num_of_record: ",num_of_records)
 
                     k = 0
 
                     temp_1 = record[k]
+                    #print(temp_1)
                     temp_2 = record[k+1]
 
                     acid = none_to_null(str(temp_1['acid']))
@@ -170,7 +178,10 @@ with conn_postgres_target:
 
                         postgres_sql_text += app_time_1 +"')"
 
-                        print(postgres_sql_text)
+                        #print(str(temp_1['dep']))
+                        #print(str(temp_1['dest']))
+
+                        #print(postgres_sql_text)
                         cursor_postgres_target.execute(postgres_sql_text)
                         conn_postgres_target.commit()
                         print(str("{:.3f}".format((k / num_of_records) * 100,2)) + "% Completed")
@@ -184,7 +195,7 @@ with conn_postgres_target:
                                                 "DROP TABLE IF EXISTS " + table_name + ";" + \
                                                 "ALTER TABLE " + table_name + "_length RENAME TO " + table_name + ";"
 
-                            print(postgres_sql_text)
+                            #print(postgres_sql_text)
                             cursor_postgres_target.execute(postgres_sql_text)
                             conn_postgres_target.commit()
                             break
@@ -243,3 +254,17 @@ with conn_postgres_target:
                                                  + "ST_LineFromText('LINESTRING("
                         else:
                             break
+
+    postgres_sql_text = "DO \n" \
+                        "$$ \n" \
+                        "DECLARE \n" \
+                        " row record; \n" \
+                        "BEGIN \n" \
+                        "FOR row IN SELECT tablename FROM pg_tables WHERE schemaname = 'public' and tablename like 'track%' \n" \
+                        "LOOP \n" \
+                        "EXECUTE 'ALTER TABLE public.' || quote_ident(row.tablename) || ' SET SCHEMA track;'; \n" \
+                        "END LOOP; \n" \
+                        "END; \n" \
+                        "$$;"
+    cursor_postgres_target.execute(postgres_sql_text)
+    conn_postgres_target.commit()
