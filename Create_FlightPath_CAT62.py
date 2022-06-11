@@ -10,7 +10,8 @@ def none_to_null(etd):
         x = "'" + etd + "'"
     return x
 
-# Try to connect to the remote PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
+# Create a connection to the remote PostGresSQL database in which we will store our trajectories
+# created from ASTERIX Cat062 targets.
 conn_postgres_target = psycopg2.connect(user = "de_old_data",
                                   password = "de_old_data",
                                   host = "172.16.129.241",
@@ -62,7 +63,8 @@ with conn_postgres_target:
                 cursor_postgres_target.execute(postgres_sql_text)
                 conn_postgres_target.commit()
 
-                # Create an sql query that select surveillance targets from the source PostgreSQL database
+                # Create a connection to the schema in the remote PostgreSQL database
+                # where the source data tables are located.
                 conn_postgres_source = psycopg2.connect(user="de_old_data",
                                              password="de_old_data",
                                              host="172.16.129.241",
@@ -74,6 +76,7 @@ with conn_postgres_target:
 
                     cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
+                    # Create an SQL query that selects surveillance targets from the source PostgreSQL database
                     postgres_sql_text = "SELECT track_no, " + \
                                         "time_of_track," + \
                                         "icao_24bit_dap," + \
@@ -144,15 +147,12 @@ with conn_postgres_target:
 
                     cursor_postgres_source.execute(postgres_sql_text)
                     record = cursor_postgres_source.fetchall()
-                    #print(record)
 
                     num_of_records = len(record)
-                    #print("num_of_record: ",num_of_records)
 
                     k = 0
 
                     temp_1 = record[k]
-                    #print(temp_1)
                     temp_2 = record[k+1]
 
                     acid = none_to_null(str(temp_1['acid']))
@@ -235,10 +235,6 @@ with conn_postgres_target:
 
                         postgres_sql_text += app_time_1 +"')"
 
-                        #print(str(temp_1['dep']))
-                        #print(str(temp_1['dest']))
-
-                        #print(postgres_sql_text)
                         cursor_postgres_target.execute(postgres_sql_text)
                         conn_postgres_target.commit()
                         print(str("{:.3f}".format((k / num_of_records) * 100,2)) + "% Completed")
