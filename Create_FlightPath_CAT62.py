@@ -1,6 +1,7 @@
 import psycopg2
 import psycopg2.extras
 import time
+import datetime as dt
 
 def none_to_null(etd):
     if etd == 'None':
@@ -22,8 +23,8 @@ with conn_postgres_target:
     cursor_postgres_target = conn_postgres_target.cursor()
 
     year_list = ['2022']
-    month_list = ['05']
-    day_list = ['01','02','03','04','05','06']
+    month_list = ['04']
+    day_list = ['26','27','28','29','30']
 
     for year in year_list:
         for month in month_list:
@@ -32,13 +33,18 @@ with conn_postgres_target:
 
                 yyyymmdd = year + month + day
 
+                start_day = dt.datetime.strptime(year + "-" + month + "-" + day, '%Y-%m-%d')
+                next_day = start_day + dt.timedelta(days=1)
+                previous_day = start_day + dt.timedelta(days=-1)
 
+                yyyymmdd_next = str(next_day.year).zfill(2) + str(next_day.month).zfill(2) + str(next_day.day).zfill(2)
+                yyyymmdd_previous = str(previous_day.year).zfill(2) + str(previous_day.month).zfill(2) + str(previous_day.day).zfill(2)
 
-                table_name = "track_cat062_" + yyyymmdd + ""
+                table_name = "track_cat062_" + yyyymmdd
 
                 print(table_name)
 
-                # Create an sql query that creates a new table for radar tracks in Postgres SQL database
+                # Create an sql query that creates a new table for radar tracks in the target PostgreSQL database
                 postgres_sql_text = "DROP TABLE IF EXISTS " + table_name + "; \n" + \
                                     "CREATE TABLE " + table_name + " " + \
                                     "(acid character varying, " \
@@ -56,6 +62,7 @@ with conn_postgres_target:
                 cursor_postgres_target.execute(postgres_sql_text)
                 conn_postgres_target.commit()
 
+                # Create an sql query that select surveillance targets from the source PostgreSQL database
                 conn_postgres_source = psycopg2.connect(user="de_old_data",
                                              password="de_old_data",
                                              host="172.16.129.241",
@@ -77,13 +84,63 @@ with conn_postgres_target:
                                         "dest," + \
                                         "latitude," + \
                                         "longitude," + \
-                                        "measured_fl " + \
-                                        "FROM sur_air.cat062_" + yyyymmdd + " " + \
-                                        "WHERE not(latitude is NULL) " + \
-                                        "AND NOT(dep is NULL) " + \
-                                        "ORDER BY track_no, time_of_track ASC"
-
-                    #print(postgres_sql_text)
+                                        "measured_fl \n" + \
+                                        "FROM sur_air.cat062_" + yyyymmdd_next + "\n " + \
+                                        "WHERE not(latitude is NULL) \n" + \
+                                        "AND NOT(dep is NULL) \n" + \
+                                        "AND concat(track_no, acid, mode_a_code) IN \n" \
+                                        "(SELECT distinct concat(track_no, acid, mode_a_code) \n" \
+                                        "from \n" \
+                                        "(SELECT track_no, acid, mode_a_code, count(*) \n" \
+                                        "from \n" \
+                                        "(SELECT track_no, acid, mode_a_code, temp, count(*) \n" \
+                                        "from \n" \
+                                        "(SELECT 'a' as temp, * FROM sur_air.cat062_" + yyyymmdd_next + \
+                                        "\n WHERE app_time < \'" + \
+                                        str(next_day.year).zfill(2) + "-" + \
+                                        str(next_day.month).zfill(2) + "-" + \
+                                        str(next_day.day).zfill(2) + \
+                                        " 00:00:30\' \n " \
+                                        "AND NOT(dest IS NULL) AND NOT(latitude IS NULL) \n" \
+                                        "UNION \n" \
+                                        "SELECT 'b' as temp, * \n FROM " \
+                                        "sur_air.cat062_" + yyyymmdd +  \
+                                        "\n WHERE app_time > \'" + year + "-" + month + "-" + day + " 23:59:30\' \n" \
+                                        "AND NOT(dest IS NULL) AND NOT(latitude IS NULL) \n" \
+                                        "ORDER BY track_no, app_time ) a \n" \
+                                        "GROUP BY track_no, acid, mode_a_code, temp) b \n" \
+                                        "GROUP BY track_no, acid, mode_a_code) c \n" \
+                                        "WHERE count = 2) \n" \
+                                        "UNION \n" \
+                                        "SELECT " \
+                                        "track_no, time_of_track, icao_24bit_dap, mode_a_code, acid, " \
+                                        "acid_dap, dep, dest, latitude, longitude, measured_fl \n" \
+                                        "FROM sur_air.cat062_" + yyyymmdd + "\n"\
+                                        "WHERE NOT (latitude is NULL) AND NOT(dep is NULL) \n" \
+                                        "AND NOT concat(track_no, acid, mode_a_code) IN \n" \
+                                        "(SELECT distinct concat(track_no, acid, mode_a_code) \n" \
+                                        "from \n" \
+                                        "(SELECT track_no, acid, mode_a_code, count(*) \n" \
+                                        "from \n" \
+                                        "(SELECT track_no, acid, mode_a_code, temp, count(*) \n" \
+                                        "from \n" \
+                                        "(SELECT 'a' as temp, * FROM sur_air.cat062_" + yyyymmdd_previous + \
+                                        "\n WHERE app_time > \'" + \
+                                        str(previous_day.year).zfill(2) + "-" + \
+                                        str(previous_day.month).zfill(2) + "-" + \
+                                        str(previous_day.day).zfill(2) + \
+                                        " 23:59:30\' \n " \
+                                        "AND NOT(dest IS NULL) AND NOT(latitude IS NULL) \n" \
+                                        "UNION \n" \
+                                        "SELECT 'b' as temp, * \n FROM " \
+                                        "sur_air.cat062_" + yyyymmdd + \
+                                        "\n WHERE app_time < \'" + year + "-" + month + "-" + day + " 00:00:30\' \n" \
+                                        "AND NOT(dest IS NULL) AND NOT(latitude IS NULL) \n" \
+                                        "ORDER BY track_no, app_time ) a \n" \
+                                        "GROUP BY track_no, acid, mode_a_code, temp) b \n" \
+                                        "GROUP BY track_no, acid, mode_a_code) c \n" \
+                                        "WHERE count = 2) \n" \
+                                        "ORDER BY track_no, time_of_track ASC;"
 
                     cursor_postgres_source.execute(postgres_sql_text)
                     record = cursor_postgres_source.fetchall()
@@ -255,6 +312,7 @@ with conn_postgres_target:
                         else:
                             break
 
+    # Move the newly created track tables from the "public" schema to the "track" schema
     postgres_sql_text = "DO \n" \
                         "$$ \n" \
                         "DECLARE \n" \
