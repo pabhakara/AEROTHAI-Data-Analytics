@@ -20,7 +20,7 @@ dbx = db.cursor()
 #                                   port = "5432",
 #                                   database = "old_data")
 
-DB = psycopg2.connect("dbname='los_2022_04'")
+DB = psycopg2.connect("dbname='los_2022_05'")
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
 
@@ -49,14 +49,14 @@ years = ['2022']
 #prefix = ''
 #postfix = '_vtbd_tecos_dep'
 
-# prefix = ''
-# postfix = '_radar'
+prefix = ''
+postfix = '_radar'
 
 # prefix = ''
 # postfix = '_fdmc'
 
-prefix = 'target_'
-postfix = ''
+# prefix = 'target_'
+# postfix = ''
 
 # prefix = 'distances_'
 # postfix = ''
@@ -67,7 +67,7 @@ postfix = ''
 
 for year in years:
     #for month in ['01','02','03','04','05','06','07','08','09','10','11','12']:
-    for month in ['04']:
+    for month in ['05']:
         text = (prefix + year + '_' + month + postfix)
         print(text)
         tables = tables + [text]
