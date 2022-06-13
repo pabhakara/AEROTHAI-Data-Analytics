@@ -31,7 +31,7 @@ with conn_postgres:
             filename = source + "_Radar_Coverage_"+ str(fl) +"FT.kml"
             #filename = 'coverage' + str(fl) + '.kml'
 
-            path = "/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Radar Coverage" \
+            path = "/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/Radar Coverage" \
                    "/Radar_Coverage/" + source + "_Radar_Coverage/" \
                    + filename
             #All Radar coverage 500.kml'
