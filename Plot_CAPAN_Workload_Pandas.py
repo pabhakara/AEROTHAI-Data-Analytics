@@ -20,7 +20,7 @@ tic()
 traffic_percentage = '100'
 
 root_path = "/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capacity Study 2022"
-scenario = "/BANGKOK_ACC - 2022-05-27 - Traffic "+ traffic_percentage + "%"
+scenario = "/BANGKOK_ACC - 2022-06-13 - Traffic "+ traffic_percentage + "%"
 output_filepath = '/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capacity Study 2022/Output Plots/'
 
 sectorcrossing_input_file = "/RUNS/12SEC_VTBS19_NO_MIL/output/sectorcrossing.out.1"

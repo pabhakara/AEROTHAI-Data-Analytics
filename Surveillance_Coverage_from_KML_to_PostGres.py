@@ -13,20 +13,20 @@ conn_postgres = psycopg2.connect(user = "postgres",
                                   port = "5432",
                                   database = "surv_coverage")
 
-source_list = ['All','CMA','DMK','HTY','PSL','PUT','SVB','UBL','UDN','ROT','STN','CPN','CTR']
-#source_list = ['CTR']
+#source_list = ['All','CMA','HTY','PSL','PUT','SVB','UBL','UDN','ROT','STN','CPN','CTR']
+source_list = ['DMK']
 type = 'SSR'
 
 with conn_postgres:
-
-    cursor_postgres = conn_postgres.cursor()
-    postgres_sql_text = "DELETE FROM surv_coverage;"
-    cursor_postgres.execute(postgres_sql_text)
-    conn_postgres.commit()
+    # cursor_postgres = conn_postgres.cursor()
+    # postgres_sql_text = "DELETE FROM surv_coverage WHERE source like \'"+ source_list[0] +"\';"
+    # cursor_postgres.execute(postgres_sql_text)
+    # conn_postgres.commit()
 
     for source in source_list:
         print(source)
-        for fl in range(500,20500,500):
+        for fl in range(500,22000,500):
+        #for fl in range(22500,50500,500):
             print(fl)
             filename = source + "_Radar_Coverage_"+ str(fl) +"FT.kml"
             #filename = 'coverage' + str(fl) + '.kml'
