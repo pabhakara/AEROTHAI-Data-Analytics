@@ -25,15 +25,14 @@ with conn_postgres:
 
     for source in source_list:
         print(source)
-        for fl in range(500,22000,500):
+        for fl in range(22500,50500,500):
         #for fl in range(22500,50500,500):
             print(fl)
             filename = source + "_Radar_Coverage_"+ str(fl) +"FT.kml"
             #filename = 'coverage' + str(fl) + '.kml'
 
-            path = "/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/Radar Coverage" \
-                   "/Radar_Coverage/" + source + "_Radar_Coverage/" \
-                   + filename
+            path = f'/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/Radar Coverage/Radar_Coverage/' \
+                  + f'{source}_Radar_Coverage/{filename}'
             #All Radar coverage 500.kml'
 
             # Read file
