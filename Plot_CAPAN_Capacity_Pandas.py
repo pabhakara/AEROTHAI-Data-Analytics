@@ -23,14 +23,14 @@ tic()
 traffic_percentage = '130'
 
 root_path = "/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capacity Study 2022"
-scenario = "/BANGKOK_ACC - 2022-05-27 - Traffic "+ traffic_percentage + "%"
+scenario = f"/BANGKOK_ACC - 2022-05-27 - Traffic {traffic_percentage}%"
 output_filepath = '/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capacity Study 2022/Output Plots/'
 
 combined_df = pd.DataFrame()
 
 for iter_num in range(1,10):
 
-    sectorcrossing_input_file = "/RUNS/12SEC_VTBS19_NO_MIL/output/sectorcrossing.out." + str(iter_num)
+    sectorcrossing_input_file = f"/RUNS/12SEC_VTBS19_NO_MIL/output/sectorcrossing.out.{iter_num}"
     print(sectorcrossing_input_file)
 
     sectorcrossing_df = pd.read_csv(root_path + scenario + sectorcrossing_input_file,
@@ -50,7 +50,7 @@ for iter_num in range(1,10):
     sectorcrossing_df = sectorcrossing_df[column_selection].copy()
     #print(sectorcrossing_df)
 
-    task_input_file = "/RUNS/12SEC_VTBS19_NO_MIL/output/task.out." + str(iter_num)
+    task_input_file = f"/RUNS/12SEC_VTBS19_NO_MIL/output/task.out.{iter_num}"
 
     task_df = pd.read_csv(root_path + scenario + task_input_file ,delimiter=';',header=0,
                                 dtype={' 6Actor': 'category',
@@ -233,13 +233,16 @@ for sector in sector_list:
 
     ax.plot(p(xp), xp, 'r-')
 
-    plt.title("Scenario Traffic " + traffic_percentage + "% EC Workload: Sector " + sector[-2:] + \
-              "\n Capacity: " + "{:.2f}".format(p(70)) + " flight/hr")
+    # plt.title("Scenario Traffic " + traffic_percentage + "% EC Workload: Sector " + sector[-2:] + \
+    #           "\n Capacity: " + "{:.2f}".format(p(70)) + " flight/hr")
+
+    plt.title(f"Scenario Traffic {traffic_percentage}% EC Workload: Sector {sector[-2:]}" + \
+              f"\n Capacity: {p(70):.2f} flight/hr")
 
     #plt.xticks(rotation=90)
     #plt.legend()
     plt.grid()
     plt.tight_layout()
-    plt.savefig(output_filepath + "Capacity-traffic_" + traffic_percentage + "_EC_" + sector + ".png")
+    plt.savefig(f"{output_filepath}Capacity-traffic_{traffic_percentage}_EC_{sector}.png")
 
 toc()

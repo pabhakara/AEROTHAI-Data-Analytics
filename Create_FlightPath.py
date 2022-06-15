@@ -8,25 +8,25 @@ from mysql.connector import Error
 # Need to connect to AEROTHAI's MySQL Server
 
 # Try to connect to the local PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
-# conn_postgres = psycopg2.connect(user = "postgres",
-#                                   password = "password",
-#                                   host = "127.0.0.1",
-#                                   port = "5432",
-#                                   database = "track")
+conn_postgres = psycopg2.connect(user = "postgres",
+                                  password = "password",
+                                  host = "127.0.0.1",
+                                  port = "5432",
+                                  database = "track")
 
 # Try to connect to the remote PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
-conn_postgres = psycopg2.connect(user = "de_old_data",
-                                  password = "de_old_data",
-                                  host = "172.16.129.241",
-                                  port = "5432",
-                                  database = "aerothai_dwh",
-                                  options="-c search_path=dbo,track")
+# conn_postgres = psycopg2.connect(user = "de_old_data",
+#                                   password = "de_old_data",
+#                                   host = "172.16.129.241",
+#                                   port = "5432",
+#                                   database = "aerothai_dwh",
+#                                   options="-c search_path=dbo,track")
 
 with conn_postgres:
 
     cursor_postgres = conn_postgres.cursor()
 
-    year_list = ['2015']
+    year_list = ['2014']
     #month_list = ['12']
     month_list = ['01']
 
@@ -35,9 +35,9 @@ with conn_postgres:
 
             t = time.time()
 
-            year_month = year + '_' + month
+            year_month = f'{year}_{month}'
 
-            table_name = "track_" + year_month + ""
+            table_name = f'track_{year_month}'
 
             center_map_latitude = 13.89
             center_map_longitude = 100.6
@@ -53,8 +53,8 @@ with conn_postgres:
             # lon_offset_scale = .3
 
             # Create an sql query that creates a new table for radar tracks in Postgres SQL database
-            postgres_sql_text = "\nDROP TABLE IF EXISTS " + table_name + "; \n" + \
-                                "CREATE TABLE " + table_name + " " + \
+            postgres_sql_text = f"DROP TABLE IF EXISTS {table_name}; \n" + \
+                                f"CREATE TABLE {table_name} " + \
                                 "(callsign character varying, flight_id integer, geom geometry, " + \
                                 "start_time timestamp without time zone, " + \
                                 "etd timestamp without time zone, " + \
@@ -96,7 +96,7 @@ with conn_postgres:
                     "b.latitude,b.longitude,b.actual_flight_level,b.cdm," + \
                     "b.sector,a.callsign,a.route,a.pbn_type,a.comnav," + \
                     "a.sidstar,a.runway,a.frule,a.reg,a.entry_flevel,a.maintain_flevel,a.exit_flevel " + \
-                    "from " + year_month + "_radar a, target_" + year_month + " b " + \
+                    f"from {year_month}_radar a, target_{year_month}  b " + \
                     "where (a.flight_id = b.flight_id) " + \
                     "and (day(a.entry_time) < 32) and (day(a.entry_time) >=1 ) " + \
                     "order by a.flight_id,b.app_time"
@@ -429,14 +429,3 @@ with conn_postgres:
                     print("MySQL connection is closed")
                     elapsed = time.time() - t
                     print('Elapsed: %s sec' % elapsed)
-
-# except (Exception, psycopg2.Error) as error :
-#     print ("Error while connecting to PostgreSQL", error)
-# finally:
-#     #closing database connection.
-#         if conn_postgres:
-#             cursor_postgres.close()
-#             conn_postgres.close()
-#             print("PostgreSQL connection is closed")
-#             elapsed = time.time() - t
-#             print('Elapsed: %s sec' % elapsed)

@@ -54,14 +54,14 @@ with conn_postgres:
 
             # Define an insert query which will read the WKB geometry and cast it to GEOMETRY type accordingly
             insert_query = """
-                INSERT INTO surv_coverage (source, type, flevel, geom)
+                INSERT INTO surv_coverage (site_id, type, flevel, geom)
                 VALUES (%(source)s, %(type)s, %(flevel)s, ST_GeomFromWKB(%(geom_wkb)s));
             """
             # Build a list of execution parameters by iterating through the GeoDataFrame
             # This is considered bad practice by the pandas community because it is slow.
             params_list = [
                 {
-                    "source": source,
+                    "site_id": source,
                     "type": type,
                     "flevel": str(fl),
                     "geom_wkb": row["geom_wkb"]
@@ -73,4 +73,3 @@ with conn_postgres:
             # Iterate through the list of execution parameters and apply them to an execution of the insert query
             for params in params_list:
                 cur.execute(insert_query, params)
-
