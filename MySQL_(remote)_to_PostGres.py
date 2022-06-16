@@ -62,12 +62,12 @@ postfix = ''
 
 # prefix = ''
 # postfix = '_radar_position_at_fix'
-years = ['2019']
+years = ['2017']
 #years = ['2015','2014','2013']
 
 for year in years:
     #for month in ['01','02','03','04','05','06','07','08','09','10','11','12']:
-    for month in ['01','02','03','04','05','06','08','09','10','11','12']:
+    for month in ['05','06','07','08','09','10','11','12']:
         text = (prefix + year + '_' + month + postfix)
         print(text)
         tables = tables + [text]
