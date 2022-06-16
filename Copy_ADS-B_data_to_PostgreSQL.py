@@ -11,12 +11,13 @@ def psql_insert_copy(table, conn, keys, data_iter):
         writer = csv.writer(s_buf)
         writer.writerows(data_iter)
         s_buf.seek(0)
-        columns = ', '.join('"{}"'.format(k) for k in keys)
+        columns = ', '.join(f'"{k}"'for k in keys)
         if table.schema:
-            table_name = '{}.{}'.format(table.schema, table.name)
+            table_name = f"{table.schema}.{table.name}"
         else:
             table_name = table.name
-        sql = 'COPY {} ({}) FROM STDIN WITH CSV'.format(table_name, columns)
+        #sql = 'COPY {} ({}) FROM STDIN WITH CSV'.format(table_name, columns)
+        sql = f"COPY {table_name} ({columns}) FROM STDIN WITH CSV"
         cur.copy_expert(sql=sql, file=s_buf)
 
 yyyymmdd = '20220321'
@@ -28,7 +29,7 @@ df_list = list()
 
 
 for filename in filenames:
-    df = pandas.read_csv('/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/Data/' + filename,low_memory=False)
+    df = pandas.read_csv(f'/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/Data/{filename}',low_memory=False)
     print(df)
     df.insert(0, "date", filename[0:7] , True)
     df_list.append(df)
@@ -53,10 +54,9 @@ combined_df = combined_df.iloc[: , :-1]
 combined_df.to_sql(table_name, engine, schema='public', method=psql_insert_copy)
 
 with conn_postgres:
-    sql_query = "drop table if exists \"adsb_" + yyyymmdd + "_geom\"; " + \
-    "select *, " + \
-    "ST_SetSRID(ST_MakePoint(\"15:wgs_lon\",\"14:wgs_lat\"),4326) AS geom " + \
-    "into \"adsb_" + yyyymmdd + "_geom\" " + \
-    "from \"adsb_" + yyyymmdd +"\"; "
+    sql_query = f"drop table if exists \"adsb_{yyyymmdd}_geom\"; " + \
+    "SELECT *, ST_SetSRID(ST_MakePoint(\"15:wgs_lon\",\"14:wgs_lat\"),4326) AS geom " + \
+    f"into \"adsb_{yyyymmdd}_geom\" " + \
+    f"from \"adsb_{yyyymmdd}\";"
     cur.execute(sql_query)
     conn_postgres.commit()
