@@ -1,6 +1,8 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
+from matplotlib.dates import DateFormatter
 
 def tic():
     #Homemade version of matlab tic and toc functions
@@ -20,7 +22,7 @@ tic()
 traffic_percentage = '100'
 
 root_path = "/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capacity Study 2022"
-scenario = f"/BANGKOK_ACC - 2022-06-13 - Traffic {traffic_percentage}%"
+scenario = f"/BANGKOK_ACC - 2022-05-27 - Traffic {traffic_percentage}%"
 output_filepath = '/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capacity Study 2022/Output Plots/'
 
 sectorcrossing_input_file = "/RUNS/12SEC_VTBS19_NO_MIL/output/sectorcrossing.out.1"
@@ -188,6 +190,11 @@ for sector in sector_list:
     ax.plot(combined_df_temp.index, combined_df_temp['Occupancy_Count'], color='k', label='Occupancy Count')
     ax.plot(combined_df_temp.index, combined_df_temp['Entry_Count'], color='b', label='Entry Count')
 
+    # hh_mm = DateFormatter('%D')
+    # ax.xaxis.set_major_formatter(hh_mm)
+
+    ax.hlines(y=70, xmin=combined_df_temp.index[0], xmax=combined_df_temp.index[-1], color='g')
+
     ax.set_xlabel('Time (UTC)')
     ax.set_ylabel('No. Flights / Workload (%)', color='k')
 
@@ -198,7 +205,10 @@ for sector in sector_list:
 
     ax.xaxis.set_minor_locator(AutoMinorLocator(1))
     ax.yaxis.set_minor_locator(AutoMinorLocator(1))
-    ax.set_ylim([0, 120])
+    ax.set_ylim([0, 100])
+    ax.set_xlim([combined_df_temp.index[0], combined_df_temp.index[-1]])
+
+
 
     num_flights = total_sector_crossing_df.loc[sector]
 

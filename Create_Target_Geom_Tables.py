@@ -8,7 +8,7 @@ conn_postgres = psycopg2.connect(user = "postgres",
                                   database = "temp")
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor()
-    year_list = ['2016']
+    year_list = ['2013']
     month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
     for year in year_list:
         for month in month_list:
