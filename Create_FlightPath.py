@@ -27,8 +27,8 @@ with conn_postgres:
     cursor_postgres = conn_postgres.cursor()
 
     year_list = ['2014']
-    #month_list = ['12']
-    month_list = ['01']
+    #month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
+    month_list = ['09','10','11','12']
 
     for year in year_list:
         for month in month_list:
@@ -45,12 +45,6 @@ with conn_postgres:
             lon_offset_scale = 0
 
             Re = 6371  # Earth Radius in km
-
-            # radar target positions (lat, long) adjustment parameters
-            # center_map_latitude = 13
-            # center_map_longitude = 101.3
-            # lat_offset_scale = .21
-            # lon_offset_scale = .3
 
             # Create an sql query that creates a new table for radar tracks in Postgres SQL database
             postgres_sql_text = f"DROP TABLE IF EXISTS {table_name}; \n" + \
@@ -106,7 +100,7 @@ with conn_postgres:
                     cursor_mysql.execute(mysql_query)
                     record = cursor_mysql.fetchall()
                     num_of_records = len(record)
-                    print("num_of_record: ",num_of_records)
+                    print(f"num_of_record: {num_of_records}")
 
                     k = 0
 
@@ -173,13 +167,13 @@ with conn_postgres:
                     flight_id_1 = str(temp_1['flight_id'])
                     flight_id_2 = str(temp_2['flight_id'])
 
-                    postgres_sql_text = "INSERT INTO \"" + table_name + "\" (\"callsign\"," + \
-                                        "\"flight_id\",\"start_time\",\"etd\",\"atd\",\"eta\",\"ata\"," + \
-                                        "\"dep\",\"dest\",\"reg\",\"actype\",\"runway\"," + \
-                                        "\"sidstar\",\"pbn_type\"," + \
-                                        "\"op_type\",\"frule\",\"comnav\",\"route\"," + \
-                                        "\"flevel\",\"entry_flevel\",\"maintain_flevel\",\"exit_flevel\"," + \
-                                        "\"geom\",\"end_time\")"
+                    postgres_sql_text = f'INSERT INTO "{table_name}"("callsign",' \
+                                        f'"flight_id","start_time","etd","atd","eta","ata",' \
+                                        f'"dep","dest","reg","actype","runway",'\
+                                        f'"sidstar","pbn_type",'\
+                                        f'"op_type","frule","comnav","route",' \
+                                        f'"flevel","entry_flevel","maintain_flevel","exit_flevel",' \
+                                        f'"geom","end_time")'
 
                     postgres_sql_text += " VALUES('" + callsign + "'," \
                             + flight_id_1 + ",'" \
@@ -274,11 +268,12 @@ with conn_postgres:
 
                         if num_of_records - k <= 2:
                             # Calculate track duration and track distance at the end
-                            postgres_sql_text = "DROP TABLE IF EXISTS " + table_name + "_length; \n" + \
-                                                "SELECT *, end_time-start_time as track_duration, ST_LengthSpheroid(geom, 'SPHEROID[\"WGS 84\",6378137,298.257223563]') / 1852 as track_length " + \
-                                                "INTO " + table_name + "_length from " + table_name + ";" + \
-                                                "DROP TABLE IF EXISTS " + table_name + ";" + \
-                                                "ALTER TABLE " + table_name + "_length RENAME TO " + table_name + ";"
+                            postgres_sql_text = f"DROP TABLE IF EXISTS {table_name}_length; \n" \
+                                                f"SELECT *, end_time-start_time as track_duration, " \
+                                                f"ST_LengthSpheroid(geom, 'SPHEROID[\"WGS 84\",6378137,298.257223563]') / 1852 as track_length " \
+                                                f"INTO {table_name}_length from {table_name};" \
+                                                f"DROP TABLE IF EXISTS {table_name};" \
+                                                f"ALTER TABLE {table_name}_length RENAME TO {table_name};"
 
                             print(postgres_sql_text)
                             cursor_postgres.execute(postgres_sql_text)
@@ -291,10 +286,11 @@ with conn_postgres:
 
                         #-----
 
-                        offset_1 = (Re ** 2 + ((center_map_latitude - float(temp_1['latitude'])) * 60 * 1.852) ** 2) ** 0.5 - Re
-                        offset_lat_1 = offset_1 * 1.852 / 60. * math.sin(math.radians((float(temp_1['latitude'])) - center_map_latitude)) \
-                                       * lat_offset_scale
-                        latitude_1 = str(float(temp_1['latitude']) + offset_lat_1)
+                        # offset_1 = (Re ** 2 + ((center_map_latitude - float(temp_1['latitude'])) * 60 * 1.852) ** 2) ** 0.5 - Re
+                        # offset_lat_1 = offset_1 * 1.852 / 60. * math.sin(math.radians((float(temp_1['latitude'])) - center_map_latitude)) \
+                        #                * lat_offset_scale
+                        # latitude_1 = str(float(temp_1['latitude']) + offset_lat_1)
+                        latitude_1 = f"{temp_1['latitude']}"
 
                         offset_2 = (Re ** 2 + ((center_map_latitude - float(temp_2['latitude'])) * 60 * 1.852) ** 2) ** 0.5 - Re
                         offset_lat_2 = offset_2 * 1.852 / 60. * math.sin(math.radians((float(temp_2['latitude'])) - center_map_latitude)) \
@@ -323,13 +319,13 @@ with conn_postgres:
 
                         if k < num_of_records:
 
-                            postgres_sql_text = "INSERT INTO \"" + table_name + "\" (\"callsign\"," + \
-                                                "\"flight_id\",\"start_time\",\"etd\",\"atd\",\"eta\",\"ata\"," + \
-                                                "\"dep\",\"dest\",\"reg\",\"actype\",\"runway\"," + \
-                                                "\"sidstar\",\"pbn_type\"," + \
-                                                "\"op_type\",\"frule\",\"comnav\",\"route\"," + \
-                                                "\"flevel\",\"entry_flevel\",\"maintain_flevel\",\"exit_flevel\"," + \
-                                                "\"geom\",\"end_time\")"
+                            postgres_sql_text = f'INSERT INTO "{table_name}"("callsign",' \
+                                                f'"flight_id","start_time","etd","atd","eta","ata",' \
+                                                f'"dep","dest","reg","actype","runway",' \
+                                                f'"sidstar","pbn_type",' \
+                                                f'"op_type","frule","comnav","route",' \
+                                                f'"flevel","entry_flevel","maintain_flevel","exit_flevel",' \
+                                                f'"geom","end_time")'
 
                             callsign = str(temp_1['callsign'])
                             app_time = str(temp_1['app_time'])

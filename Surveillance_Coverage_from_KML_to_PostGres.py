@@ -16,6 +16,7 @@ conn_postgres = psycopg2.connect(user = "postgres",
 #source_list = ['All','CMA','HTY','PSL','PUT','SVB','UBL','UDN','ROT','STN','CPN','CTR']
 source_list = ['DMK']
 type = 'SSR'
+table_name = 'surv_coverage2'
 
 with conn_postgres:
     # cursor_postgres = conn_postgres.cursor()
@@ -25,14 +26,14 @@ with conn_postgres:
 
     for source in source_list:
         print(source)
-        for fl in range(22500,50500,500):
+        for fl in range(500,22000,500):
         #for fl in range(22500,50500,500):
             print(fl)
             filename = source + "_Radar_Coverage_"+ str(fl) +"FT.kml"
             #filename = 'coverage' + str(fl) + '.kml'
 
-            path = f'/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/Radar Coverage/Radar_Coverage/' \
-                  + f'{source}_Radar_Coverage/{filename}'
+            path = f"/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/Radar Coverage" \
+                   f"/Radar_Coverage/{source}_Radar_Coverage/{filename}"
             #All Radar coverage 500.kml'
 
             # Read file
@@ -53,15 +54,15 @@ with conn_postgres:
             insert_gdf["geom_wkb"] = insert_gdf["geometry"].apply(lambda x: wkb_dumps(x))
 
             # Define an insert query which will read the WKB geometry and cast it to GEOMETRY type accordingly
-            insert_query = """
-                INSERT INTO surv_coverage (site_id, type, flevel, geom)
+            insert_query = f"""
+                INSERT INTO {table_name} (site_id, type, flevel, geom)
                 VALUES (%(source)s, %(type)s, %(flevel)s, ST_GeomFromWKB(%(geom_wkb)s));
             """
             # Build a list of execution parameters by iterating through the GeoDataFrame
             # This is considered bad practice by the pandas community because it is slow.
             params_list = [
                 {
-                    "site_id": source,
+                    "source": source,
                     "type": type,
                     "flevel": str(fl),
                     "geom_wkb": row["geom_wkb"]
@@ -73,3 +74,10 @@ with conn_postgres:
             # Iterate through the list of execution parameters and apply them to an execution of the insert query
             for params in params_list:
                 cur.execute(insert_query, params)
+    cursor_postgres = conn_postgres.cursor()
+    postgres_sql_text = f"ALTER TABLE {table_name} " \
+                        f"ALTER COLUMN geom " \
+                        f"TYPE geometry(MultiPolygon, 4326) " \
+                        f"USING ST_SetSRID(geom, 4326); "
+    cursor_postgres.execute(postgres_sql_text)
+    conn_postgres.commit()

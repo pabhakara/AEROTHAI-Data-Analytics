@@ -29,7 +29,7 @@ mysql_db = 'flight'
 
 #mysql = '''show tables from flight_vtbd'''
 
-mysql = 'show tables from ' + mysql_db
+mysql = f'show tables from {mysql_db}'
 
 
 dbx.execute(mysql)
@@ -51,29 +51,30 @@ tables = []
 # prefix = ''
 # postfix = '_radar'
 
-# prefix = ''
-# postfix = '_fdmc'
+prefix = ''
+postfix = '_fdmc'
 
-prefix = 'target_'
-postfix = ''
+# prefix = 'target_'
+# postfix = ''
 
 # prefix = 'distances_'
 # postfix = ''
 
 # prefix = ''
 # postfix = '_radar_position_at_fix'
-years = ['2013']
-#years = ['2015','2014','2013']
 
-for year in years:
-    for month in ['01','02','03','04','05','06','07','08','09','10','11','12']:
-    #for month in ['03','04','05','06','07','08','09','10','11','12']:
-        text = (prefix + year + '_' + month + postfix)
+year_list = ['2014']
+#month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
+month_list = ['02']
+
+for year in year_list:
+    for month in month_list:
+        text = f"{prefix}{year}_{month}{postfix}"
         print(text)
         tables = tables + [text]
 
 for table in tables:
-    mysql = 'describe '+ mysql_db + '.%s' % (table)
+    mysql = f'describe {mysql_db}.{table}'
     dbx.execute(mysql)
     rows = dbx.fetchall()
     print(rows)
@@ -81,7 +82,7 @@ for table in tables:
     # DC.execute(psql)
     #DB.commit()
 
-    psql = 'create table "%s"( ' % (table) + ''
+    psql = f'create table "{table}" ('
     for row in rows:
         name = row[0]
         type = row[1] #.decode('ascii')
@@ -92,7 +93,7 @@ for table in tables:
         if 'varchar' in type: type='character varying'
         if 'enum' in type:
             print("warning : conversion of enum to varchar %s(%s)" % (table, name))
-        psql += '%s %s,' % (name, type)
+        psql += f'{name} {type},'
     psql = psql.strip(',') + ')'
     print(psql)
 
@@ -101,7 +102,8 @@ for table in tables:
         print(e)
         DB.rollback()
 
-    msql = 'select * from '+ mysql_db  + '.%s' % (table)
+    #msql = f'select * from '+ mysql_db  + '.%s' % (table)
+    msql = f'select * from {mysql_db}.{table}'
     dbx.execute(msql)
     rows = dbx.fetchall()
     n = len(rows)
@@ -114,7 +116,7 @@ for table in tables:
     for row in rows:
         print(row)
         ps = ', '.join(['%s'] * cols)
-        psql = '''insert into "%s" values(%s)''' % (table, ps)
+        psql = f'insert into "{table}" values({ps})'
         print(psql)
         DC.execute(psql, (row))
         n = n - 1

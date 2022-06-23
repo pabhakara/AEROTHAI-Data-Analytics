@@ -14,7 +14,7 @@ def tic():
 def toc():
     import time
     if 'startTime_for_tictoc' in globals():
-        print("Elapsed time is " + str(time.time() - startTime_for_tictoc) + " seconds.")
+        print(f"Elapsed time is {time.time() - startTime_for_tictoc} seconds.")
     else:
         print("Toc: start time not set")
 
@@ -33,7 +33,7 @@ for iter_num in range(1,10):
     sectorcrossing_input_file = f"/RUNS/12SEC_VTBS19_NO_MIL/output/sectorcrossing.out.{iter_num}"
     print(sectorcrossing_input_file)
 
-    sectorcrossing_df = pd.read_csv(root_path + scenario + sectorcrossing_input_file,
+    sectorcrossing_df = pd.read_csv(f'{root_path}{scenario}{sectorcrossing_input_file}',
                                 delimiter=';',header=0,
                                 dtype={' 13ActualEntryHH': 'S',
                                        ' 14ActualExitHH': 'S',
