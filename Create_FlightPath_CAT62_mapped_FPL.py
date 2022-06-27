@@ -24,8 +24,10 @@ with conn_postgres_target:
     cursor_postgres_target = conn_postgres_target.cursor()
 
     year_list = ['2022']
-    month_list = ['04']
-    day_list = ['25','26','27','28','29','30']
+    #month_list = ['04']
+    month_list = ['05']
+    #day_list = ['24','25','26','27','28','29','30']
+    day_list = ['01','02','03','04','05','06']
 
     for year in year_list:
         for month in month_list:
