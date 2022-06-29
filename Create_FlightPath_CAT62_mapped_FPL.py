@@ -12,11 +12,18 @@ def none_to_null(etd):
 
 # Create a connection to the remote PostGresSQL database in which we will store our trajectories
 # created from ASTERIX Cat062 targets.
-conn_postgres_target = psycopg2.connect(user = "de_old_data",
-                                  password = "de_old_data",
-                                  host = "172.16.129.241",
+# conn_postgres_target = psycopg2.connect(user = "de_old_data",
+#                                   password = "de_old_data",
+#                                   host = "172.16.129.241",
+#                                   port = "5432",
+#                                   database = "aerothai_dwh",
+#                                   options="-c search_path=dbo,public")
+
+conn_postgres_target = psycopg2.connect(user = "postgres",
+                                  password = "password",
+                                  host = "127.0.0.1",
                                   port = "5432",
-                                  database = "aerothai_dwh",
+                                  database = "temp",
                                   options="-c search_path=dbo,public")
 
 with conn_postgres_target:
@@ -27,7 +34,7 @@ with conn_postgres_target:
     #month_list = ['04']
     month_list = ['05']
     #day_list = ['24','25','26','27','28','29','30']
-    day_list = ['01','02','03','04','05','06']
+    day_list = ['01']
 
     for year in year_list:
         for month in month_list:
@@ -339,8 +346,13 @@ with conn_postgres_target:
                                     f"INTO track.track_cat62_{yyyymmdd} " \
                                     f"FROM track.track_{yyyymmdd}_temp " \
                                     f"LEFT JOIN flight_data.flight_{yyyymm} ON " \
-                                    f"track.track_{yyyymmdd}_temp.flight_id = flight_data.flight_{yyyymm}.id;" \
-                                    f"DROP TABLE IF EXISTS track.track_{yyyymmdd}_temp;" \
+                                    f"track.track_{yyyymmdd}_temp.flight_id = flight_data.flight_{yyyymm}.id;"
+
+                print(postgres_sql_text)
+                cursor_postgres_target.execute(postgres_sql_text)
+                conn_postgres_target.commit()
+
+                postgres_sql_text = f"DROP TABLE IF EXISTS track.track_{yyyymmdd}_temp;" \
                                     f"GRANT SELECT ON ALL TABLES IN SCHEMA track TO public;"
                 print(postgres_sql_text)
                 cursor_postgres_target.execute(postgres_sql_text)

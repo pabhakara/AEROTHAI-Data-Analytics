@@ -86,3 +86,21 @@ where st_length(geom) > 300;
 delete
 from star_legs_without_rf
 where st_length(geom) > 300;
+
+do
+$$
+declare
+   stmt text;
+   table_rec record;
+begin
+   for table_rec in (SELECT c.relname as tname
+                     FROM pg_catalog.pg_class c
+                       LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+                     WHERE c.relkind IN ('r','')
+                       AND n.nspname LIKE 'public'
+                       AND c.relname like 'tbl%')
+   loop
+     execute 'drop table public.'||table_rec.tname||' cascade';
+   end loop;
+end;
+$$

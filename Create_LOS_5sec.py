@@ -24,10 +24,10 @@ with conn_postgres:
     cursor_postgres = conn_postgres.cursor()
 
     year_list = ['2022']
-    month_list = ['04']
-    #month_list = ['05']
-    day_list = ['24','25','26','27','28','29','30']
-    #day_list = ['01','02','03','04','05','06']
+    #month_list = ['04']
+    month_list = ['05']
+    #day_list = ['24','25','26','27','28','29','30']
+    day_list = ['01','02','03','04','05','06']
     for year in year_list:
         for month in month_list:
             for day in day_list:
@@ -74,9 +74,8 @@ with conn_postgres:
                                     f"DROP TABLE IF EXISTS los.los_{year}_{month}_{day}; " \
                                     f"ALTER TABLE los.los_{year}_{month}_{day}_temp " \
                                     f"RENAME TO los_{year}_{month}_{day};" \
-                                    f"ALTER TABLE los_{year}_{month}_{day} " \
-                                    f"DROP \"flight_key_a\",DROP \"flight_key_b\"," \
-                                    f"DROP \"flight_id_a\",DROP \"flight_id_b\";"
+                                    f"DELETE FROM los_{year}_{month}_{day} " \
+                                    f"WHERE (frule_a = 'V' and frule_b = 'V');"
                 print(postgres_sql_text)
                 cursor_postgres.execute(postgres_sql_text)
                 conn_postgres.commit()

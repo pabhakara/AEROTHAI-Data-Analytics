@@ -12,12 +12,19 @@ def none_to_null(etd):
 
 # Create a connection to the remote PostGresSQL database in which we will store our trajectories
 # created from ASTERIX Cat062 targets.
-conn_postgres_target = psycopg2.connect(user = "de_old_data",
-                                  password = "de_old_data",
-                                  host = "172.16.129.241",
+# conn_postgres_target = psycopg2.connect(user = "de_old_data",
+#                                   password = "de_old_data",
+#                                   host = "172.16.129.241",
+#                                   port = "5432",
+#                                   database = "aerothai_dwh",
+#                                   options="-c search_path=dbo,public")
+
+# Try to connect to the local PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
+conn_postgres_target = psycopg2.connect(user = "postgres",
+                                  password = "password",
+                                  host = "127.0.0.1",
                                   port = "5432",
-                                  database = "aerothai_dwh",
-                                  options="-c search_path=dbo,public")
+                                  database = "surv_coverage")
 
 with conn_postgres_target:
 
@@ -27,7 +34,7 @@ with conn_postgres_target:
     #month_list = ['04']
     month_list = ['05']
     #day_list = ['24','25','26','27','28','29','30']
-    day_list = ['05','06']
+    day_list = ['01']
 
     for year in year_list:
         for month in month_list:
@@ -45,18 +52,14 @@ with conn_postgres_target:
                 yyyymmdd_previous = str(previous_day.year).zfill(2) + str(previous_day.month).zfill(2) + str(previous_day.day).zfill(2)
 
                 # Create an sql query that creates a new table for radar tracks in the target PostgreSQL database
-                postgres_sql_text = f"DROP TABLE IF EXISTS track_{yyyymmdd}_raw; \n" + \
-                                    f"CREATE TABLE track_{yyyymmdd}_raw " + \
-                                    "(acid character varying, " \
-                                    "track_no integer, " \
-                                    "geom geometry, " + \
+                postgres_sql_text = f"DROP TABLE IF EXISTS track_{yyyymmdd}_by_sector; \n" + \
+                                    f"CREATE TABLE track_{yyyymmdd}_by_sector " + \
+                                    "(geom geometry, " + \
+                                    "dep character varying, " + \
+                                    "dest character varying, " + \
                                     "start_time timestamp without time zone, " + \
                                     "end_time timestamp without time zone, " + \
-                                    "icao_24bit_dap character varying," + \
-                                    "mode_a_code character varying," + \
-                                    "dep character varying, " \
-                                    "dest character varying," \
-                                    "flight_id integer," \
+                                    "sector character varying," \
                                     "flight_key character varying)" + \
                                     "WITH (OIDS=FALSE);"
 
@@ -90,9 +93,11 @@ with conn_postgres_target:
                                         "flight_id," + \
                                         "latitude," + \
                                         "longitude," + \
+                                        "sector," + \
                                         "measured_fl \n" + \
                                         f"FROM sur_air.cat062_{yyyymmdd_next} \n " + \
                                         "WHERE not(latitude is NULL) \n" + \
+                                        "AND NOT(flight_key is NULL) \n" + \
                                         "AND concat(track_no, acid, mode_a_code) IN \n" \
                                         "(SELECT distinct concat(track_no, acid, mode_a_code) \n" \
                                         "from \n" \
@@ -101,27 +106,29 @@ with conn_postgres_target:
                                         "(SELECT track_no, acid, mode_a_code, temp, count(*) \n" \
                                         "from \n" \
                                         f"(SELECT 'a' as temp, * FROM sur_air.cat062_{yyyymmdd_next}" \
-                                        "\n WHERE app_time < \'" + \
+                                        "\n WHERE time_of_track < \'" + \
                                         f"{str(next_day.year).zfill(2)}-" + \
                                         f"{str(next_day.month).zfill(2)}-" + \
                                         f"{str(next_day.day).zfill(2)} " \
                                         " 00:00:30\' \n " \
-                                        "AND  NOT(latitude IS NULL) \n" \
+                                        "AND NOT(latitude IS NULL) \n" \
+                                        "AND NOT(flight_key is NULL) \n" + \
                                         "UNION \n" \
                                         "SELECT 'b' as temp, * \n FROM " \
                                         f"sur_air.cat062_{yyyymmdd}"  \
-                                        f"\n WHERE app_time > '{year}-{month}-{day} 23:59:30' \n" \
+                                        f"\n WHERE time_of_track > '{year}-{month}-{day} 23:59:30' \n" \
                                         "AND  NOT(latitude IS NULL) \n" \
-                                        "ORDER BY track_no, app_time ) a \n" \
+                                        "ORDER BY flight_key, time_of_track ASC) a \n" \
                                         "GROUP BY track_no, acid, mode_a_code, temp) b \n" \
                                         "GROUP BY track_no, acid, mode_a_code) c \n" \
                                         "WHERE count = 2) \n" \
                                         "UNION \n" \
                                         "SELECT " \
                                         "track_no, time_of_track, icao_24bit_dap, mode_a_code, acid, " \
-                                        "acid_dap, dep, dest, flight_key, flight_id, latitude, longitude, measured_fl \n" \
+                                        "acid_dap, dep, dest, flight_key, flight_id, latitude, longitude, sector, measured_fl \n" \
                                         f"FROM sur_air.cat062_{yyyymmdd}\n"\
                                         "WHERE NOT (latitude is NULL) " \
+                                        "AND NOT(flight_key is NULL) \n" + \
                                         "AND NOT concat(track_no, acid, mode_a_code) IN \n" \
                                         "(SELECT distinct concat(track_no, acid, mode_a_code) \n" \
                                         "from \n" \
@@ -130,22 +137,24 @@ with conn_postgres_target:
                                         "(SELECT track_no, acid, mode_a_code, temp, count(*) \n" \
                                         "from \n" \
                                         f"(SELECT 'a' as temp, * FROM sur_air.cat062_{yyyymmdd_previous}" \
-                                        "\n WHERE app_time > '" + \
+                                        "\n WHERE time_of_track > '" + \
                                         f"{str(previous_day.year).zfill(2)}-" \
                                         f"{str(previous_day.month).zfill(2)}-" \
                                         f"{str(previous_day.day).zfill(2)}" \
                                         " 23:59:30' \n " \
                                         "AND NOT(latitude IS NULL) \n" \
+                                        "AND NOT(flight_key is NULL) \n" + \
                                         "UNION \n" \
                                         "SELECT 'b' as temp, * \n FROM " \
                                         f"sur_air.cat062_{yyyymmdd}" \
-                                        f"\n WHERE app_time < '{year}-{month}-{day} 00:00:30' \n" \
+                                        f"\n WHERE time_of_track < '{year}-{month}-{day} 00:00:30' \n" \
                                         "AND NOT(latitude IS NULL) \n" \
-                                        "ORDER BY track_no, app_time ) a \n" \
+                                        "AND NOT(flight_key is NULL) \n" + \
+                                        "ORDER BY flight_key, time_of_track ASC) a \n" \
                                         "GROUP BY track_no, acid, mode_a_code, temp) b \n" \
                                         "GROUP BY track_no, acid, mode_a_code) c \n" \
                                         "WHERE count = 2) \n" \
-                                        "ORDER BY track_no, time_of_track ASC;"
+                                        "ORDER BY flight_key,time_of_track ASC;"
 
                     #print(postgres_sql_text)
                     cursor_postgres_source.execute(postgres_sql_text)
@@ -164,6 +173,8 @@ with conn_postgres_target:
 
                     dep = none_to_null(str(temp_1['dep']))
                     dest = none_to_null(str(temp_1['dest']))
+
+                    sector = none_to_null(str(temp_1['sector']))
 
                     flight_key = none_to_null(str(temp_1['flight_key']))
                     flight_id = none_to_null(str(temp_1['flight_id']))
@@ -184,27 +195,25 @@ with conn_postgres_target:
                     longitude_1 = str(float(temp_1['longitude']))
                     longitude_2 = str(float(temp_1['longitude']))
 
-
-                    postgres_sql_text = f"INSERT INTO \"track_{yyyymmdd}_raw\" (\"acid\"," + \
-                                        "\"track_no\"," \
-                                        "\"icao_24bit_dap\"," \
-                                        "\"mode_a_code\", \"start_time\"," + \
-                                        "\"dep\",\"dest\",\"flight_key\",\"flight_id\"," + \
+                    postgres_sql_text = f"INSERT INTO \"track_{yyyymmdd}_by_sector\" (\"start_time\"," + \
+                                        "\"sector\"," \
+                                        "\"flight_key\"," + \
+                                        "\"dep\"," \
+                                        "\"dest\"," + \
                                         "\"geom\",\"end_time\")"
 
-                    postgres_sql_text += f" VALUES({acid}," \
-                                         f"{track_no}," \
-                                         f"{icao_24bit_dap}," \
-                                         f"{mode_a_code},'" \
-                                         f"{app_time}'," \
+                    postgres_sql_text += f" VALUES('{app_time}'," \
+                                         f"{sector}," \
+                                         f"{flight_key}," \
                                          f"{dep}," \
                                          f"{dest}," \
-                                         f"{flight_key}," \
-                                         f"{flight_id}," \
                                          f"ST_LineFromText('LINESTRING("
 
                     app_time_1 = str(temp_1['time_of_track'])
                     app_time_2 = str(temp_2['time_of_track'])
+
+                    sector_1 = str(temp_1['sector'])
+                    sector_2 = str(temp_2['sector'])
 
                     measured_fl_1 = str(temp_1['measured_fl'])
                     if measured_fl_1 == 'None':
@@ -214,13 +223,11 @@ with conn_postgres_target:
                         measured_fl_2 = "-1"
 
                     while k < num_of_records - 1:
-                        while (temp_1['track_no'] == temp_2['track_no']) and \
-                                (temp_1['icao_24bit_dap'] == temp_2['icao_24bit_dap']) and \
-                                (temp_1['mode_a_code'] == temp_2['mode_a_code']) and \
-                                (temp_1['acid'] == temp_2['acid']) and \
+                        while (temp_1['flight_key'] == temp_2['flight_key']) and \
                                 abs(temp_2['longitude'] - temp_1['longitude']) < 1 and \
                             abs(temp_2['latitude'] - temp_1['latitude']) < 1 and \
-                            (temp_2['time_of_track'] - temp_1['time_of_track']) <= dt.timedelta(minutes=1):
+                            (temp_2['time_of_track'] - temp_1['time_of_track']) <= dt.timedelta(minutes=1) and \
+                                (temp_1['sector'] == temp_2['sector']):
                             #abs(temp_2['longitude'] - temp_1['longitude']) < 1 and \
                             #abs(temp_2['latitude'] - temp_1['latitude']) < 1:
 
@@ -248,18 +255,19 @@ with conn_postgres_target:
 
                         cursor_postgres_target.execute(postgres_sql_text)
                         conn_postgres_target.commit()
-                        print('track_' + yyyymmdd + str("_raw {:.3f}".format((k / num_of_records) * 100,2)) + "% Completed")
+                        print('track_' + yyyymmdd + str("_by_sector {:.3f}".format((k / num_of_records) * 100,2)) + "% Completed")
 
                         if num_of_records - k <= 2:
                             # Calculate track duration and track distance at the end
-                            postgres_sql_text = f"DROP TABLE IF EXISTS track_{yyyymmdd}_raw_length; \n" + \
+                            postgres_sql_text = f"DROP TABLE IF EXISTS track_{yyyymmdd}_by_sector_length; \n" + \
                                                 "SELECT *, end_time-start_time as track_duration, " \
-                                                "ST_LengthSpheroid(geom, 'SPHEROID[\"WGS 84\",6378137,298.257223563]') / 1852 as track_length " + \
-                                                f"INTO track_{yyyymmdd}_raw_length from track_{yyyymmdd}_raw;" + \
-                                                f"DROP TABLE IF EXISTS track_{yyyymmdd}_raw;" + \
-                                                f"ALTER TABLE track_{yyyymmdd}_raw_length RENAME TO track_{yyyymmdd}_raw;"
+                                                "EXTRACT(EPOCH from end_time-start_time)/60 as minutes_in_sector, " \
+                                                "ST_LengthSpheroid(geom, 'SPHEROID[\"WGS 84\",6378137,298.257223563]') / 1852 as nm_in_sector " + \
+                                                f"INTO track_{yyyymmdd}_by_sector_length from track_{yyyymmdd}_by_sector;" + \
+                                                f"DROP TABLE IF EXISTS track_{yyyymmdd}_by_sector;" + \
+                                                f"ALTER TABLE track_{yyyymmdd}_by_sector_length RENAME TO track_{yyyymmdd}_by_sector;"
 
-                            #print(postgres_sql_text)
+                            print(postgres_sql_text)
                             cursor_postgres_target.execute(postgres_sql_text)
                             conn_postgres_target.commit()
                             break
@@ -288,19 +296,14 @@ with conn_postgres_target:
 
                         if k < num_of_records:
 
-                            postgres_sql_text = f"INSERT INTO \"track_{yyyymmdd}_raw\" (\"acid\"," + \
-                                                "\"track_no\"," \
-                                                "\"icao_24bit_dap\"," \
-                                                "\"mode_a_code\", \"start_time\"," + \
-                                                "\"dep\",\"dest\",\"flight_key\",\"flight_id\"," + \
-                                                "\"geom\",\"end_time\")"
-
                             acid = none_to_null(str(temp_1['acid']))
 
                             app_time = str(temp_1['time_of_track'])
 
                             dep = none_to_null(str(temp_1['dep']))
                             dest = none_to_null(str(temp_1['dest']))
+
+                            sector = none_to_null(str(temp_1['sector']))
 
                             flight_key = none_to_null(str(temp_1['flight_key']))
                             flight_id = none_to_null(str(temp_1['flight_id']))
@@ -310,28 +313,31 @@ with conn_postgres_target:
 
                             track_no = str(temp_1['track_no'])
 
-                            postgres_sql_text += f" VALUES({acid}," \
-                                                 f"{track_no}," \
-                                                 f"{icao_24bit_dap}," \
-                                                 f"{mode_a_code},'" \
-                                                 f"{app_time}'," \
+                            postgres_sql_text = f"INSERT INTO \"track_{yyyymmdd}_by_sector\" (\"start_time\"," + \
+                                                "\"sector\"," \
+                                                "\"flight_key\"," + \
+                                                "\"dep\"," \
+                                                "\"dest\"," + \
+                                                "\"geom\",\"end_time\")"
+
+                            postgres_sql_text += f" VALUES('{app_time}'," \
+                                                 f"{sector}," \
+                                                 f"{flight_key}," \
                                                  f"{dep}," \
                                                  f"{dest}," \
-                                                 f"{flight_key}," \
-                                                 f"{flight_id}," \
                                                  f"ST_LineFromText('LINESTRING("
                         else:
                             break
 
-                postgres_sql_text = f"DROP TABLE IF EXISTS track.track_{yyyymmdd}_raw;"  \
-                                    f"ALTER TABLE public.track_{yyyymmdd}_raw SET SCHEMA track;"
-                print(postgres_sql_text)
-                cursor_postgres_target.execute(postgres_sql_text)
-                conn_postgres_target.commit()
+                # postgres_sql_text = f"DROP TABLE IF EXISTS track.track_{yyyymmdd}_by_sector;"  \
+                #                     f"ALTER TABLE public.track_{yyyymmdd}_by_sector SET SCHEMA track;"
+                # print(postgres_sql_text)
+                # cursor_postgres_target.execute(postgres_sql_text)
+                # conn_postgres_target.commit()
 
-                postgres_sql_text = f"GRANT SELECT ON ALL TABLES IN SCHEMA track TO public;"
-                print(postgres_sql_text)
-                cursor_postgres_target.execute(postgres_sql_text)
-                conn_postgres_target.commit()
+                # postgres_sql_text = f"GRANT SELECT ON ALL TABLES IN SCHEMA track TO public;"
+                # print(postgres_sql_text)
+                # cursor_postgres_target.execute(postgres_sql_text)
+                # conn_postgres_target.commit()
 
 
