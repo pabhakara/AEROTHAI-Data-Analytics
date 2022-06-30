@@ -4,7 +4,7 @@
 db_name = 'temp'
 
 #db_name = 'test'
-schema_name = 'airac_current_vt'
+schema_name = 'public'
 
 path_script = "/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics/"
 airac = '_2206'
