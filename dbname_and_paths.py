@@ -1,7 +1,7 @@
 # db_name = 'aerothai_dwh'
 # schema_name = 'navigraph_current_airac'
 #db_name = 'current_airac'
-db_name = 'temp'
+db_name = 'navigraph'
 
 #db_name = 'test'
 schema_name = 'public'

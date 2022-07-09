@@ -21,6 +21,7 @@ dbx = db.cursor()
 #                                   options="-c search_path=dbo,flight_data")
 
 DB = psycopg2.connect("dbname='temp'")
+
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
 
@@ -51,11 +52,11 @@ tables = []
 # prefix = ''
 # postfix = '_radar'
 
-prefix = ''
-postfix = '_fdmc'
+# prefix = ''
+# postfix = '_fdmc'
 
-# prefix = 'target_'
-# postfix = ''
+prefix = 'target_'
+postfix = ''
 
 # prefix = 'distances_'
 # postfix = ''
@@ -63,9 +64,9 @@ postfix = '_fdmc'
 # prefix = ''
 # postfix = '_radar_position_at_fix'
 
-year_list = ['2014']
+year_list = ['2019']
 #month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
-month_list = ['02']
+month_list = ['07_new']
 
 for year in year_list:
     for month in month_list:

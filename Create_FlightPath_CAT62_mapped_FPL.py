@@ -32,9 +32,9 @@ with conn_postgres_target:
 
     year_list = ['2022']
     #month_list = ['04']
-    month_list = ['05']
+    month_list = ['07']
     #day_list = ['24','25','26','27','28','29','30']
-    day_list = ['01']
+    day_list = ['01','02','03']
 
     for year in year_list:
         for month in month_list:
@@ -73,8 +73,8 @@ with conn_postgres_target:
 
                 # Create a connection to the schema in the remote PostgreSQL database
                 # where the source data tables are located.
-                conn_postgres_source = psycopg2.connect(user="de_old_data",
-                                             password="de_old_data",
+                conn_postgres_source = psycopg2.connect(user="pongabhaab",
+                                             password="pongabhaab",
                                              host="172.16.129.241",
                                              port="5432",
                                              database="aerothai_dwh",
@@ -346,7 +346,7 @@ with conn_postgres_target:
                                     f"INTO track.track_cat62_{yyyymmdd} " \
                                     f"FROM track.track_{yyyymmdd}_temp " \
                                     f"LEFT JOIN flight_data.flight_{yyyymm} ON " \
-                                    f"track.track_{yyyymmdd}_temp.flight_id = flight_data.flight_{yyyymm}.id;"
+                                    f"track.track_{yyyymmdd}_temp.flight_key = flight_data.flight_{yyyymm}.flight_key;"
 
                 print(postgres_sql_text)
                 cursor_postgres_target.execute(postgres_sql_text)
