@@ -30,12 +30,12 @@ conn_postgres = psycopg2.connect(
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    table_name = 'holding_iap_legs' + airac
+    table_name = 'holding_iap_legs'
     table_name2 = table_name + '_geom'
 
     postgres_sql_text = "DROP TABLE IF EXISTS " + table_name + "; \n" + \
                         "CREATE TABLE " + table_name + " " + \
-                        "(LIKE holdings" + airac + ")" + \
+                        "(LIKE holdings" + ")" + \
                         "WITH (OIDS=FALSE); \n" + \
                         "ALTER TABLE " + table_name + " " \
                         "OWNER TO postgres;"

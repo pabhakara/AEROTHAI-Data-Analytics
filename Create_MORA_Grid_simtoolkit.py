@@ -2,7 +2,7 @@ import psycopg2.extras
 
 from dbname_and_paths import db_name,airac,schema_name
 
-table_name = 'mora_grid' + airac
+table_name = 'mora_grid'
 
 conn = psycopg2.connect(
     user='postgres', password='password',

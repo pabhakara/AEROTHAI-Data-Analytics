@@ -14,7 +14,7 @@ def toc():
         print("Toc: start time not set")
 tic()
 
-from dbname_and_paths import db_name,path_script,schema_name
+from dbname_and_paths import db_name,path_script,schema_name,airac
 
 #
 # # #establishing the connection
@@ -33,6 +33,9 @@ from dbname_and_paths import db_name,path_script,schema_name
 
 #Populating the database with simtoolkit navdata from sqlite file
 exec(open(path_script + 'SQLite_File_to_PostgreSQL.py').read())
+
+print(db_name)
+print(schema_name)
 
 # #establishing the connection
 conn2 = psycopg2.connect(
@@ -89,6 +92,32 @@ cursor3 = conn3.cursor()
 
 sql_file = open(path_script + 'clean_up_legs.sql', 'r')
 cursor3.execute(sql_file.read())
+
+
+
+conn_postgres = psycopg2.connect(user = "postgres",
+                                  password = "password",
+                                  host = "127.0.0.1",
+                                  port = "5432",
+                                  database = "track")
+
+
+postgres_sql_text = f"CREATE SCHEMA airac_{airac};" \
+                    "DO " \
+                    "$$ " \
+                    "DECLARE " \
+                    "row record; " \
+                    "BEGIN " \
+                    "FOR row IN SELECT tablename FROM pg_tables " \
+                    "WHERE schemaname = 'public' and NOT(tablename like 'spat%') " \
+                    "LOOP " \
+                    f"EXECUTE 'DROP TABLE IF EXISTS airac_{airac}.' || quote_ident(row.tablename) || ' ;'; " \
+                    f"EXECUTE 'ALTER TABLE public.' || quote_ident(row.tablename) || ' SET SCHEMA airac_{airac};'; " \
+                    " END LOOP; " \
+                    "END; " \
+                    "$$;"
+cursor3.execute(postgres_sql_text)
+conn3.commit()
 conn3.close()
 
 # sql_file = open(path_script + 'clean_up_legs_vt.sql', 'r')

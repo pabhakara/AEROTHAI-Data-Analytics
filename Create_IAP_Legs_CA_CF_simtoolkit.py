@@ -26,7 +26,7 @@ conn_postgres = psycopg2.connect(
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    table_name = 'iap_legs_rf' + airac
+    table_name = 'iap_legs_rf'
 
     postgres_sql_text = "DROP TABLE IF EXISTS " + table_name + "; \n" + \
                         "CREATE TABLE " + table_name + " " + \

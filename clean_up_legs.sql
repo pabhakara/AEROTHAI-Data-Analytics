@@ -113,15 +113,3 @@ begin
 end;
 $$;
 
-DO
-$$
-DECLARE
-    row record;
-BEGIN
-    FOR row IN SELECT tablename FROM pg_tables WHERE schemaname = 'public' and NOT(tablename like 'spat%')
-    LOOP
-        EXECUTE 'DROP TABLE IF EXISTS airac_current.' || quote_ident(row.tablename) || ' ;';
-        EXECUTE 'ALTER TABLE public.' || quote_ident(row.tablename) || ' SET SCHEMA airac_current;';
-    END LOOP;
-END;
-$$;
