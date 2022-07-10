@@ -1,6 +1,6 @@
 import psycopg2.extras
 
-from dbname_and_paths import db_name,airac,schema_name
+from autoprocess_simtoolkit import db_name, path_db, schema_name
 
 table_name = 'mora_grid'
 

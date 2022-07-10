@@ -20,10 +20,11 @@ db_name = 'navigraph'
 #db_name = 'test'
 schema_name = 'public'
 
-airac_list = ['2106','2107','2108','2109','2110','2111','2112','2201','2202','2203']
+#airac_list = ['2106','2107','2108','2109','2110','2111','2112','2201','2202','2203']
+airac_list = ['2201','2202','2203']
 
 for airac in airac_list:
-    print(airac)
+
     path_script = "/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics/"
 
     path_db = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/NavData/simtoolkitpro_native_' + airac +'/'
@@ -110,6 +111,8 @@ for airac in airac_list:
     #                                   host = "127.0.0.1",
     #                                   port = "5432",
     #                                   database = "track")
+
+    print(airac)
 
     postgres_sql_text = f"CREATE SCHEMA airac_{airac};" \
                         "DO " \

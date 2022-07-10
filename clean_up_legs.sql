@@ -106,7 +106,8 @@ begin
                        LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
                      WHERE c.relkind IN ('r','')
                        AND n.nspname LIKE 'public'
-                       AND c.relname like 'tbl%')
+                       AND c.relname like 'tbl%'
+                       AND NOT (c.relname like '%header%'))
    loop
      execute 'DROP TABLE IF EXISTS public.'||table_rec.tname||' cascade';
    end loop;
