@@ -1,6 +1,6 @@
 import psycopg2
 
-from dbname_and_paths import db_name,airac,schema_name
+from autoprocess_simtoolkit import db_name, airac,schema_name
 
 table_name = 'airways'
 

@@ -1,7 +1,7 @@
 import psycopg2.extras
 
 # Try to connect to the local PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
-from dbname_and_paths import db_name, airac,schema_name
+from autoprocess_simtoolkit import db_name, airac,schema_name
 
 conn_postgres = psycopg2.connect(
     user='postgres', password='password',
