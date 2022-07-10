@@ -14,116 +14,124 @@ def toc():
         print("Toc: start time not set")
 tic()
 
-from dbname_and_paths import db_name,path_script,schema_name,airac
+#from dbname_and_paths import db_name,path_script,schema_name,airac
 
-#
-# # #establishing the connection
-# conn = psycopg2.connect(
-#    database="postgres", user='postgres', password='password', host='127.0.0.1', port= '5432'
-# )
-# conn.autocommit = True
-# #Creating a cursor object using the cursor() method
-# cursor = conn.cursor()
-# #Preparing query to create a database
-# sql = 'CREATE database ' + db_name + ';'
-# #Creating a database
-# cursor.execute(sql)
-# print("Database created successfully........")
-# conn.close()
+db_name = 'navigraph'
+#db_name = 'test'
+schema_name = 'public'
 
-#Populating the database with simtoolkit navdata from sqlite file
-exec(open(path_script + 'SQLite_File_to_PostgreSQL.py').read())
+airac_list = ['2106','2107','2108','2109','2110','2111','2112','2201','2202','2203']
 
-print(db_name)
-print(schema_name)
+for airac in airac_list:
+    print(airac)
+    path_script = "/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics/"
 
-# #establishing the connection
-conn2 = psycopg2.connect(
-    user='postgres', password='password',
-    host='127.0.0.1', port='5432',
-    database=db_name,
-    options="-c search_path=dbo," + schema_name
-)
+    path_db = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/NavData/simtoolkitpro_native_' + airac +'/'
 
-# conn2 = psycopg2.connect(user = "de_old_data",
-#                                   password = "de_old_data",
-#                                   host = "172.16.129.241",
-#                                   port = "5432",
-#                                   database = "aerothai_dwh",
-#                                   options="-c search_path=dbo," + schema_name)
+    #
+    # # #establishing the connection
+    # conn = psycopg2.connect(
+    #    database="postgres", user='postgres', password='password', host='127.0.0.1', port= '5432'
+    # )
+    # conn.autocommit = True
+    # #Creating a cursor object using the cursor() method
+    # cursor = conn.cursor()
+    # #Preparing query to create a database
+    # sql = 'CREATE database ' + db_name + ';'
+    # #Creating a database
+    # cursor.execute(sql)
+    # print("Database created successfully........")
+    # conn.close()
 
-print(schema_name)
-conn2.autocommit = True
-cursor2 = conn2.cursor()
-# #sql_file = open(path_script + 'create_wp_with_airac.sql', 'r')
-#
-sql_file = open(path_script + 'create_wp.sql', 'r')
-cursor2.execute(sql_file.read())
-conn2.close()
-# #
+    #Populating the database with simtoolkit navdata from sqlite file
+    exec(open(path_script + 'SQLite_File_to_PostgreSQL.py').read())
 
-exec(open(path_script + 'Create_MORA_Grid_simtoolkit.py').read())
+    print(db_name)
+    print(schema_name)
 
-exec(open(path_script + 'Create_SID_Legs_simtoolkit.py').read())
-exec(open(path_script + 'Create_SID_Legs_RF_simtoolkit.py').read())
-exec(open(path_script + 'Create_SID_Legs_simtoolkit_without_RF.py').read())
+    # #establishing the connection
+    conn2 = psycopg2.connect(
+        user='postgres', password='password',
+        host='127.0.0.1', port='5432',
+        database=db_name,
+        options="-c search_path=dbo," + schema_name
+    )
 
-exec(open(path_script + 'Create_STAR_Legs_simtoolkit.py').read())
-exec(open(path_script + 'Create_STAR_Legs_RF_simtoolkit.py').read())
-exec(open(path_script + 'Create_STAR_Legs_simtoolkit_without_RF.py').read())
+    # conn2 = psycopg2.connect(user = "de_old_data",
+    #                                   password = "de_old_data",
+    #                                   host = "172.16.129.241",
+    #                                   port = "5432",
+    #                                   database = "aerothai_dwh",
+    #                                   options="-c search_path=dbo," + schema_name)
 
-exec(open(path_script + 'Create_IAP_Legs_RF_simtoolkit.py').read())
-exec(open(path_script + 'Create_IAP_Legs_AF_simtoolkit.py').read())
-exec(open(path_script + 'Create_IAP_Legs_simtoolkit.py').read())
+    print(schema_name)
+    conn2.autocommit = True
+    cursor2 = conn2.cursor()
+    # #sql_file = open(path_script + 'create_wp_with_airac.sql', 'r')
+    #
+    sql_file = open(path_script + 'create_wp.sql', 'r')
+    cursor2.execute(sql_file.read())
+    conn2.close()
+    # #
 
-exec(open(path_script + 'Create_ATS_Route_Segments_simtoolkit.py').read())
-exec(open(path_script + 'Create_ATS_Route_simtoolkit.py').read())
-exec(open(path_script + 'Create_Runway_Segments_simtoolkit.py').read())
-exec(open(path_script + 'Create_Holding_Legs.py').read())
-exec(open(path_script + 'Create_Holding_Legs_from_IAPs.py').read())
+    exec(open(path_script + 'Create_MORA_Grid_simtoolkit.py').read())
 
-#establishing the connection
-conn3 = psycopg2.connect(
-   database=db_name, user='postgres', password='password', host='127.0.0.1', port='5432'
-)
+    exec(open(path_script + 'Create_SID_Legs_simtoolkit.py').read())
+    exec(open(path_script + 'Create_SID_Legs_RF_simtoolkit.py').read())
+    exec(open(path_script + 'Create_SID_Legs_simtoolkit_without_RF.py').read())
 
-conn3.autocommit = True
-cursor3 = conn3.cursor()
+    exec(open(path_script + 'Create_STAR_Legs_simtoolkit.py').read())
+    exec(open(path_script + 'Create_STAR_Legs_RF_simtoolkit.py').read())
+    exec(open(path_script + 'Create_STAR_Legs_simtoolkit_without_RF.py').read())
 
-sql_file = open(path_script + 'clean_up_legs.sql', 'r')
-cursor3.execute(sql_file.read())
+    exec(open(path_script + 'Create_IAP_Legs_RF_simtoolkit.py').read())
+    exec(open(path_script + 'Create_IAP_Legs_AF_simtoolkit.py').read())
+    exec(open(path_script + 'Create_IAP_Legs_simtoolkit.py').read())
 
+    exec(open(path_script + 'Create_ATS_Route_Segments_simtoolkit.py').read())
+    exec(open(path_script + 'Create_ATS_Route_simtoolkit.py').read())
+    exec(open(path_script + 'Create_Runway_Segments_simtoolkit.py').read())
+    exec(open(path_script + 'Create_Holding_Legs.py').read())
+    exec(open(path_script + 'Create_Holding_Legs_from_IAPs.py').read())
 
+    #establishing the connection
+    conn3 = psycopg2.connect(
+       database=db_name, user='postgres', password='password', host='127.0.0.1', port='5432'
+    )
 
-conn_postgres = psycopg2.connect(user = "postgres",
-                                  password = "password",
-                                  host = "127.0.0.1",
-                                  port = "5432",
-                                  database = "track")
+    conn3.autocommit = True
+    cursor3 = conn3.cursor()
 
+    sql_file = open(path_script + 'clean_up_legs.sql', 'r')
+    cursor3.execute(sql_file.read())
 
-postgres_sql_text = f"CREATE SCHEMA airac_{airac};" \
-                    "DO " \
-                    "$$ " \
-                    "DECLARE " \
-                    "row record; " \
-                    "BEGIN " \
-                    "FOR row IN SELECT tablename FROM pg_tables " \
-                    "WHERE schemaname = 'public' and NOT(tablename like 'spat%') " \
-                    "LOOP " \
-                    f"EXECUTE 'DROP TABLE IF EXISTS airac_{airac}.' || quote_ident(row.tablename) || ' ;'; " \
-                    f"EXECUTE 'ALTER TABLE public.' || quote_ident(row.tablename) || ' SET SCHEMA airac_{airac};'; " \
-                    " END LOOP; " \
-                    "END; " \
-                    "$$;"
-cursor3.execute(postgres_sql_text)
-conn3.commit()
-conn3.close()
+    # conn_postgres = psycopg2.connect(user = "postgres",
+    #                                   password = "password",
+    #                                   host = "127.0.0.1",
+    #                                   port = "5432",
+    #                                   database = "track")
 
-# sql_file = open(path_script + 'clean_up_legs_vt.sql', 'r')
-# cursor3.execute(sql_file.read())
-# conn3.close()
-# exec(open(path_script + 'Filter_Only_VT.py').read())
+    postgres_sql_text = f"CREATE SCHEMA airac_{airac};" \
+                        "DO " \
+                        "$$ " \
+                        "DECLARE " \
+                        "row record; " \
+                        "BEGIN " \
+                        "FOR row IN SELECT tablename FROM pg_tables " \
+                        "WHERE schemaname = 'public' and NOT(tablename like 'spat%') " \
+                        "LOOP " \
+                        f"EXECUTE 'DROP TABLE IF EXISTS airac_{airac}.' || quote_ident(row.tablename) || ' ;'; " \
+                        f"EXECUTE 'ALTER TABLE public.' || quote_ident(row.tablename) || ' SET SCHEMA airac_{airac};'; " \
+                        " END LOOP; " \
+                        "END; " \
+                        "$$;"
+    cursor3.execute(postgres_sql_text)
+    conn3.commit()
+    conn3.close()
 
+    # sql_file = open(path_script + 'clean_up_legs_vt.sql', 'r')
+    # cursor3.execute(sql_file.read())
+    # conn3.close()
+    # exec(open(path_script + 'Filter_Only_VT.py').read())
 
 toc()

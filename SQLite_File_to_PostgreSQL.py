@@ -1,6 +1,6 @@
 import psycopg2, sqlite3, sys, re
 
-from dbname_and_paths import db_name, path_db, schema_name
+from autoprocess_simtoolkit import db_name, path_db, schema_name
 
 sqdb = path_db + 'navdata.s3db'
 sqlike = '%'
