@@ -21,7 +21,7 @@ db_name = 'navigraph'
 schema_name = 'public'
 
 #airac_list = ['2106','2107','2108','2109','2110','2111','2112','2201','2202','2203']
-airac_list = ['2201','2202','2203']
+airac_list = reversed(['2206'])
 
 for airac in airac_list:
 
@@ -114,7 +114,8 @@ for airac in airac_list:
 
     print(airac)
 
-    postgres_sql_text = f"CREATE SCHEMA airac_{airac};" \
+    postgres_sql_text = f"DROP SCHEMA IF EXISTS airac_{airac} CASCADE;" \
+                        f"CREATE SCHEMA airac_{airac};" \
                         "DO " \
                         "$$ " \
                         "DECLARE " \
