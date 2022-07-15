@@ -21,7 +21,7 @@ db_name = 'navigraph'
 schema_name = 'public'
 
 #airac_list = ['2106','2107','2108','2109','2110','2111','2112','2201','2202','2203']
-airac_list = reversed(['2206'])
+airac_list = reversed(['2207'])
 
 for airac in airac_list:
 
@@ -106,16 +106,16 @@ for airac in airac_list:
     sql_file = open(path_script + 'clean_up_legs.sql', 'r')
     cursor3.execute(sql_file.read())
 
-    # conn_postgres = psycopg2.connect(user = "postgres",
-    #                                   password = "password",
-    #                                   host = "127.0.0.1",
-    #                                   port = "5432",
-    #                                   database = "track")
-
     print(airac)
 
-    postgres_sql_text = f"DROP SCHEMA IF EXISTS airac_{airac} CASCADE;" \
-                        f"CREATE SCHEMA airac_{airac};" \
+    # sql_file = open(path_script + 'clean_up_legs_vt.sql', 'r')
+    # cursor3.execute(sql_file.read())
+    # conn3.close()
+
+    schema_name = f"airac_{airac}"
+
+    postgres_sql_text = f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;" \
+                        f"CREATE SCHEMA {schema_name};" \
                         "DO " \
                         "$$ " \
                         "DECLARE " \
@@ -124,18 +124,18 @@ for airac in airac_list:
                         "FOR row IN SELECT tablename FROM pg_tables " \
                         "WHERE schemaname = 'public' and NOT(tablename like 'spat%') " \
                         "LOOP " \
-                        f"EXECUTE 'DROP TABLE IF EXISTS airac_{airac}.' || quote_ident(row.tablename) || ' ;'; " \
-                        f"EXECUTE 'ALTER TABLE public.' || quote_ident(row.tablename) || ' SET SCHEMA airac_{airac};'; " \
+                        f"EXECUTE 'DROP TABLE IF EXISTS {schema_name}.' || quote_ident(row.tablename) || ' ;'; " \
+                        f"EXECUTE 'ALTER TABLE public.' || quote_ident(row.tablename) || ' SET SCHEMA {schema_name};'; " \
                         " END LOOP; " \
                         "END; " \
                         "$$;"
+
     cursor3.execute(postgres_sql_text)
     conn3.commit()
+
+
+    exec(open(path_script + 'Filter_Only_VT.py').read())
     conn3.close()
 
-    # sql_file = open(path_script + 'clean_up_legs_vt.sql', 'r')
-    # cursor3.execute(sql_file.read())
-    # conn3.close()
-    # exec(open(path_script + 'Filter_Only_VT.py').read())
 
 toc()
