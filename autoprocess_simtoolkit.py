@@ -21,7 +21,7 @@ db_name = 'navigraph'
 schema_name = 'public'
 
 #airac_list = ['2106','2107','2108','2109','2110','2111','2112','2201','2202','2203']
-airac_list = reversed(['2207'])
+airac_list = reversed(['2206'])
 
 for airac in airac_list:
 
@@ -52,8 +52,10 @@ for airac in airac_list:
 
     # #establishing the connection
     conn2 = psycopg2.connect(
-        user='postgres', password='password',
-        host='127.0.0.1', port='5432',
+        user='postgres',
+        password='password',
+        host='127.0.0.1',
+        port='5432',
         database=db_name,
         options="-c search_path=dbo," + schema_name
     )
@@ -97,7 +99,11 @@ for airac in airac_list:
 
     #establishing the connection
     conn3 = psycopg2.connect(
-       database=db_name, user='postgres', password='password', host='127.0.0.1', port='5432'
+        database=db_name,
+        user='postgres',
+        password='password',
+        host='127.0.0.1',
+        port='5432'
     )
 
     conn3.autocommit = True
@@ -106,11 +112,7 @@ for airac in airac_list:
     sql_file = open(path_script + 'clean_up_legs.sql', 'r')
     cursor3.execute(sql_file.read())
 
-    print(airac)
-
-    # sql_file = open(path_script + 'clean_up_legs_vt.sql', 'r')
-    # cursor3.execute(sql_file.read())
-    # conn3.close()
+    # Move the tables from PUBLIC SCHEMA to airac_xxx SCHEMA
 
     schema_name = f"airac_{airac}"
 
@@ -132,10 +134,42 @@ for airac in airac_list:
 
     cursor3.execute(postgres_sql_text)
     conn3.commit()
-
-
-    exec(open(path_script + 'Filter_Only_VT.py').read())
+    #exec(open(path_script + 'Filter_Only_VT.py').read())
     conn3.close()
 
+    # Create VT version of NavData
+
+    conn_postgres = psycopg2.connect(
+        user='postgres', password='password',
+        host='127.0.0.1', port='5432',
+        database=db_name,
+        options="-c search_path=dbo," + schema_name
+    )
+    with conn_postgres:
+        cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        postgres_sql_text = f" CREATE SCHEMA IF NOT EXISTS {schema_name}_vt; " \
+                            " SELECT tablename FROM pg_tables " \
+                            f" WHERE schemaname = '{schema_name}' " \
+                            " AND NOT(tablename like '%head%') " \
+                            " AND NOT(tablename like 'sbas%');"
+
+        print(postgres_sql_text)
+        cursor_postgres.execute(postgres_sql_text)
+        table_name_list = cursor_postgres.fetchall()
+        for table_name in table_name_list:
+            print(table_name[0])
+            postgres_sql_text = f" SELECT * " \
+                                f" INTO {schema_name}_vt.{table_name[0]}" \
+                                f" FROM {schema_name}.{table_name[0]}" \
+                                f" WHERE public.ST_Intersects(geom," \
+                                f" (SELECT public.ST_Buffer(geom,10) " \
+                                f" FROM airspace.fir " \
+                                f" WHERE name like 'BANGKOK%'));" # \
+                                # f" DROP TABLE {schema_name}_vt.{table_name[0]};" \
+                                # f" ALTER TABLE {schema_name}_vt.{table_name[0]}_vt RENAME TO {table_name[0]};"
+            print(postgres_sql_text)
+            cursor_postgres.execute(postgres_sql_text)
+            conn_postgres.commit()
 
 toc()
