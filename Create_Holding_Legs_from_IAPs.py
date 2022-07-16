@@ -68,7 +68,7 @@ def create_holding_legs_from_iaps(db_name,schema_name):
 
         #postgres_sql_text = "SELECT * from tbl_holdings WHERE icao_code like 'VT%'"
 
-        #print(postgres_sql_text)
+        print(postgres_sql_text)
 
         cursor_postgres.execute(postgres_sql_text)
 

@@ -44,12 +44,6 @@ def create_ats_route_segments(db_name,schema_name):
             # query
         cur.execute(sql_query)
 
-        print(sql_query)
-
-        cur.execute(sql_query)
-
-        print(cur.rowcount)
-
         results = cur.fetchall()
 
         print("Total rows are:  ", len(results))
@@ -104,14 +98,14 @@ def create_ats_route_segments(db_name,schema_name):
             outbound_course.append(row[15])
             inbound_course.append(row[16])
             inbound_distance.append(row[17])
-        print("Number of rows: " + str(len(area_code)))
+        #print("Number of rows: " + str(len(area_code)))
         num_of_ids = len(area_code)
 
         k = 0
-
-        print(waypoint_identifier[k])
-        print(waypoint_latitude[k])
-        print(waypoint_longitude[k])
+        #
+        # print(waypoint_identifier[k])
+        # print(waypoint_latitude[k])
+        # print(waypoint_longitude[k])
 
         if str(minimum_altitude1[k]) == 'None':
             minimum_altitude1_temp = 0
@@ -186,7 +180,7 @@ def create_ats_route_segments(db_name,schema_name):
                    "ST_LineFromText('LINESTRING(" + \
                    str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + "," + \
                    str(float(waypoint_longitude[k + 1])) + " " + str(float(waypoint_latitude[k + 1])) + ")',4326));"
-        print(sql_text)
+        #print(sql_text)
 
         cur.execute(sql_text)
         conn.commit()

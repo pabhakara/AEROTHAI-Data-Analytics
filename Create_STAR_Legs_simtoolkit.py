@@ -136,7 +136,7 @@ def create_star_legs(db_name,schema_name):
             #print(postgres_sql_text)
 
             conn_postgres.commit()
-            print("STAR Legs: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
+            #print("STAR Legs: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
 
             k = k + 1
 

@@ -37,11 +37,12 @@ db_name = 'navigraph'
 #db_name = 'test'
 schema_name = 'public'
 
-airac_list = ['2106','2107','2108','2109','2110','2111','2112','2113','2201','2202','2203','2204','2205','2206','2207']
+#airac_list = ['2106','2107','2108','2109','2110','2111','2112','2113','2201','2202','2203','2204','2205','2206','2207']
+airac_list = ['2206','2207']
 airac_list = reversed(airac_list)
 
 for airac in airac_list:
-    #print(schema_name)
+    print(schema_name)
 
     path_script = "/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics/"
 

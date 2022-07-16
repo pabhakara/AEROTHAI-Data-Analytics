@@ -70,7 +70,7 @@ def create_runway_segments(db_name,schema_name):
         k = 0
 
         for airport_id in airport_identifier_list:  # each airport identifier
-            print("Runway Segments: " + str("{:.3f}".format((k / total) * 100, 2)) + "% Completed")
+            #print("Runway Segments: " + str("{:.3f}".format((k / total) * 100, 2)) + "% Completed")
 
             k = k + 1
 
