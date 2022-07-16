@@ -145,7 +145,7 @@ def create_star_legs_without_rf(db_name,schema_name):
             #print(postgres_sql_text)
 
             conn_postgres.commit()
-            print("star Legs: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
+            #print("star Legs: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
 
             k = k + 1
 

@@ -285,5 +285,5 @@ def create_runway_segments(db_name,schema_name):
                     #print(sql_text_2)
                     cur.execute(sql_text_2)
                     conn.commit()
-        print("Runway Segments: " + str("{:.3f}".format((k / total) * 100, 2)) + "% Completed")
+        #print("Runway Segments: " + str("{:.3f}".format((k / total) * 100, 2)) + "% Completed")
         #print(weird_airport_list)

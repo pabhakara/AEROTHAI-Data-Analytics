@@ -150,7 +150,7 @@ def create_iap_legs(db_name,schema_name):
             #print(postgres_sql_text)
 
             conn_postgres.commit()
-            print("IAP Legs: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
+            #print("IAP Legs: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
 
             k = k + 1
 

@@ -232,8 +232,8 @@ public.ST_MakePoint(landing_threshold_longitude,landing_threshold_latitude),
 public.ST_MakePoint(flightpath_alignment_longitude,flightpath_alignment_latitude))
 ,4326) AS flightpath,
 public.ST_Azimuth(
-public.ST_SetSRID(public.ST_MakePoint(landing_threshold_longitude,landing_threshold_latitude),4326)::geography,
-public.ST_SetSRID(public.ST_MakePoint(flightpath_alignment_longitude,flightpath_alignment_latitude),4326)::geography
+public.ST_SetSRID(public.ST_MakePoint(landing_threshold_longitude,landing_threshold_latitude),4326)::public.geography,
+public.ST_SetSRID(public.ST_MakePoint(flightpath_alignment_longitude,flightpath_alignment_latitude),4326)::public.geography
 )*180/pi()
 AS azimuth
 into "sbas_path"

@@ -330,7 +330,7 @@ def create_holding_legs_from_iaps(db_name,schema_name):
             cursor_postgres.execute(postgres_sql_text)
 
             conn_postgres.commit()
-            print("Holding Legs from IAP: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
+            #print("Holding Legs from IAP: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
 
             k = k + 1
             temp_1 = record[k]

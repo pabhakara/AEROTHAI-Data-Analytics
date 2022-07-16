@@ -88,7 +88,7 @@ def create_ats_route(db_name,schema_name):
 
                 sql_text = sql_text + str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + ")',4326));"
 
-                print("Airways: " + str("{:.3f}".format((k / num_of_ids) * 100, 2)) + "% Completed")
+                #print("Airways: " + str("{:.3f}".format((k / num_of_ids) * 100, 2)) + "% Completed")
 
                 #print(sql_text)
 

@@ -1,5 +1,3 @@
-import psycopg2
-
 from Create_MORA_Grid_simtoolkit import *
 from Create_SID_Legs_simtoolkit import *
 from Create_SID_Legs_RF_simtoolkit import *
@@ -15,6 +13,9 @@ from Create_ATS_Route_simtoolkit import *
 from Create_Runway_Segments_simtoolkit import *
 from Create_Holding_Legs import *
 from Create_Holding_Legs_from_IAPs import *
+from SQLite_File_to_PostgreSQL import *
+
+import psycopg2
 
 def tic():
     #Homemade version of matlab tic and toc functions
@@ -36,32 +37,20 @@ db_name = 'navigraph'
 #db_name = 'test'
 schema_name = 'public'
 
-#airac_list = ['2106','2107','2108','2109','2110','2111','2112','2201','2202','2203']
-airac_list = reversed(['2110'])
+airac_list = ['2106','2107','2108','2109','2110','2111','2112','2113','2201','2202','2203','2204','2205','2206','2207']
+airac_list = reversed(airac_list)
 
 for airac in airac_list:
+    #print(schema_name)
 
     path_script = "/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics/"
 
     path_db = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/NavData/simtoolkitpro_native_' + airac +'/'
 
-    #
-    # # #establishing the connection
-    # conn = psycopg2.connect(
-    #    database="postgres", user='postgres', password='password', host='127.0.0.1', port= '5432'
-    # )
-    # conn.autocommit = True
-    # #Creating a cursor object using the cursor() method
-    # cursor = conn.cursor()
-    # #Preparing query to create a database
-    # sql = 'CREATE database ' + db_name + ';'
-    # #Creating a database
-    # cursor.execute(sql)
-    # print("Database created successfully........")
-    # conn.close()
-
     #Populating the database with simtoolkit navdata from sqlite file
-    exec(open(path_script + 'SQLite_File_to_PostgreSQL.py').read())
+
+    #exec(open(path_script + 'SQLite_File_to_PostgreSQL.py').read())
+    sqllite_file_to_postgresql(db_name, path_db, schema_name)
 
     # #establishing the connection
     conn2 = psycopg2.connect(
@@ -87,13 +76,13 @@ for airac in airac_list:
     cursor2.execute(sql_file.read())
     conn2.close()
     # #
+    print(schema_name)
     create_mora_grid(db_name,schema_name)
-    create_sid_legs(db_name,schema_name)
 
-    create_mora_grid(db_name,schema_name)
     create_sid_legs(db_name,schema_name)
     create_sid_legs_rf(db_name,schema_name)
     create_sid_legs_without_rf(db_name,schema_name)
+
     create_star_legs(db_name,schema_name)
     create_star_legs_rf(db_name,schema_name)
     create_star_legs_without_rf(db_name,schema_name)
@@ -104,7 +93,9 @@ for airac in airac_list:
     #
     create_ats_route_segments(db_name,schema_name)
     create_ats_route(db_name,schema_name)
+
     create_runway_segments(db_name,schema_name)
+
     create_holding_legs(db_name,schema_name)
     create_holding_legs_from_iaps(db_name,schema_name)
 
@@ -125,10 +116,10 @@ for airac in airac_list:
 
     # Move the tables from PUBLIC SCHEMA to airac_xxx SCHEMA
 
-    schema_name = f"airac_{airac}"
+    schema_name_2 = f"airac_{airac}"
 
-    postgres_sql_text = f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;" \
-                        f"CREATE SCHEMA {schema_name};" \
+    postgres_sql_text = f"DROP SCHEMA IF EXISTS {schema_name_2} CASCADE;" \
+                        f"CREATE SCHEMA {schema_name_2};" \
                         "DO " \
                         "$$ " \
                         "DECLARE " \
@@ -137,8 +128,8 @@ for airac in airac_list:
                         "FOR row IN SELECT tablename FROM pg_tables " \
                         "WHERE schemaname = 'public' and NOT(tablename like 'spat%') " \
                         "LOOP " \
-                        f"EXECUTE 'DROP TABLE IF EXISTS {schema_name}.' || quote_ident(row.tablename) || ' ;'; " \
-                        f"EXECUTE 'ALTER TABLE public.' || quote_ident(row.tablename) || ' SET SCHEMA {schema_name};'; " \
+                        f"EXECUTE 'DROP TABLE IF EXISTS {schema_name_2}.' || quote_ident(row.tablename) || ' ;'; " \
+                        f"EXECUTE 'ALTER TABLE public.' || quote_ident(row.tablename) || ' SET SCHEMA {schema_name_2};'; " \
                         " END LOOP; " \
                         "END; " \
                         "$$;"
@@ -159,9 +150,9 @@ for airac in airac_list:
     with conn_postgres:
         cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-        postgres_sql_text = f" CREATE SCHEMA IF NOT EXISTS {schema_name}_vt; " \
+        postgres_sql_text = f" CREATE SCHEMA IF NOT EXISTS {schema_name_2}_vt; " \
                             " SELECT tablename FROM pg_tables " \
-                            f" WHERE schemaname = '{schema_name}' " \
+                            f" WHERE schemaname = '{schema_name_2}' " \
                             " AND NOT(tablename like '%head%') " \
                             " AND NOT(tablename like 'sbas%');"
 
@@ -170,9 +161,10 @@ for airac in airac_list:
         table_name_list = cursor_postgres.fetchall()
         for table_name in table_name_list:
             print(table_name[0])
-            postgres_sql_text = f" SELECT * " \
-                                f" INTO {schema_name}_vt.{table_name[0]}" \
-                                f" FROM {schema_name}.{table_name[0]}" \
+            postgres_sql_text = f" DROP TABLE IF EXISTS {schema_name_2}_vt.{table_name[0]};" \
+                                f" SELECT * " \
+                                f" INTO {schema_name_2}_vt.{table_name[0]}" \
+                                f" FROM {schema_name_2}.{table_name[0]}" \
                                 f" WHERE public.ST_Intersects(geom," \
                                 f" (SELECT public.ST_Buffer(geom,10) " \
                                 f" FROM airspace.fir " \
@@ -182,4 +174,10 @@ for airac in airac_list:
             print(postgres_sql_text)
             cursor_postgres.execute(postgres_sql_text)
             conn_postgres.commit()
-toc()
+        postgres_sql_text = f" DROP TABLE IF EXISTS {schema_name_2}_vt.tbl_header;" \
+                            f" SELECT * " \
+                            f" INTO {schema_name_2}_vt.tbl_header" \
+                            f" FROM {schema_name_2}.tbl_header;"
+        cursor_postgres.execute(postgres_sql_text)
+        conn_postgres.commit()
+toc

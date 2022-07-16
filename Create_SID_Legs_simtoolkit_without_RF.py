@@ -144,7 +144,7 @@ def create_sid_legs_without_rf(db_name,schema_name):
             #print(postgres_sql_text)
 
             conn_postgres.commit()
-            print("sid Legs: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
+            #print("sid Legs: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
 
             k = k + 1
 

@@ -217,7 +217,7 @@ def create_sid_legs_rf(db_name,schema_name):
             cursor_postgres.execute(postgres_sql_text)
 
             conn_postgres.commit()
-            print("sid Legs RF: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
+            #print("sid Legs RF: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
 
             k = k + 1
 

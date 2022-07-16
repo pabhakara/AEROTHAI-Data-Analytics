@@ -273,4 +273,4 @@ def create_ats_route_segments(db_name,schema_name):
                 cur.execute(sql_text)
                 conn.commit()
                 #print(sql_text)
-                print("Airways Segments: "+str("{:.3f}".format((k / num_of_ids) * 100, 2)) + "% Completed")
+                #print("Airways Segments: "+str("{:.3f}".format((k / num_of_ids) * 100, 2)) + "% Completed")

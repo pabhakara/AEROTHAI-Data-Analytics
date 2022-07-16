@@ -223,7 +223,7 @@ def create_iap_legs_ca_cf(db_name,schema_name):
             cursor_postgres.execute(postgres_sql_text)
 
             conn_postgres.commit()
-            print("IAP Legs CA CF: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
+            #print("IAP Legs CA CF: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
 
             k = k + 1
 

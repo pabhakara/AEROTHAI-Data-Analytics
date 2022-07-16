@@ -106,7 +106,7 @@ def create_mora_grid(db_name,schema_name):
                 cur.execute(sql_text_2)
 
                 conn.commit()
-                print("Grid MORA: " + str("{:.3f}".format((k / num_of_rows) * 100, 2)) + "% Completed")
+                #print("Grid MORA: " + str("{:.3f}".format((k / num_of_rows) * 100, 2)) + "% Completed")
 
                 m = m + 1
 
