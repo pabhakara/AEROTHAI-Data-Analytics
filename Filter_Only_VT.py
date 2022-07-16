@@ -1,9 +1,6 @@
 import psycopg2.extras
 
-# Try to connect to the local PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
-from autoprocess_simtoolkit import db_name, airac,schema_name
-
-airac = '2206'
+airac = 'current'
 
 db_name = 'navigraph'
 #db_name = 'test'
@@ -18,7 +15,8 @@ conn_postgres = psycopg2.connect(
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    postgres_sql_text = f" CREATE SCHEMA IF NOT EXISTS {schema_name}_vt; " \
+    postgres_sql_text = f" DROP SCHEMA IF EXISTS {schema_name}_vt CASCADE;" \
+                        f" CREATE SCHEMA IF NOT EXISTS {schema_name}_vt; " \
                         " SELECT tablename FROM pg_tables " \
                         f" WHERE schemaname = '{schema_name}' " \
                         " AND NOT(tablename like '%head%') " \
@@ -41,3 +39,10 @@ with conn_postgres:
         print(postgres_sql_text)
         cursor_postgres.execute(postgres_sql_text)
         conn_postgres.commit()
+
+    postgres_sql_text = f" SELECT * " \
+                        f" INTO {schema_name}_vt.tbl_header" \
+                        f" FROM {schema_name}.tbl_header;"
+    print(postgres_sql_text)
+    cursor_postgres.execute(postgres_sql_text)
+    conn_postgres.commit()

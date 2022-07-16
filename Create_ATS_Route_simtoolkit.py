@@ -1,117 +1,119 @@
-import psycopg2
+def create_ats_route(db_name,schema_name):
 
-from autoprocess_simtoolkit import db_name, airac,schema_name
+    import psycopg2
 
-table_name = 'airways'
+    #from autoprocess_simtoolkit import db_name, airac,schema_name
 
-conn = psycopg2.connect(
-    user='postgres', password='password',
-    host='127.0.0.1', port='5432',
-    database=db_name,
-    options="-c search_path=dbo," + schema_name
-)
+    table_name = 'airways'
 
-with conn:
-    cur = conn.cursor()
+    conn = psycopg2.connect(
+        user='postgres', password='password',
+        host='127.0.0.1', port='5432',
+        database=db_name,
+        options="-c search_path=dbo," + schema_name
+    )
 
-    sql_query = "DROP TABLE IF EXISTS " + table_name + ";"
+    with conn:
+        cur = conn.cursor()
 
-    cur.execute(sql_query)
-    conn.commit()
+        sql_query = "DROP TABLE IF EXISTS " + table_name + ";"
 
-    sql_query = "CREATE TABLE " + table_name \
-                + '(route_identifier character varying, ' \
-                + 'area_code character varying,' \
-                + 'seqno integer,' \
-                + 'geom geometry) ' \
-                + 'WITH (OIDS=FALSE);' \
-                + 'ALTER TABLE "' + table_name + '"' \
-                + 'OWNER TO postgres;'
+        cur.execute(sql_query)
+        conn.commit()
 
-    print(sql_query)
+        sql_query = "CREATE TABLE " + table_name \
+                    + '(route_identifier character varying, ' \
+                    + 'area_code character varying,' \
+                    + 'seqno integer,' \
+                    + 'geom geometry) ' \
+                    + 'WITH (OIDS=FALSE);' \
+                    + 'ALTER TABLE "' + table_name + '"' \
+                    + 'OWNER TO postgres;'
 
-    cur.execute(sql_query)
-    conn.commit()
+        print(sql_query)
 
-    sql_query = "SELECT route_identifier,area_code,seqno,waypoint_latitude,waypoint_longitude,inbound_distance " + \
-                "FROM tbl_enroute_airways " \
-                "order by route_identifier,seqno; "
-    # query
-    cur.execute(sql_query)
+        cur.execute(sql_query)
+        conn.commit()
 
-    print(cur.rowcount)
+        sql_query = "SELECT route_identifier,area_code,seqno,waypoint_latitude,waypoint_longitude,inbound_distance " + \
+                    "FROM tbl_enroute_airways " \
+                    "order by route_identifier,seqno; "
+        # query
+        cur.execute(sql_query)
 
-    results = cur.fetchall()
+        print(cur.rowcount)
 
-    print("Total rows are:  ", len(results))
+        results = cur.fetchall()
 
-    # initialize parameters
-    route_identifier = []
-    area_code = []
-    seqno = []
-    waypoint_latitude = []
-    waypoint_longitude = []
-    inbound_distance = []
+        print("Total rows are:  ", len(results))
 
-    # populate the parameters with the query results, row by row
-    for row in results:
-        route_identifier.append(row[0])
-        area_code.append(row[1])
-        seqno.append(row[2])
-        waypoint_latitude.append(row[3])
-        waypoint_longitude.append(row[4])
-        inbound_distance.append(row[5])
+        # initialize parameters
+        route_identifier = []
+        area_code = []
+        seqno = []
+        waypoint_latitude = []
+        waypoint_longitude = []
+        inbound_distance = []
 
-    print("Number of rows: " + str(len(route_identifier)))
-    num_of_ids = len(route_identifier)
+        # populate the parameters with the query results, row by row
+        for row in results:
+            route_identifier.append(row[0])
+            area_code.append(row[1])
+            seqno.append(row[2])
+            waypoint_latitude.append(row[3])
+            waypoint_longitude.append(row[4])
+            inbound_distance.append(row[5])
 
-    k = 0
+        print("Number of rows: " + str(len(route_identifier)))
+        num_of_ids = len(route_identifier)
 
-    # initialize first INSERT query
-    sql_text = "INSERT INTO " + table_name + \
-               "(route_identifier," + \
-                "area_code," + \
-                "seqno," + \
-                "geom) " + \
-                "VALUES('" + \
-                str(route_identifier[k]) + "','" + \
-                str(area_code[k]) + "'," + \
-                str(seqno[k]) + "," + \
-                "ST_LineFromText('LINESTRING(" + \
-               str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + ","
+        k = 0
 
-    while k < num_of_ids:
-        if (inbound_distance[k] == 0) or \
-                not(str(route_identifier[k]) == str(route_identifier[k+1])):
+        # initialize first INSERT query
+        sql_text = "INSERT INTO " + table_name + \
+                   "(route_identifier," + \
+                    "area_code," + \
+                    "seqno," + \
+                    "geom) " + \
+                    "VALUES('" + \
+                    str(route_identifier[k]) + "','" + \
+                    str(area_code[k]) + "'," + \
+                    str(seqno[k]) + "," + \
+                    "ST_LineFromText('LINESTRING(" + \
+                   str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + ","
 
-            sql_text = sql_text + str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + ")',4326));"
+        while k < num_of_ids:
+            if (inbound_distance[k] == 0) or \
+                    not(str(route_identifier[k]) == str(route_identifier[k+1])):
 
-            print("Airways: " + str("{:.3f}".format((k / num_of_ids) * 100, 2)) + "% Completed")
+                sql_text = sql_text + str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + ")',4326));"
 
-            #print(sql_text)
+                print("Airways: " + str("{:.3f}".format((k / num_of_ids) * 100, 2)) + "% Completed")
 
-            cur.execute(sql_text)
-            conn.commit()
+                #print(sql_text)
 
-            k = k + 1
-
-            if k == num_of_ids:
-                break
-            else:
-                sql_text = "INSERT INTO " + table_name + \
-                       "(route_identifier," + \
-                       "area_code," + \
-                       "seqno," + \
-                       "geom) " + \
-                       "VALUES('" + \
-                       str(route_identifier[k]) + "','" + \
-                       str(area_code[k]) + "'," + \
-                       str(seqno[k]) + "," + \
-                       "ST_LineFromText('LINESTRING(" + \
-                       str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + ","
+                cur.execute(sql_text)
+                conn.commit()
 
                 k = k + 1
 
-        else:
-            sql_text = sql_text + str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + ","
-            k = k + 1
+                if k == num_of_ids:
+                    break
+                else:
+                    sql_text = "INSERT INTO " + table_name + \
+                           "(route_identifier," + \
+                           "area_code," + \
+                           "seqno," + \
+                           "geom) " + \
+                           "VALUES('" + \
+                           str(route_identifier[k]) + "','" + \
+                           str(area_code[k]) + "'," + \
+                           str(seqno[k]) + "," + \
+                           "ST_LineFromText('LINESTRING(" + \
+                           str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + ","
+
+                    k = k + 1
+
+            else:
+                sql_text = sql_text + str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + ","
+                k = k + 1

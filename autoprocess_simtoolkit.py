@@ -1,5 +1,21 @@
 import psycopg2
 
+from Create_MORA_Grid_simtoolkit import *
+from Create_SID_Legs_simtoolkit import *
+from Create_SID_Legs_RF_simtoolkit import *
+from Create_SID_Legs_simtoolkit_without_RF import *
+from Create_STAR_Legs_simtoolkit import *
+from Create_STAR_Legs_RF_simtoolkit import *
+from Create_STAR_Legs_simtoolkit_without_RF import *
+from Create_IAP_Legs_RF_simtoolkit import *
+from Create_IAP_Legs_AF_simtoolkit import *
+from Create_IAP_Legs_simtoolkit import *
+from Create_ATS_Route_Segments_simtoolkit import *
+from Create_ATS_Route_simtoolkit import *
+from Create_Runway_Segments_simtoolkit import *
+from Create_Holding_Legs import *
+from Create_Holding_Legs_from_IAPs import *
+
 def tic():
     #Homemade version of matlab tic and toc functions
     import time
@@ -21,7 +37,7 @@ db_name = 'navigraph'
 schema_name = 'public'
 
 #airac_list = ['2106','2107','2108','2109','2110','2111','2112','2201','2202','2203']
-airac_list = reversed(['2206'])
+airac_list = reversed(['2110'])
 
 for airac in airac_list:
 
@@ -47,9 +63,6 @@ for airac in airac_list:
     #Populating the database with simtoolkit navdata from sqlite file
     exec(open(path_script + 'SQLite_File_to_PostgreSQL.py').read())
 
-    print(db_name)
-    print(schema_name)
-
     # #establishing the connection
     conn2 = psycopg2.connect(
         user='postgres',
@@ -59,7 +72,6 @@ for airac in airac_list:
         database=db_name,
         options="-c search_path=dbo," + schema_name
     )
-
     # conn2 = psycopg2.connect(user = "de_old_data",
     #                                   password = "de_old_data",
     #                                   host = "172.16.129.241",
@@ -67,7 +79,6 @@ for airac in airac_list:
     #                                   database = "aerothai_dwh",
     #                                   options="-c search_path=dbo," + schema_name)
 
-    print(schema_name)
     conn2.autocommit = True
     cursor2 = conn2.cursor()
     # #sql_file = open(path_script + 'create_wp_with_airac.sql', 'r')
@@ -76,26 +87,26 @@ for airac in airac_list:
     cursor2.execute(sql_file.read())
     conn2.close()
     # #
+    create_mora_grid(db_name,schema_name)
+    create_sid_legs(db_name,schema_name)
 
-    exec(open(path_script + 'Create_MORA_Grid_simtoolkit.py').read())
-
-    exec(open(path_script + 'Create_SID_Legs_simtoolkit.py').read())
-    exec(open(path_script + 'Create_SID_Legs_RF_simtoolkit.py').read())
-    exec(open(path_script + 'Create_SID_Legs_simtoolkit_without_RF.py').read())
-
-    exec(open(path_script + 'Create_STAR_Legs_simtoolkit.py').read())
-    exec(open(path_script + 'Create_STAR_Legs_RF_simtoolkit.py').read())
-    exec(open(path_script + 'Create_STAR_Legs_simtoolkit_without_RF.py').read())
-
-    exec(open(path_script + 'Create_IAP_Legs_RF_simtoolkit.py').read())
-    exec(open(path_script + 'Create_IAP_Legs_AF_simtoolkit.py').read())
-    exec(open(path_script + 'Create_IAP_Legs_simtoolkit.py').read())
-
-    exec(open(path_script + 'Create_ATS_Route_Segments_simtoolkit.py').read())
-    exec(open(path_script + 'Create_ATS_Route_simtoolkit.py').read())
-    exec(open(path_script + 'Create_Runway_Segments_simtoolkit.py').read())
-    exec(open(path_script + 'Create_Holding_Legs.py').read())
-    exec(open(path_script + 'Create_Holding_Legs_from_IAPs.py').read())
+    create_mora_grid(db_name,schema_name)
+    create_sid_legs(db_name,schema_name)
+    create_sid_legs_rf(db_name,schema_name)
+    create_sid_legs_without_rf(db_name,schema_name)
+    create_star_legs(db_name,schema_name)
+    create_star_legs_rf(db_name,schema_name)
+    create_star_legs_without_rf(db_name,schema_name)
+    #
+    create_iap_legs_rf(db_name,schema_name)
+    create_iap_legs_af(db_name,schema_name)
+    create_iap_legs(db_name,schema_name)
+    #
+    create_ats_route_segments(db_name,schema_name)
+    create_ats_route(db_name,schema_name)
+    create_runway_segments(db_name,schema_name)
+    create_holding_legs(db_name,schema_name)
+    create_holding_legs_from_iaps(db_name,schema_name)
 
     #establishing the connection
     conn3 = psycopg2.connect(
@@ -171,5 +182,4 @@ for airac in airac_list:
             print(postgres_sql_text)
             cursor_postgres.execute(postgres_sql_text)
             conn_postgres.commit()
-
 toc()
