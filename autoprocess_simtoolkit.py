@@ -42,7 +42,7 @@ airac_list = ['2206','2207']
 airac_list = reversed(airac_list)
 
 for airac in airac_list:
-    print(schema_name)
+    #print(schema_name)
 
     path_script = "/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics/"
 
@@ -77,7 +77,8 @@ for airac in airac_list:
     cursor2.execute(sql_file.read())
     conn2.close()
     # #
-    print(schema_name)
+    #print(schema_name)
+
     create_mora_grid(db_name,schema_name)
 
     create_sid_legs(db_name,schema_name)
@@ -118,6 +119,8 @@ for airac in airac_list:
     # Move the tables from PUBLIC SCHEMA to airac_xxx SCHEMA
 
     schema_name_2 = f"airac_{airac}"
+
+    print(schema_name_2)
 
     postgres_sql_text = f"DROP SCHEMA IF EXISTS {schema_name_2} CASCADE;" \
                         f"CREATE SCHEMA {schema_name_2};" \

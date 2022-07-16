@@ -38,7 +38,7 @@ def create_runway_segments(db_name,schema_name):
                     "ALTER TABLE " + table_name + \
                     " ADD geom geometry;"
 
-        #print(sql_query)
+        print(sql_query)
 
         cur.execute(sql_query)
         conn.commit()
@@ -63,7 +63,7 @@ def create_runway_segments(db_name,schema_name):
         for row in results:
             airport_identifier_list.append(row[0])
 
-        print("Total number of airports is:  ", len(results))
+        #print("Total number of airports is:  ", len(results))
 
         total = len(results)
 
