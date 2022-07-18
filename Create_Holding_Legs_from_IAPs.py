@@ -40,6 +40,7 @@ def create_holding_legs_from_iaps(db_name,schema_name):
                             "WITH (OIDS=FALSE); \n" + \
                             "ALTER TABLE " + table_name + " " \
                             "OWNER TO postgres;"
+        print(postgres_sql_text)
 
         cursor_postgres.execute(postgres_sql_text)
         conn_postgres.commit()
@@ -68,7 +69,7 @@ def create_holding_legs_from_iaps(db_name,schema_name):
 
         #postgres_sql_text = "SELECT * from tbl_holdings WHERE icao_code like 'VT%'"
 
-        print(postgres_sql_text)
+
 
         cursor_postgres.execute(postgres_sql_text)
 

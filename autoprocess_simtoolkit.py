@@ -38,7 +38,7 @@ db_name = 'navigraph'
 schema_name = 'public'
 
 #airac_list = ['2106','2107','2108','2109','2110','2111','2112','2113','2201','2202','2203','2204','2205','2206','2207']
-airac_list = ['2206','2207']
+airac_list = ['2206']
 airac_list = reversed(airac_list)
 
 for airac in airac_list:
@@ -148,9 +148,9 @@ for airac in airac_list:
     conn_postgres = psycopg2.connect(
         user='postgres', password='password',
         host='127.0.0.1', port='5432',
-        database=db_name,
-        options="-c search_path=dbo," + schema_name
-    )
+        database=db_name)
+    #     options="-c search_path=dbo," + schema_name_2
+    # )
     with conn_postgres:
         cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
@@ -160,11 +160,11 @@ for airac in airac_list:
                             " AND NOT(tablename like '%head%') " \
                             " AND NOT(tablename like 'sbas%');"
 
-        print(postgres_sql_text)
+        #print(postgres_sql_text)
         cursor_postgres.execute(postgres_sql_text)
         table_name_list = cursor_postgres.fetchall()
         for table_name in table_name_list:
-            print(table_name[0])
+            #print(table_name[0])
             postgres_sql_text = f" DROP TABLE IF EXISTS {schema_name_2}_vt.{table_name[0]};" \
                                 f" SELECT * " \
                                 f" INTO {schema_name_2}_vt.{table_name[0]}" \
