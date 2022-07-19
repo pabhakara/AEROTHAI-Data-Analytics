@@ -20,6 +20,7 @@ conn_postgres = psycopg2.connect(
         database=db_name,
         options="-c search_path=dbo," + schema_name
     )
+
 with conn_postgres:
     cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
