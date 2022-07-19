@@ -20,6 +20,7 @@ def psql_insert_copy(table, conn, keys, data_iter):
         cur.copy_expert(sql=sql, file=s_buf)
 
 yyyymmdd = '20191225'
+year_month_day = "2019_12_25"
 
 filenames = [ yyyymmdd +'_flights.csv']
 print(filenames)
@@ -54,16 +55,16 @@ combined_df.to_sql(table_name, engine, schema='public', method=psql_insert_copy)
 
 with conn_postgres:
     cur = conn_postgres.cursor()
-    sql_query = "DROP TABLE IF EXISTS flight_" + yyyymmdd + "_temp; " + \
-                "SELECT *, CAST(flight_id AS text) flight_id_txt " + \
-                "INTO flight_" + yyyymmdd + "_temp " + \
-                "FROM flight_" + yyyymmdd + ";" + \
-                "ALTER TABLE flight_" + yyyymmdd + "_temp " \
-                "DROP COLUMN flight_id;" \
-                "ALTER TABLE flight_" + yyyymmdd + "_temp " \
-                "RENAME COLUMN flight_id_txt TO flight_id; " \
-                "DROP TABLE IF EXISTS flight_" + yyyymmdd +"; " \
-                "ALTER TABLE flight_" + yyyymmdd + "_temp " \
-                "RENAME TO flight_" + yyyymmdd + ";"
+    sql_query = f"DROP TABLE IF EXISTS flight_{yyyymmdd}_temp; " + \
+                f"SELECT *, CAST(flight_id AS text) flight_id_txt " + \
+                f"INTO flight_{yyyymmdd}_temp " + \
+                f"FROM flight_{yyyymmdd};" + \
+                f"ALTER TABLE flight_{yyyymmdd}_temp " \
+                f"DROP COLUMN flight_id;" \
+                f"ALTER TABLE flight_{yyyymmdd}_temp " \
+                f"RENAME COLUMN flight_id_txt TO flight_id; " \
+                f"DROP TABLE IF EXISTS flight_{yyyymmdd}; " \
+                f"ALTER TABLE flight_{yyyymmdd}_temp " \
+                f"RENAME TO flight_{yyyymmdd};"
     cur.execute(sql_query)
     conn_postgres.commit()

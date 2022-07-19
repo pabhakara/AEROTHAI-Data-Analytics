@@ -22,13 +22,14 @@ with conn_postgres:
 
     # create the table name that will store the radar track
     yyyymmdd = '20191225'
-    year_month = "2019_12_25"
-    table_name = "track_" + year_month + "_fr24"
+    year_month_day = "2019_12_25"
+
+    table_name = "track_" + year_month_day + "_fr24"
 
     # Create an sql query that creates a new table for radar tracks in Postgres SQL database
-    postgres_sql_text = "\n \n DROP TABLE IF EXISTS " + table_name + "; \n" + \
-                                "CREATE TABLE " + table_name + " " + \
-                                "(flight_id_txt character varying, " \
+    postgres_sql_text = f"\n \n DROP TABLE IF EXISTS {table_name}; \n" + \
+                                f"CREATE TABLE {table_name} " + \
+                                "(flight_id character varying, " \
                                 "geom geometry, " + \
                                 "aircraft_id character varying, " + \
                                 "reg character varying, " + \
@@ -39,7 +40,7 @@ with conn_postgres:
                                 "start_time_unix bigint, " + \
                                 "end_time_unix bigint)" + \
                                 "WITH (OIDS=FALSE); \n" + \
-                                "ALTER TABLE " + table_name + " " \
+                                f"ALTER TABLE {table_name} " \
                                 "OWNER TO postgres;"
     print(postgres_sql_text)
     cursor_postgres.execute(postgres_sql_text)
@@ -48,10 +49,10 @@ with conn_postgres:
 
     # postgres_sql_text = "SELECT b.track_id,b.app_time,b._24bitaddress,b.callsign,b.dep,b.dest,b.actype," + \
     #               "b.latitude,b.longitude,b.actual_flight_level,b.cdm " + \
-    #               "from target_" + year_month + "_geom b " + \
+    #               "from target_" + year_month_day + "_geom b " + \
     #               "order by b.track_id,b.app_time"
 
-    postgres_sql_text = "SELECT b.flight_id_txt," \
+    postgres_sql_text = "SELECT b.flight_id," \
                         "b.aircraft_id," \
                         "b.snapshot_id," \
                         "b.latitude," \
@@ -63,8 +64,8 @@ with conn_postgres:
                         "b.equip," + \
                         "b.schd_from," + \
                         "b.schd_to " + \
-                        "from position_" + yyyymmdd + "_geom_mapped b " + \
-                        "order by b.flight_id_txt,b.snapshot_id"
+                        f"from position_{yyyymmdd} b " + \
+                        "order by b.flight_id,b.snapshot_id"
 
     print(postgres_sql_text)
     cursor_postgres.execute(postgres_sql_text)
@@ -105,11 +106,11 @@ with conn_postgres:
     if equip == 'None':
         equip = 'null'
 
-    flight_id_txt_1 = str(temp_1['flight_id_txt'])
-    flight_id_txt_2 = str(temp_2['flight_id_txt'])
+    flight_id_1 = str(temp_1['flight_id'])
+    flight_id_2 = str(temp_2['flight_id'])
 
-    postgres_sql_text = "INSERT INTO \"" + table_name + "\" " \
-                         "(\"flight_id_txt\"," + \
+    postgres_sql_text = f"INSERT INTO \"{table_name}\" " \
+                         "(\"flight_id\"," + \
                          "\"aircraft_id\"," \
                          "\"start_time_unix\"," \
                          "\"callsign\"," \
@@ -120,7 +121,7 @@ with conn_postgres:
                          "\"geom\"," \
                          "\"end_time_unix\")"
 
-    postgres_sql_text = postgres_sql_text + " VALUES('" + flight_id_txt_1 + "','" \
+    postgres_sql_text = postgres_sql_text + " VALUES('" + flight_id_1 + "','" \
                         + aircraft_id + "'," \
                         + snapshot_id_1 + ",'" \
                         + callsign + "','" \
@@ -143,7 +144,7 @@ with conn_postgres:
     altitude_2 = str(temp_2['altitude'])
 
     while k < num_of_records - 1:
-        while (temp_1['flight_id_txt'] == temp_2['flight_id_txt']) and \
+        while (temp_1['flight_id'] == temp_2['flight_id']) and \
              (temp_2['snapshot_id'] - temp_1['snapshot_id']) < 300:
                     # and \
                     # (temp_1['_24bitaddress'] == temp_2['_24bitaddress']) and \
@@ -213,7 +214,7 @@ with conn_postgres:
         conn_postgres.commit()
 
         postgres_sql_text = "INSERT INTO \"" + table_name + "\" " \
-                            "(\"flight_id_txt\"," + \
+                            "(\"flight_id\"," + \
                             "\"aircraft_id\"," \
                             "\"start_time_unix\"," \
                             "\"callsign\"," \
@@ -224,7 +225,7 @@ with conn_postgres:
                             "\"geom\"," \
                             "\"end_time_unix\") "
 
-        postgres_sql_text = postgres_sql_text + " VALUES('" + flight_id_txt_1 + "','" \
+        postgres_sql_text = postgres_sql_text + " VALUES('" + flight_id_1 + "','" \
                             + aircraft_id + "'," \
                             + snapshot_id_1 + ",'" \
                             + callsign + "','" \
@@ -263,14 +264,14 @@ with conn_postgres:
                                 "a2.airport_identifier as dest, " + \
                                 "to_timestamp(start_time_unix::INT - 7*60*60)::timestamp without time zone at time zone 'Etc/UTC' as start_time, " + \
                                 "to_timestamp(end_time_unix::INT - 7*60*60)::timestamp without time zone at time zone 'Etc/UTC' as end_time " + \
-                                "INTO track_2021_02_01_fr24_icao_code " + \
-                                "FROM public.track_2021_02_01_fr24 t " + \
+                                f"INTO track_{year_month_day}_fr24_icao_code " + \
+                                f"FROM public.track_{year_month_day}_fr24 t " + \
                                 "LEFT JOIN airports a1 " + \
                                 "ON a1.iata_ata_designator = t.adep_iata " + \
                                 "LEFT JOIN airports a2 " + \
                                 "ON a2.iata_ata_designator = t.ades_iata;" + \
-                                "DROP TABLE IF EXISTS track_2021_02_01_fr24; " + \
-                                "ALTER TABLE track_2021_02_01_fr24_icao_code RENAME TO track_2021_02_01_fr24;"
+                                f"DROP TABLE IF EXISTS track_{year_month_day}_fr24; " + \
+                                f"ALTER TABLE track_{year_month_day}_fr24_icao_code RENAME TO track_{year_month_day}_fr24;"
             print(postgres_sql_text)
             cursor_postgres.execute(postgres_sql_text)
             conn_postgres.commit()
@@ -294,13 +295,13 @@ with conn_postgres:
         altitude_1 = str(temp_1['altitude'])
         altitude_2 = str(temp_2['altitude'])
 
-        flight_id_txt_1 = str(temp_1['flight_id_txt'])
-        flight_id_txt_2 = str(temp_2['flight_id_txt'])
+        flight_id_1 = str(temp_1['flight_id'])
+        flight_id_2 = str(temp_2['flight_id'])
 
         if k < num_of_records:
 
             postgres_sql_text = "INSERT INTO \"" + table_name + "\" " \
-                                 "(\"flight_id_txt\"," + \
+                                 "(\"flight_id\"," + \
                                 "\"aircraft_id\"," \
                                 "\"start_time_unix\"," \
                                 "\"callsign\"," \
@@ -337,10 +338,10 @@ with conn_postgres:
                 callsign = 'null'
 
             snapshot_id_1 = str(temp_1['snapshot_id'])
-            flight_id_txt_1 = str(temp_1['flight_id_txt'])
+            flight_id_1 = str(temp_1['flight_id'])
             # ----------------
 
-            postgres_sql_text = postgres_sql_text + " VALUES('" + flight_id_txt_1 + "','" \
+            postgres_sql_text = postgres_sql_text + " VALUES('" + flight_id_1 + "','" \
                                 + aircraft_id + "'," \
                                 + snapshot_id_1 + ",'" \
                                 + callsign + "','" \
