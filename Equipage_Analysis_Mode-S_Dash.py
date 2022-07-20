@@ -1,6 +1,5 @@
 import psycopg2.extras
 import pandas as pd
-import plotly.graph_objects as go
 import datetime as dt
 import dash
 from dash import dcc
@@ -74,102 +73,119 @@ with conn_postgres:
         for year in reversed(year_list):
             for month in month_list:
                 print(f"{year}-{month}")
-                # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
-                postgres_sql_text = f"SELECT '{year}-{month}','{equipage}',count(*) " \
+                postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
                                     f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
                                     f"WHERE {filter[equipage]} " \
-                                    f"and dest like '%'" \
-                                    f"and frule like 'I';" \
-                    # f"GROUP BY dest;"
+                                    f"and dest like 'VT%'" \
+                                    f"and frule like 'I'" \
+                                    f"GROUP BY dest;"
+                #postgres_sql_text = f"SELECT '{year}-{month}','{equipage}',count(*) " \
                 cursor_postgres = conn_postgres.cursor()
                 cursor_postgres.execute(postgres_sql_text)
                 record = cursor_postgres.fetchall()
-                # equipage_count_temp = pd.DataFrame(record, columns=['year_month', 'equipage', 'dest', 'count'])
-                equipage_count_temp = pd.DataFrame(record, columns=['time', 'equipage', 'count'])
+                equipage_count_temp = pd.DataFrame(record, columns=['time', 'equipage', 'dest', 'count'])
+                #equipage_count_temp = pd.DataFrame(record, columns=['time', 'equipage', 'count'])
                 equipage_count_df = (pd.concat([equipage_count_df, equipage_count_temp], ignore_index=True))
 
         year_list = ['2022']
-        month_list = ['01','02','03','04','05','06']
+        month_list = ['01', '02', '03', '04', '05', '06']
         for year in year_list:
             for month in month_list:
                 print(f"{year}-{month}")
-                # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
-                postgres_sql_text = f"SELECT '{year}-{month}','{equipage}',count(*) " \
+                #postgres_sql_text = f"SELECT '{year}-{month}','{equipage}',count(*) " \
+                postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
                                     f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
                                     f"WHERE {filter[equipage]} " \
-                                    f"and dest like '%'" \
-                                    f"and frule like 'I';" \
-                    # f"GROUP BY dest;"
+                                    f"and dest like 'VT%'" \
+                                    f"and frule like 'I'" \
+                                    f"GROUP BY dest;"
                 cursor_postgres = conn_postgres.cursor()
                 cursor_postgres.execute(postgres_sql_text)
                 record = cursor_postgres.fetchall()
-                # equipage_count_temp = pd.DataFrame(record, columns=['year_month', 'equipage', 'dest', 'count'])
-                equipage_count_temp = pd.DataFrame(record, columns=['time', 'equipage', 'count'])
+                equipage_count_temp = pd.DataFrame(record, columns=['time', 'equipage', 'dest', 'count'])
+                #equipage_count_temp = pd.DataFrame(record, columns=['time', 'equipage', 'count'])
                 equipage_count_df = (pd.concat([equipage_count_df, equipage_count_temp], ignore_index=True))
-#print(equipage_count_df)
-df = equipage_count_df
-# df = equipage_count_df.query('equipage == "Mode-S EHS"')
+print(equipage_count_df)
+
 # fig = px.bar(equipage_count_df.sort_values(['time', 'equipage'],
 #                                            ascending=[True, True]),
 #              x='time', y='count', color='equipage')
-# fig.update_layout(title_text="IFR Movements with Mode-S Equipage (2013-2021)")
+# fig.update_layout(title_text="IFR Movements with ADS-B Equipage (2013-2021)")
 # fig.show()
 
-print(df['time'])
-print(df['count'])
 
-# Create figure
-fig = go.Figure(
-    data=[
-    go.Bar(name = "Mode-S EHS",
-           x=df['time'],
-           y=df.query('equipage == "Mode-S EHS"')['count'],
-           offsetgroup=0),
-    go.Bar(name = "Mode-S ELS",
-           x=df['time'],
-           y=df.query('equipage == "Mode-S ELS"')['count'],
-           offsetgroup=1),
-    go.Bar(name="No Mode-S",
-           x=df['time'],
-           y=df.query('equipage == "No Mode-S"')['count'],
-           offsetgroup=2)
-    ]
-)
+# -------------------------------------------------------------------------------------
 
-# Set title
-fig.update_layout(
-    title_text="Monthly IFR Movements in Bangkok FIR  with Mode-S Equipage (January 2013 to June 2022)"
-)
+app = dash.Dash(__name__)
 
-# Add range slider
-fig.update_layout(
-    xaxis=dict(
-        rangeselector=dict(
-            buttons=list([
-                dict(count=1,
-                     label="1m",
-                     step="month",
-                     stepmode="backward"),
-                dict(count=6,
-                     label="6m",
-                     step="month",
-                     stepmode="backward"),
-                dict(count=1,
-                     label="YTD",
-                     step="year",
-                     stepmode="todate"),
-                dict(count=1,
-                     label="1y",
-                     step="year",
-                     stepmode="backward"),
-                dict(step="all")
-            ])
+# -------------------------------------------------------------------------------------
+app.layout = html.Div([
+
+    html.Div([
+        html.Pre(children="Equipage Statistics",
+                 style={"text-align": "center", "font-size": "100%", "color": "black"})
+    ]),
+
+    html.Div([
+        html.Label(['X-axis categories to compare:'], style={'font-weight': 'bold'}),
+        dcc.RadioItems(
+            id='xaxis_raditem',
+            options=[
+                {'label': 'Year-Month ', 'value': 'time'},
+                {'label': 'Equipage ', 'value': 'equipage'},
+                {'label': 'Destination Airport ', 'value': 'dest'}
+            ],
+            value='time',
+            style={"width": "50%"}
         ),
-        rangeslider=dict(
-            visible=True
+    ]),
+
+    html.Div([
+        html.Br(),
+        html.Label(['Y-axis values to compare:'], style={'font-weight': 'bold'}),
+        dcc.RadioItems(
+            id='yaxis_raditem',
+            options=[
+                {'label': 'Time Spent on Site (hours)', 'value': 'count'}
+            ],
+            value='count',
+            style={"width": "50%"}
         ),
-        type="date"
+    ]),
+
+    html.Div([
+        dcc.Graph(id='the_graph')
+    ]),
+
+])
+
+
+# -------------------------------------------------------------------------------------
+@app.callback(
+    Output(component_id='the_graph', component_property='figure'),
+    [Input(component_id='xaxis_raditem', component_property='value'),
+     Input(component_id='yaxis_raditem', component_property='value')]
+)
+def update_graph(x_axis, y_axis):
+    dff = equipage_count_df
+    # print(dff[[x_axis,y_axis]][:1])
+
+    barchart = px.bar(
+        data_frame=dff,
+        x=x_axis,
+        y=y_axis,
+        title=y_axis + ': by ' + x_axis,
+        # facet_col='Borough',
+        color='equipage',
+        barmode='group',
     )
-)
-fig.write_html("/Users/pongabha/Desktop/ADS-B.html")
-fig.show()
+    barchart.update_layout(title={'xanchor': 'center', 'yanchor': 'top', 'y': 0.9, 'x': 0.5, })
+
+    # barchart.update_layout(xaxis={'categoryorder': 'total ascending'},
+    #                        title={'xanchor': 'center', 'yanchor': 'top', 'y': 0.9, 'x': 0.5, })
+
+    return (barchart)
+
+
+if __name__ == '__main__':
+    app.run_server(debug=True)

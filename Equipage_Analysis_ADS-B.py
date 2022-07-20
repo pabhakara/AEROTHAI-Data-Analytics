@@ -45,20 +45,8 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
 # }
 
 filter = {
-    "Mode-S EHS": "(item10_cns like '%/%L%' "
-                  "or item10_cns like '%/%H%' ) ",
-    "Mode-S ELS": "(item10_cns like '%/%S%' "
-                  "or item10_cns like '%/%E%' "
-                  "or item10_cns like '%/%P%' "
-                  "or item10_cns like '%/%I%' "
-                  "or item10_cns like '%/%X%') ",
-    "No Mode-S": "NOT (item10_cns like '%/%L%' "
-                 "or item10_cns like '%/%E%' "
-                 "or item10_cns like '%/%H%' "
-                 "or item10_cns like '%/%S%' "
-                 "or item10_cns like '%/%P%' "
-                 "or item10_cns like '%/%I%' "
-                 "or item10_cns like '%/%X%') "
+    "ADS-B": " (item10_cns like '%/%B%'or item10_cns like '%/%U%' or item10_cns like '%/%V%')",
+    "No ADS-B": " NOT (item10_cns like '%/%B%'or item10_cns like '%/%U%' or item10_cns like '%/%V%')"
 }
 
 # filter = {
@@ -121,13 +109,13 @@ print(df['count'])
 # Create figure
 fig = go.Figure(
     data=[
-    go.Bar(name = "Mode-S EHS",
+    go.Bar(name = "ADS-B",
            x=df['time'],
-           y=df.query('equipage == "Mode-S EHS"')['count'],
+           y=df.query('equipage == "ADS-B"')['count'],
            offsetgroup=0),
-    go.Bar(name = "Mode-S ELS",
+    go.Bar(name = "No ADS-B",
            x=df['time'],
-           y=df.query('equipage == "Mode-S ELS"')['count'],
+           y=df.query('equipage == "No ADS-B"')['count'],
            offsetgroup=1),
     go.Bar(name="No Mode-S",
            x=df['time'],
@@ -138,7 +126,7 @@ fig = go.Figure(
 
 # Set title
 fig.update_layout(
-    title_text="Monthly IFR Movements in Bangkok FIR  with Mode-S Equipage (January 2013 to June 2022)"
+    title_text="Monthly IFR Movements in Bangkok FIR  with ADS-B Capability (January 2013 to June 2022)"
 )
 
 # Add range slider

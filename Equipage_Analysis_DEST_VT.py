@@ -75,17 +75,17 @@ with conn_postgres:
             for month in month_list:
                 print(f"{year}-{month}")
                 # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
-                postgres_sql_text = f"SELECT '{year}-{month}','{equipage}',count(*) " \
+                postgres_sql_text = f"SELECT '{year}-{month}',dest,count(*) " \
                                     f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
                                     f"WHERE {filter[equipage]} " \
                                     f"and dest like '%'" \
-                                    f"and frule like 'I';" \
-                    # f"GROUP BY dest;"
+                                    f"and frule like 'I' " \
+                                    f"GROUP BY dest;"
                 cursor_postgres = conn_postgres.cursor()
                 cursor_postgres.execute(postgres_sql_text)
                 record = cursor_postgres.fetchall()
                 # equipage_count_temp = pd.DataFrame(record, columns=['year_month', 'equipage', 'dest', 'count'])
-                equipage_count_temp = pd.DataFrame(record, columns=['time', 'equipage', 'count'])
+                equipage_count_temp = pd.DataFrame(record, columns=['time', 'dest', 'count'])
                 equipage_count_df = (pd.concat([equipage_count_df, equipage_count_temp], ignore_index=True))
 
         year_list = ['2022']
@@ -94,17 +94,18 @@ with conn_postgres:
             for month in month_list:
                 print(f"{year}-{month}")
                 # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
-                postgres_sql_text = f"SELECT '{year}-{month}','{equipage}',count(*) " \
+                postgres_sql_text = f"SELECT '{year}-{month}',dest,count(*) " \
                                     f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
                                     f"WHERE {filter[equipage]} " \
                                     f"and dest like '%'" \
-                                    f"and frule like 'I';" \
-                    # f"GROUP BY dest;"
+                                    f"and frule like 'I' " \
+                                    f"GROUP BY dest;"
                 cursor_postgres = conn_postgres.cursor()
                 cursor_postgres.execute(postgres_sql_text)
                 record = cursor_postgres.fetchall()
                 # equipage_count_temp = pd.DataFrame(record, columns=['year_month', 'equipage', 'dest', 'count'])
-                equipage_count_temp = pd.DataFrame(record, columns=['time', 'equipage', 'count'])
+                # equipage_count_temp = pd.DataFrame(record, columns=['time', 'equipage', 'count'])
+                equipage_count_temp = pd.DataFrame(record, columns=['time', 'dest', 'count'])
                 equipage_count_df = (pd.concat([equipage_count_df, equipage_count_temp], ignore_index=True))
 #print(equipage_count_df)
 df = equipage_count_df
@@ -116,23 +117,35 @@ df = equipage_count_df
 # fig.show()
 
 print(df['time'])
-print(df['count'])
+#print(df['count'])
 
 # Create figure
 fig = go.Figure(
     data=[
-    go.Bar(name = "Mode-S EHS",
+    go.Bar(name = "VTBS",
            x=df['time'],
-           y=df.query('equipage == "Mode-S EHS"')['count'],
+           y=df.query('dest == "VTBS"')['count'],
            offsetgroup=0),
-    go.Bar(name = "Mode-S ELS",
+    go.Bar(name = "VTBD",
            x=df['time'],
-           y=df.query('equipage == "Mode-S ELS"')['count'],
+           y=df.query('dest == "VTBD"')['count'],
            offsetgroup=1),
-    go.Bar(name="No Mode-S",
+    go.Bar(name="VTSP",
            x=df['time'],
-           y=df.query('equipage == "No Mode-S"')['count'],
-           offsetgroup=2)
+           y=df.query('dest == "VTSP"')['count'],
+           offsetgroup=2),
+    go.Bar(name="VTCC",
+           x=df['time'],
+           y=df.query('dest == "VTCC"')['count'],
+           offsetgroup=3),
+    go.Bar(name="VTSM",
+           x=df['time'],
+           y=df.query('dest == "VTSM"')['count'],
+           offsetgroup=4),
+    go.Bar(name="VTSS",
+           x=df['time'],
+           y=df.query('dest == "VTSS"')['count'],
+           offsetgroup=5),
     ]
 )
 
@@ -171,5 +184,5 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html("/Users/pongabha/Desktop/ADS-B.html")
+fig.write_html("/Users/pongabha/Desktop/DEST-VT.html")
 fig.show()
