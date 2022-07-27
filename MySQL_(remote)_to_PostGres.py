@@ -52,11 +52,11 @@ tables = []
 # prefix = ''
 # postfix = '_radar'
 
-# prefix = ''
-# postfix = '_fdmc'
+prefix = ''
+postfix = '_fdmc'
 
-prefix = 'target_'
-postfix = ''
+# prefix = 'target_'
+# postfix = ''
 
 # prefix = 'distances_'
 # postfix = ''
@@ -64,9 +64,9 @@ postfix = ''
 # prefix = ''
 # postfix = '_radar_position_at_fix'
 
-year_list = ['2019']
+year_list = ['2022']
 #month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
-month_list = ['07_new']
+month_list = ['07']
 
 for year in year_list:
     for month in month_list:

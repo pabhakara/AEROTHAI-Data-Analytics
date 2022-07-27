@@ -8,8 +8,8 @@ import os
 import glob
 
 import plotly.express as px
-
-
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 
 from dash import Dash, html, dcc
 import time
@@ -22,19 +22,19 @@ def none_to_null(etd):
     return x
 
 
-conn_postgres_source = psycopg2.connect(user="pongabhaab",
-                                             password="pongabhaab",
-                                             host="172.16.129.241",
-                                             port="5432",
-                                             database="aerothai_dwh",
-                                             options="-c search_path=dbo,sur_air")
-
-# conn_postgres_source = psycopg2.connect(user="postgres",
-#                                              password="password",
-#                                              host="localhost",
+# conn_postgres_source = psycopg2.connect(user="pongabhaab",
+#                                              password="pongabhaab",
+#                                              host="172.16.129.241",
 #                                              port="5432",
-#                                              database="temp",
+#                                              database="aerothai_dwh",
 #                                              options="-c search_path=dbo,sur_air")
+
+conn_postgres_source = psycopg2.connect(user="postgres",
+                                             password="password",
+                                             host="localhost",
+                                             port="5432",
+                                             database="temp",
+                                             options="-c search_path=dbo,sur_air")
 
 output_filepath = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Flight_Proflie_Plots/'
 files = glob.glob(f"{output_filepath}*")
@@ -42,8 +42,8 @@ for f in files:
     os.remove(f)
 
 year = '2022'
-month = '07'
-day = '03'
+month = '04'
+day = '28'
 
 with conn_postgres_source:
     cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -53,8 +53,8 @@ with conn_postgres_source:
                         f"FROM sur_air.cat062_{year}{month}{day} t " \
                         f"LEFT JOIN flight_data.flight_{year}{month} f " \
                         f"ON t.flight_id = f.id " \
-                        f"WHERE (f.dep LIKE 'VTC%' AND f.dest LIKE 'VTSS%') " \
-                        f"AND t.acid LIKE '%' " \
+                        f"WHERE (f.dep LIKE '%' AND f.dest LIKE 'VTSP%') " \
+                        f"AND t.acid LIKE 'BKP%' " \
                         f"AND f.frule LIKE '%'; "
     cursor_postgres_source.execute(postgres_sql_text)
     flight_key_list = cursor_postgres_source.fetchall()
@@ -67,6 +67,7 @@ with conn_postgres_source:
         # Create an SQL query that selects surveillance targets based on the list of selected flights
         # from the source PostgreSQL database
         postgres_sql_text = f"SELECT t.flight_key, t.app_time, t.sector, t.dist_from_last_position, t.measured_fl " \
+                            f", t.final_state_selected_alt_dap " \
                             f", t.latitude, t.longitude " \
                             f"FROM sur_air.cat062_{year}{month}{day} t " \
                             f"LEFT JOIN flight_data.flight_{year}{month} f " \
@@ -81,7 +82,7 @@ with conn_postgres_source:
         cursor_postgres_source.execute(postgres_sql_text)
         record = cursor_postgres_source.fetchall()
         df = pd.DataFrame(record, columns=['flight_key','app_time','sector','dist_from_last_position','measured_fl',
-                                           'latitude','longitude'])
+                                           'final_state_selected_alt_dap','latitude','longitude'])
 
         accumulated_distance = 0
         accumulated_distance_list = []
@@ -95,25 +96,123 @@ with conn_postgres_source:
         df['accumulated_distance'] = pd.DataFrame(accumulated_distance_list,columns =['accumulated_distance'])
         print(df)
         #print(df[-1])
+        #
+        # fig = make_subplots(
+        #     rows=1, cols=1,
+        #     # specs=[[{"type": "scatter"}, {"type": "mapbox"},{"type": "scatter3d"}]])
+        #     # specs=[[{"type": "scatter"}, {"type": "mapbox"},{"type": "scatter3d"}]])
+
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+
+        #fig = go.Figure()
+
+        fig.add_trace(go.Line(name="Measured FL",
+                              x=df["accumulated_distance"],
+                              y=df["measured_fl"]*100),
+                      secondary_y=False,
+                      )
 
 
-        #fig = px.line(df, x="accumulated_distance", y="measured_fl",title=flight_key[0])
+        fig.add_trace(go.Line(name="Final State Selected Altitude",
+                              x=df["accumulated_distance"],
+                              y=df["final_state_selected_alt_dap"]),
+                      secondary_y=False,
+                      )
 
-        fig = px.scatter_mapbox(df, lat="latitude", lon="longitude",
-                                color_continuous_scale=px.colors.sequential.Viridis,
-                                color="measured_fl",
-                                hover_data=["app_time", "measured_fl"],
-                                zoom=5)
-        # fig = px.scatter_mapbox(us_cities, lat="lat", lon="lon", hover_name="City", hover_data=["State", "Population"],
-        #                         color_discrete_sequence=["fuchsia"], )
-        fig.update_layout(mapbox_style="carto-darkmatter")
-        fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
-        fig.update_layout(title=flight_key[0])
-        fig.update_traces(marker=dict(size=2))
-        fig.show()
+        # Add figure title
+        fig.update_layout(
+            title_text=f"Vertical Profile of Flight {flight_key[0]}"
+        )
 
+        # Set x-axis title
+        fig.update_xaxes(title_text="Accumulated Distance (NM)")
 
+        # Set y-axes titles
+        #fig.update_yaxes(title_text="<b>Measured FL (ft)</b>", secondary_y=False)
+        fig.update_yaxes(title_text=f"<b>Altitude (ft)</b>", secondary_y=False)
 
+        # fig.add_trace(go.Scattermapbox(lat=df["latitude"], lon=df["longitude"],
+        #               mode='markers',
+        #               marker_size=14),
+        #               row=1, col=2)
+
+        # fig.add_trace(go.Scatter3d(x = df['longitude'], y = df['latitude'], z = df['measured_fl'],
+        #               mode='markers',
+        #               marker_size=14),
+        #               row=1, col=3)
+        #
+        # fig.update_layout(height=500, width=700,
+        #                   title_text="Multiple Subplots with Titles")
+
+        # fig.update_layout(
+        #     autosize=True,
+        #     hovermode='closest',
+        #     mapbox=dict(
+        #         style='open-street-map',
+        #         domain={'x': [0, 0.4], 'y': [0, 1]},
+        #         bearing=0,
+        #         center=dict(
+        #             lat=45,
+        #             lon=-73
+        #         ),
+        #         pitch=0,
+        #         zoom=5
+        #     ),
+        #     mapbox2=dict(
+        #         style='open-street-map',
+        #         domain={'x': [0.6, 1.0], 'y': [0, 1]},
+        #         bearing=0,
+        #         center=dict(
+        #             lat=45,
+        #             lon=-73
+        #         ),
+        #         pitch=0,
+        #         zoom=5
+        #     ),
+        #     mapbox3=dict(
+        #         style='open-street-map',
+        #         domain={'x': [0.6, 1.0], 'y': [0, 1]},
+        #         bearing=0,
+        #         center=dict(
+        #             lat=45,
+        #             lon=-73
+        #         ),
+        #         pitch=0,
+        #         zoom=5
+        #     ),
+        # )
+
+        # fig = make_subplots(
+        #     rows=1, cols=2, subplot_titles=('Montreal 1', 'Montreal 2'),
+        #     specs=[[{"type": "mapbox"}, {"type": "mapbox"}]]
+        # )
+        #
+        # fig.add_trace(go.Scattermapbox(
+        #     lat=[45.5017],
+        #     lon=[-73.5673],
+        #     mode='markers',
+        #     marker_size=14,
+        #     text=['Montreal 1'],
+        # ), 1, 1)
+
+        # fig = px.line
+        # fig.show()
+        #
+        # fig = px.scatter_mapbox(df, lat="latitude", lon="longitude",
+        #                         color_continuous_scale=px.colors.sequential.Viridis,
+        #                         color="measured_fl",
+        #                         hover_data=["app_time", "measured_fl"],
+        #                         zoom=5)
+        # # fig = px.scatter_mapbox(us_cities, lat="lat", lon="lon", hover_name="City", hover_data=["State", "Population"],
+        # #                         color_discrete_sequence=["fuchsia"], )
+        # fig.update_layout(mapbox_style="carto-darkmatter")
+        # fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+        # fig.update_layout(title=flight_key[0])
+        # fig.update_traces(marker=dict(size=3))
+        # fig.show()
+        #
+        #
+        #
         # fig = px.scatter_3d(df, x='longitude', y='latitude', z='measured_fl',
         #                     color='sector')
         fig.show()
