@@ -28,7 +28,7 @@ with conn_postgres:
 
     year_list = ['2022']
     #month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
-    month_list = ['01','02','03','04','05']
+    month_list = ['07']
 
     for year in year_list:
         for month in month_list:

@@ -49,11 +49,11 @@ tables = []
 #prefix = ''
 #postfix = '_vtbd_tecos_dep'
 
-# prefix = ''
-# postfix = '_radar'
-
 prefix = ''
-postfix = '_fdmc'
+postfix = '_radar'
+
+# prefix = ''
+# postfix = '_fdmc'
 
 # prefix = 'target_'
 # postfix = ''
@@ -64,9 +64,15 @@ postfix = '_fdmc'
 # prefix = ''
 # postfix = '_radar_position_at_fix'
 
-year_list = ['2022']
-#month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
-month_list = ['07']
+# year_list = ['2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013']
+# month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
+
+# year_list = ['2019']
+# month_list = ['08','09','10','11','12']
+
+year_list = ['2015']
+month_list = ['12']
+#month_list = ['07']
 
 for year in year_list:
     for month in month_list:

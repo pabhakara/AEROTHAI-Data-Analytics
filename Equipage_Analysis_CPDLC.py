@@ -45,31 +45,14 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
 #                  "or item10_cns like '%/%X%')"
 # }
 
-filter = {
-    "Mode-S EHS": "(item10_cns like '%/%L%' "
-                  "or item10_cns like '%/%H%' ) ",
-    "Mode-S ELS": "(item10_cns like '%/%S%' "
-                  "or item10_cns like '%/%E%' "
-                  "or item10_cns like '%/%P%' "
-                  "or item10_cns like '%/%I%' "
-                  "or item10_cns like '%/%X%') ",
-    "No Mode-S": "NOT (item10_cns like '%/%L%' "
-                 "or item10_cns like '%/%E%' "
-                 "or item10_cns like '%/%H%' "
-                 "or item10_cns like '%/%S%' "
-                 "or item10_cns like '%/%P%' "
-                 "or item10_cns like '%/%I%' "
-                 "or item10_cns like '%/%X%') "
-}
-
 # filter = {
-#     "Mode-S": "(item10_cns like '%/%L%' "
-#                  "or item10_cns like '%/%E%' "
-#                  "or item10_cns like '%/%H%' "
-#                  "or item10_cns like '%/%S%' "
-#                  "or item10_cns like '%/%P%' "
-#                  "or item10_cns like '%/%I%' "
-#                  "or item10_cns like '%/%X%') ",
+#     "Mode-S EHS": "(item10_cns like '%/%L%' "
+#                   "or item10_cns like '%/%H%' ) ",
+#     "Mode-S ELS": "(item10_cns like '%/%S%' "
+#                   "or item10_cns like '%/%E%' "
+#                   "or item10_cns like '%/%P%' "
+#                   "or item10_cns like '%/%I%' "
+#                   "or item10_cns like '%/%X%') ",
 #     "No Mode-S": "NOT (item10_cns like '%/%L%' "
 #                  "or item10_cns like '%/%E%' "
 #                  "or item10_cns like '%/%H%' "
@@ -79,6 +62,15 @@ filter = {
 #                  "or item10_cns like '%/%X%') "
 # }
 
+filter = {
+    "CPDLC-ATN-B1 VDLM2": "(item10_cns like '%J1%/%')" ,
+    "CPDLC-FANS 1/A HFDL": "(item10_cns like '%J2%/%')" ,
+    "CPDLC-FANS 1/A VDL MODE A": "(item10_cns like '%J3%/%')",
+    "CPDLC-FANS 1/A VDL MODE 2": "(item10_cns like '%J4%/%')",
+    "CPDLC-FANS 1/A SATCOM (INMARSAT)": "(item10_cns like '%J5%/%')",
+    "CPDLC-FANS 1/A SATCOM (MTSAT)": "(item10_cns like '%J6%/%')",
+    "CPDLC-FANS 1/A SATCOM (Iridium)": "(item10_cns like '%J7%/%')",
+}
 # filter = {
 #     "ADS-B":"(item10_cns like '%/%B%'or item10_cns like '%/%U%' or item10_cns like '%/%V%') ",
 # }
@@ -99,7 +91,7 @@ with conn_postgres:
                 postgres_sql_text = f"SELECT count(*) " \
                                     f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
                                     f"WHERE {filter[equipage]} " \
-                                    f"and dest like '%'" \
+                                    f"and (reg LIKE 'HS%') " \
                                     f"and frule like 'I';" \
                     # f"GROUP BY dest;"
                 cursor_postgres = conn_postgres.cursor()
@@ -177,18 +169,18 @@ fig.add_trace(
     secondary_y=False,
 )
 
-fig.add_trace(
-    go.Bar(name=equipage_list[2],
-                      x=df.index,
-                      y=df[equipage_list[2]],
-                      offsetgroup=2),
-    secondary_y=False,
-)
+# fig.add_trace(
+#     go.Bar(name=equipage_list[2],
+#                       x=df.index,
+#                       y=df[equipage_list[2]],
+#                       offsetgroup=2),
+#     secondary_y=False,
+# )
 
 fig.add_trace(
-    go.Line(name="Mode-S EHS %",
+    go.Line(name="Thai %",
                            x=df.index,
-                           y=df['Mode-S EHS']/(df['Mode-S EHS']+df['Mode-S ELS']+df['No Mode-S'])*100,
+                           y=df[equipage_list[0]]/(df[equipage_list[0]]+df[equipage_list[1]])*100,
             line=dict(color="#808080")
                         ),
     secondary_y=True,
@@ -196,7 +188,7 @@ fig.add_trace(
 
 # Add figure title
 fig.update_layout(
-    title_text="Historical Monthly IFR Movements with Mode-S (January 2013 to June 2022)"
+    title_text="Historical Monthly Thai-registered IFR Movements with CPDLC (January 2013 to July 2022)"
 )
 
 # Set x-axis title
@@ -245,7 +237,7 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html("/Users/pongabha/Desktop/Mode-S.html")
-df.to_csv("/Users/pongabha/Desktop/Mode-S.csv")
+fig.write_html("/Users/pongabha/Desktop/CPDLC-Thai.html")
+df.to_csv("/Users/pongabha/Desktop/CPDLC-Thai.csv")
 #fig.write_image("/Users/pongabha/Desktop/ADS-B.png")
 fig.show()

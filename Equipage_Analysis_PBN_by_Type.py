@@ -14,80 +14,39 @@ import plotly.express as px
 pd.options.plotting.backend = "plotly"
 
 schema_name = 'flight_data'
-conn_postgres = psycopg2.connect(user="pongabhaab",
-                                 password="pongabhaab",
-                                 host="172.16.129.241",
+# conn_postgres = psycopg2.connect(user="pongabhaab",
+#                                  password="pongabhaab",
+#                                  host="172.16.129.241",
+#                                  port="5432",
+#                                  database="aerothai_dwh",
+#                                  options="-c search_path=dbo," + schema_name)
+conn_postgres = psycopg2.connect(user="postgres",
+                                 password="password",
+                                 host="localhost",
                                  port="5432",
-                                 database="aerothai_dwh",
+                                 database="temp",
                                  options="-c search_path=dbo," + schema_name)
 
-# filter = {
-#     "Mode-S aircraft identification":"(item10_cns like '%/%S%' "
-#                                      "or item10_cns like '%/%L%' "
-#                                      "or item10_cns like '%/%E%' "
-#                                      "or item10_cns like '%/%H%' "
-#                                      "or item10_cns like '%/%I%') ",
-#     "Mode-S pressure-altitude": "(item10_cns like '%/%L%' "
-#                                 "or item10_cns like '%/%E%' "
-#                                 "or item10_cns like '%/%S%' "
-#                                 "or item10_cns like '%/%H%'"
-#                                 "or item10_cns like '%/%P%') ",
-#     "Mode-S extended squitter": "(item10_cns like '%/%L%' "
-#                                 "or item10_cns like '%/%E%' ) ",
-#     "Mode-S enhanced surveillance": "(item10_cns like '%/%L%' "
-#                                     "or item10_cns like '%/%H%' ) ",
-#     "No Mode-S": "NOT(item10_cns like '%/%L%' "
-#                  "or item10_cns like '%/%E%' "
-#                  "or item10_cns like '%/%S%' "
-#                  "or item10_cns like '%/%H%'"
-#                  "or item10_cns like '%/%P%'"
-#                  "or item10_cns like '%/%I%' "
-#                  "or item10_cns like '%/%X%')"
-# }
+analysis = "PBN by type"
 
 filter = {
-    "Mode-S EHS": "(item10_cns like '%/%L%' "
-                  "or item10_cns like '%/%H%' ) ",
-    "Mode-S ELS": "(item10_cns like '%/%S%' "
-                  "or item10_cns like '%/%E%' "
-                  "or item10_cns like '%/%P%' "
-                  "or item10_cns like '%/%I%' "
-                  "or item10_cns like '%/%X%') ",
-    "No Mode-S": "NOT (item10_cns like '%/%L%' "
-                 "or item10_cns like '%/%E%' "
-                 "or item10_cns like '%/%H%' "
-                 "or item10_cns like '%/%S%' "
-                 "or item10_cns like '%/%P%' "
-                 "or item10_cns like '%/%I%' "
-                 "or item10_cns like '%/%X%') "
+    "RNAV 10 (RNP 10)": "(pbn_type like '%A%')" ,
+    "RNAV 5": "(pbn_type like '%B%')" ,
+    "RNAV 2": "(pbn_type like '%C%')",
+    "RNAV 1": "(pbn_type like '%D%')",
+    "RNP 4": "(pbn_type like '%L%')",
+    "RNP 1": "(pbn_type like '%O%')",
+    "RNP APCH": "(pbn_type like '%S%')",
+    "RNP AR APCH": "(pbn_type like '%T%')",
+    "Total": "(pbn_type like '%')",
 }
 
-# filter = {
-#     "Mode-S": "(item10_cns like '%/%L%' "
-#                  "or item10_cns like '%/%E%' "
-#                  "or item10_cns like '%/%H%' "
-#                  "or item10_cns like '%/%S%' "
-#                  "or item10_cns like '%/%P%' "
-#                  "or item10_cns like '%/%I%' "
-#                  "or item10_cns like '%/%X%') ",
-#     "No Mode-S": "NOT (item10_cns like '%/%L%' "
-#                  "or item10_cns like '%/%E%' "
-#                  "or item10_cns like '%/%H%' "
-#                  "or item10_cns like '%/%S%' "
-#                  "or item10_cns like '%/%P%' "
-#                  "or item10_cns like '%/%I%' "
-#                  "or item10_cns like '%/%X%') "
-# }
-
-# filter = {
-#     "ADS-B":"(item10_cns like '%/%B%'or item10_cns like '%/%U%' or item10_cns like '%/%V%') ",
-# }
 
 equipage_list = list(filter.keys())
 equipage_count_df = pd.DataFrame()
 with conn_postgres:
     for equipage in equipage_list:
-        year_list = ['2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013']
+        year_list = ['2021', '2020', '2019', '2018', '2017', '2016']
         month_list = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         equipage_count_temp_3 = pd.DataFrame()
         for year in reversed(year_list):
@@ -97,9 +56,9 @@ with conn_postgres:
 
                 # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
                 postgres_sql_text = f"SELECT count(*) " \
-                                    f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
+                                    f"FROM {schema_name}.\"{year}_{month}_radar\" " \
                                     f"WHERE {filter[equipage]} " \
-                                    f"and dest like '%'" \
+                                    f"and (reg LIKE '%') " \
                                     f"and frule like 'I';" \
                     # f"GROUP BY dest;"
                 cursor_postgres = conn_postgres.cursor()
@@ -121,7 +80,7 @@ with conn_postgres:
 
                 # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
                 postgres_sql_text = f"SELECT count(*) " \
-                                    f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
+                                    f"FROM {schema_name}.\"{year}_{month}_radar\" " \
                                     f"WHERE {filter[equipage]} " \
                                     f"and dest like '%'" \
                                     f"and frule like 'I';" \
@@ -161,42 +120,59 @@ print(df)
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 
 # Add traces
-fig.add_trace(
-    go.Bar(name=equipage_list[0],
-                      x=df.index,
-                      y=df[equipage_list[0]],
-                      offsetgroup=0),
-    secondary_y=False,
-)
+for k in range(0,8):
+    fig.add_trace(
+        go.Bar(name=equipage_list[k],
+                          x=df.index,
+                          y=df[equipage_list[k]],
+                          offsetgroup=k),
+        secondary_y=False,
+    )
 
-fig.add_trace(
-    go.Bar(name=equipage_list[1],
-                      x=df.index,
-                      y=df[equipage_list[1]],
-                      offsetgroup=1),
-    secondary_y=False,
-)
+for k in range(0, 8):
+    fig.add_trace(
+        go.Line(name=f"{equipage_list[k]} as % of Total IFR",
+                          x=df.index,
+                          y=df[equipage_list[k]]/df[equipage_list[-1]]*100),
+        secondary_y=True,
+    )
+    # fig.add_trace(
+    #     go.Line(name="Thai %",
+    #                            x=df.index,
+    #                            y=df[equipage_list[0]]/(df[equipage_list[0]]+df[equipage_list[1]])*100,
+    #             line=dict(color="#808080")
+    #                         ),
+    #     secondary_y=True,
+    # )
 
-fig.add_trace(
-    go.Bar(name=equipage_list[2],
-                      x=df.index,
-                      y=df[equipage_list[2]],
-                      offsetgroup=2),
-    secondary_y=False,
-)
+# fig.add_trace(
+#     go.Bar(name=equipage_list[1],
+#                       x=df.index,
+#                       y=df[equipage_list[1]],
+#                       offsetgroup=1),
+#     secondary_y=False,
+# )
 
-fig.add_trace(
-    go.Line(name="Mode-S EHS %",
-                           x=df.index,
-                           y=df['Mode-S EHS']/(df['Mode-S EHS']+df['Mode-S ELS']+df['No Mode-S'])*100,
-            line=dict(color="#808080")
-                        ),
-    secondary_y=True,
-)
+# fig.add_trace(
+#     go.Bar(name=equipage_list[2],
+#                       x=df.index,
+#                       y=df[equipage_list[2]],
+#                       offsetgroup=2),
+#     secondary_y=False,
+# )
+
+# fig.add_trace(
+#     go.Line(name="Thai %",
+#                            x=df.index,
+#                            y=df[equipage_list[0]]/(df[equipage_list[0]]+df[equipage_list[1]])*100,
+#             line=dict(color="#808080")
+#                         ),
+#     secondary_y=True,
+# )
 
 # Add figure title
 fig.update_layout(
-    title_text="Historical Monthly IFR Movements with Mode-S (January 2013 to June 2022)"
+    title_text="Historical Monthly IFR Movements with CPDLC by type (January 2013 to July 2022)"
 )
 
 # Set x-axis title
@@ -245,7 +221,7 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html("/Users/pongabha/Desktop/Mode-S.html")
-df.to_csv("/Users/pongabha/Desktop/Mode-S.csv")
+fig.write_html(f"/Users/pongabha/Desktop/{analysis}.html")
+df.to_csv(f"/Users/pongabha/Desktop/{analysis}.csv")
 #fig.write_image("/Users/pongabha/Desktop/ADS-B.png")
 fig.show()

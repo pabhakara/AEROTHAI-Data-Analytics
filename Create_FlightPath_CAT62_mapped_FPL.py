@@ -32,9 +32,12 @@ with conn_postgres_target:
 
     year_list = ['2022']
     #month_list = ['04']
-    month_list = ['07']
-    #day_list = ['24','25','26','27','28','29','30']
-    day_list = ['01','02','03']
+    month_list = ['05']
+    day_list = ['01','02','03','04','05','06']
+
+    # day_list = ['08','09','10',
+    #             '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
+    #             '21', '22', '23', '24', '25']
 
     for year in year_list:
         for month in month_list:
@@ -166,6 +169,8 @@ with conn_postgres_target:
                     num_of_records = len(record)
 
                     k = 0
+
+                    print(postgres_sql_text)
 
                     temp_1 = record[k]
                     temp_2 = record[k+1]
@@ -332,13 +337,13 @@ with conn_postgres_target:
                         else:
                             break
 
-                postgres_sql_text = f"DROP TABLE IF EXISTS track.track_{yyyymmdd}_temp;"  \
+                postgres_sql_text = f"DROP TABLE IF EXISTS track.track_{yyyymmdd}_temp;\n"  \
                                     f"ALTER TABLE public.track_{yyyymmdd}_temp SET SCHEMA track;"
                 print(postgres_sql_text)
                 cursor_postgres_target.execute(postgres_sql_text)
                 conn_postgres_target.commit()
 
-                postgres_sql_text = f"DROP TABLE IF EXISTS track.track_cat62_{yyyymmdd};"  \
+                postgres_sql_text = f"DROP TABLE IF EXISTS track.track_cat62_{yyyymmdd}; \n"  \
                                     f"SELECT track.track_{yyyymmdd}_temp.geom," \
                                     f"track.track_{yyyymmdd}_temp.track_duration," \
                                     f"track.track_{yyyymmdd}_temp.track_length," \

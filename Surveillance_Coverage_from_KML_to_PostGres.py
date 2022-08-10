@@ -1,10 +1,14 @@
 import psycopg2.extras
 import geopandas as gpd
+import fiona
 from shapely.wkb import dumps as wkb_dumps
 import shapely
 
 # Enable fiona driver
-gpd.io.file.fiona.drvsupport.supported_drivers['KML'] = 'rw'
+#gpd.io.file.fiona.drvsupport.supported_drivers['KML'] = 'rw'
+
+
+fiona.supported_drivers["KML"] = "rw"
 
 # Try to connect to the local PostGresSQL database in which we will store our surveillance coverage
 conn_postgres = psycopg2.connect(user = "postgres",
@@ -14,9 +18,9 @@ conn_postgres = psycopg2.connect(user = "postgres",
                                   database = "surv_coverage")
 
 #source_list = ['All','CMA','HTY','PSL','PUT','SVB','UBL','UDN','ROT','STN','CPN','CTR']
-source_list = ['DMK']
-type = 'SSR'
-table_name = 'surv_coverage2'
+source_list = ['Samui']
+type = 'ADS-B'
+table_name = 'surv_coverage'
 
 with conn_postgres:
     # cursor_postgres = conn_postgres.cursor()
@@ -26,14 +30,16 @@ with conn_postgres:
 
     for source in source_list:
         print(source)
-        for fl in range(500,22000,500):
+        for fl in range(500,20500,500):
         #for fl in range(22500,50500,500):
             print(fl)
-            filename = source + "_Radar_Coverage_"+ str(fl) +"FT.kml"
+            filename = source + "_ADSB_Coverage_"+ str(fl) +"FT.kml"
             #filename = 'coverage' + str(fl) + '.kml'
 
-            path = f"/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/Radar Coverage" \
-                   f"/Radar_Coverage/{source}_Radar_Coverage/{filename}"
+            path = f"/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/" \
+                   f"/Simulated Coverage/{source}_ADSB_Coverage/{filename}"
+            # path = f"/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/Radar Coverage" \
+            #        f"/Radar_Coverage/{source}_ADS-B_Coverage/{filename}"
             #All Radar coverage 500.kml'
 
             # Read file

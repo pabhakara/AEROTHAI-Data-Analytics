@@ -48,16 +48,17 @@ def count_target(year,month,day,filter_list,airport_list):
 pd.options.plotting.backend = "plotly"
 
 schema_name = 'flight_data'
-conn_postgres = psycopg2.connect(user="postgres",
-                                 password="password",
-                                 host="localhost",
+conn_postgres = psycopg2.connect(user="pongabhaab",
+                                 password="pongabhaab",
+                                 host="172.16.129.241",
                                  port="5432",
-                                 database="temp")
+                                 database="aerothai_dwh",
+                                 options="-c search_path=dbo," + schema_name)
 
 filter_list = {
     "All": f"(t.measured_fl < a.upper/100 "
         f" AND t.measured_fl > 0 "
-        f" AND public.ST_WITHIN(t.\"2d_position\",a.geom) "
+        f" AND public.ST_WITHIN(t.\"position\",a.geom) "
         f" AND f.frule LIKE 'I' )"
         # f" AND (f.sur LIKE '%L%' OR f.sur LIKE '%H%' OR f.sur LIKE '%E%') "
         # f" ) "
@@ -75,47 +76,54 @@ with conn_postgres:
     # print(equipage_list)
     equipage_count_df = pd.DataFrame()
 
-    year_list = ['2022']
-    month_list = ['04']
-    day_list = ['25','26','27','28','29','30']
-    equipage_count_temp_1 = pd.DataFrame()
-    for year in year_list:
-        for month in month_list:
-            for day in day_list:
-                equipage_count_temp = count_target(year, month, day, filter_list, airport_list)
-                equipage_count_temp_1 = pd.concat([equipage_count_temp_1, equipage_count_temp])
+    # year_list = ['2022']
+    # month_list = ['04']
+    # day_list = ['25','26','27','28','29','30']
+    # equipage_count_temp_1 = pd.DataFrame()
+    # for year in year_list:
+    #     for month in month_list:
+    #         for day in day_list:
+    #             equipage_count_temp = count_target(year, month, day, filter_list, airport_list)
+    #             equipage_count_temp_1 = pd.concat([equipage_count_temp_1, equipage_count_temp])
 
-    year_list = ['2022']
-    month_list = ['05']
-    day_list = ['01','02','03','04','05']
-    equipage_count_temp_2 = pd.DataFrame()
-    for year in year_list:
-        for month in month_list:
-            for day in day_list:
-                equipage_count_temp = count_target(year, month, day, filter_list, airport_list)
-                equipage_count_temp_2 = pd.concat([equipage_count_temp_2, equipage_count_temp])
-
-    year_list = ['2022']
-    month_list = ['06']
-    day_list = ['30']
-    equipage_count_temp_3 = pd.DataFrame()
-    for year in year_list:
-        for month in month_list:
-            for day in day_list:
-                equipage_count_temp = count_target(year, month, day, filter_list, airport_list)
-                equipage_count_temp_3 = pd.concat([equipage_count_temp_3, equipage_count_temp])
+    # year_list = ['2022']
+    # month_list = ['05']
+    # day_list = ['01','02','03','04','05','06','07','08','09','10',
+    #             '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
+    #             '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
+    #
+    # equipage_count_temp_2 = pd.DataFrame()
+    # for year in year_list:
+    #     for month in month_list:
+    #         for day in day_list:
+    #             equipage_count_temp = count_target(year, month, day, filter_list, airport_list)
+    #             equipage_count_temp_2 = pd.concat([equipage_count_temp_2, equipage_count_temp])
+    #
+    # year_list = ['2022']
+    # month_list = ['06']
+    # day_list = ['01','02','03','04','05','06','07','08','09','10',
+    #             '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
+    #             '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
+    # equipage_count_temp_3 = pd.DataFrame()
+    # for year in year_list:
+    #     for month in month_list:
+    #         for day in day_list:
+    #             equipage_count_temp = count_target(year, month, day, filter_list, airport_list)
+    #             equipage_count_temp_3 = pd.concat([equipage_count_temp_3, equipage_count_temp])
 
     year_list = ['2022']
     month_list = ['07']
-    day_list = ['01','02','03']
+    day_list = ['01','02','03','05','06','07','08','09']
     equipage_count_temp_4 = pd.DataFrame()
     for year in year_list:
         for month in month_list:
             for day in day_list:
                 equipage_count_temp = count_target(year, month, day, filter_list, airport_list)
                 equipage_count_temp_4 = pd.concat([equipage_count_temp_4, equipage_count_temp])
+                print(f"working on {year}{month}{day}")
 
-equipage_count_df = pd.concat([equipage_count_temp_1,equipage_count_temp_2,equipage_count_temp_3,equipage_count_temp_4])
+#equipage_count_df = pd.concat([equipage_count_temp_2,equipage_count_temp_3,equipage_count_temp_4])
+equipage_count_df = pd.concat([equipage_count_temp_4])
 equipage_count_df = equipage_count_df.set_index(['time','dap'])
 print(equipage_count_df)
 df = equipage_count_df.transpose()
