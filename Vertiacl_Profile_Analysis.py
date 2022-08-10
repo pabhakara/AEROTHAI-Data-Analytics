@@ -25,19 +25,19 @@ def none_to_null(etd):
     return x
 
 
-# conn_postgres_source = psycopg2.connect(user="pongabhaab",
-#                                              password="pongabhaab",
-#                                              host="172.16.129.241",
-#                                              port="5432",
-#                                              database="aerothai_dwh",
-#                                              options="-c search_path=dbo,sur_air")
+conn_postgres_source = psycopg2.connect(user="pongabhaab",
+                                             password="pongabhaab",
+                                             host="172.16.129.241",
+                                             port="5432",
+                                             database="aerothai_dwh",
+                                             options="-c search_path=dbo,sur_air")
 
-conn_postgres_source = psycopg2.connect(user="postgres",
-                                        password="password",
-                                        host="localhost",
-                                        port="5432",
-                                        database="temp",
-                                        options="-c search_path=dbo,sur_air")
+# conn_postgres_source = psycopg2.connect(user="postgres",
+#                                         password="password",
+#                                         host="localhost",
+#                                         port="5432",
+#                                         database="temp",
+#                                         options="-c search_path=dbo,sur_air")
 
 output_filepath = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Flight_Proflie_Plots/'
 files = glob.glob(f"{output_filepath}*")
@@ -45,15 +45,15 @@ for f in files:
     os.remove(f)
 
 year = '2022'
-month = '04'
-day = '25'
+month = '05'
+day = '24'
 
-#STAR_list = ['LEBIM', 'NORTA', 'EASTE', 'WILLA', 'DOLNI']
-STAR_list = ['']
+STAR_list = ['LEBIM', 'NORTA', 'EASTE', 'WILLA', 'DOLNI']
+#STAR_list = ['']
 summary_df = pd.DataFrame()
 
-dest = 'VTCC'
-dep = 'VTBD'
+dest = 'VTBS'
+dep = '%'
 
 with conn_postgres_source:
     cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -65,8 +65,8 @@ with conn_postgres_source:
                             f"LEFT JOIN flight_data.flight_{year}{month} f " \
                             f"ON t.flight_id = f.id " \
                             f"WHERE (f.dep LIKE '{dep}' AND f.dest LIKE '{dest}') " \
-                            f"AND f.planned_profile LIKE '%{STAR}%' " \
-                            f"AND t.acid LIKE 'AIQ%' " \
+                            f"AND f.item15_route LIKE '%{STAR}%' " \
+                            f"AND t.acid LIKE '%' " \
                             f"AND f.frule LIKE 'I%'" \
                             f"ORDER BY t.flight_key; "
         #print(postgres_sql_text)
@@ -85,7 +85,7 @@ with conn_postgres_source:
 
 track_duration_list = []
 track_distance_list = []
-radius = 150
+radius = 70
 
 with conn_postgres_source:
     for flight_key in flight_key_list:
@@ -94,19 +94,19 @@ with conn_postgres_source:
         cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)
         # Create an SQL query that selects surveillance targets based on the list of selected flights
         # from the source PostgreSQL database
-        postgres_sql_text = f"SELECT t.flight_key, t.app_time, t.sector, t.dist_from_last_position, t.measured_fl " \
-                            f", t.final_state_selected_alt_dap, t.selected_altitude_dap " \
-                            f", t.sector " \
-                            f", t.latitude, t.longitude " \
-                            f" FROM airac_current_vt.airports_buffer b, " \
-                            f" sur_air.cat062_{year}{month}{day} t " \
-                            f" LEFT JOIN flight_data.flight_{year}{month} f " \
-                            f" ON t.flight_id = f.id " \
-                            f" LEFT JOIN airac_current_vt.airports a " \
-                            f" ON a.airport_identifier = f.dest " \
-                            f" WHERE f.flight_key = '{flight_key}' " \
-                            f" AND b.airport_identifier LIKE '{dep}' " \
-                            f" AND public.ST_Within(t.\"2d_position\", b.nm{radius}) " \
+        postgres_sql_text = f"SELECT t.flight_key, t.app_time, t.sector, t.dist_from_last_position, t.measured_fl \n" \
+                            f", t.final_state_selected_alt_dap, t.selected_altitude_dap \n" \
+                            f", t.sector \n" \
+                            f", t.latitude, t.longitude \n" \
+                            f" FROM airac_current.airports_buffer b, \n" \
+                            f" sur_air.cat062_{year}{month}{day} t \n" \
+                            f" LEFT JOIN flight_data.flight_{year}{month} f \n" \
+                            f" ON t.flight_id = f.id \n" \
+                            f" LEFT JOIN airac_current.airports a \n" \
+                            f" ON a.airport_identifier = f.dest \n" \
+                            f" WHERE f.flight_key = '{flight_key}' \n" \
+                            f" AND b.airport_identifier LIKE '{dest}' \n" \
+                            f" AND public.ST_Within(t.\"position\", b.nm{radius}) \n" \
                             f" ORDER BY t.app_time "
         # f"AND public.ST_WITHIN(t.\"2d_position\",public.ST_Buffer(a.geom,2)) " \
         print(postgres_sql_text)
@@ -170,12 +170,15 @@ with conn_postgres_source:
             )
 
             # Set x-axis title
+            #fig.update_xaxes(title_text=f"<b>Accumulated Time (Minutes)</b>")
             fig.update_xaxes(title_text=f"<b>Accumulated Distance (NM)</b>")
 
             # Set y-axes titles
             # fig.update_yaxes(title_text="<b>Measured FL (ft)</b>", secondary_y=False)
             fig.update_yaxes(title_text=f"<b>Altitude (ft)</b>", secondary_y=False)
-            fig.show()
+            #fig.show()
+            fig.write_image(f"{output_filepath}{flight_key}.png")
+            fig.write_html(f"{output_filepath}{flight_key}.html")
 
 print(track_distance_list)
 
@@ -188,7 +191,7 @@ summary_df = summary_df.set_index('flight_key')
 
 print(summary_df)
 
-summary_df.to_csv('/Users/pongabha/Desktop/VTBD_arrivals_stats.csv')
+summary_df.to_csv(f"{output_filepath}VTBS_arrivals_stats.csv")
 
 fig = px.histogram(summary_df, x="track_distance",color="star",nbins=100)
 fig.show()

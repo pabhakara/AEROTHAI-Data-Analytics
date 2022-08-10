@@ -42,8 +42,8 @@ for f in files:
     os.remove(f)
 
 year = '2022'
-month = '07'
-day = '02'
+month = '05'
+day = '25'
 
 STAR_list = ['LEBIM','NORTA','EASTE','WILLA','DOLNI']
 
@@ -162,7 +162,7 @@ with conn_postgres_source:
         #               row=1, col=2)
 
         # fig.add_trace(go.Scatter3d(x = df['longitude'], y = df['latitude'], z = df['measured_fl'],
-        #               mode='markers',
+        #               mode='markers',-
         #               marker_size=14),
         #               row=1, col=3)
         #
