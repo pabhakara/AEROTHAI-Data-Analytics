@@ -144,7 +144,7 @@ def create_iap_legs_rf(db_name,schema_name):
                      temp_1['path_termination'] == 'FC' or
                      temp_1['path_termination'] == 'RF' or
                      temp_1['path_termination'] == 'IF'):
-                if temp_2['path_termination'] == 'RF':
+                if temp_2['path_termination'] == 'RF' and not(str(temp_2['center_waypoint_latitude']) == 'None'):
                     arc_center_latlong = (temp_2['center_waypoint_latitude'], temp_2['center_waypoint_longitude'])
                     start_wp_latlong = (temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
                     end_wp_latlong = (temp_2['waypoint_latitude'], temp_2['waypoint_longitude'])
