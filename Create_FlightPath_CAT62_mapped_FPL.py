@@ -12,19 +12,19 @@ def none_to_null(etd):
 
 # Create a connection to the remote PostGresSQL database in which we will store our trajectories
 # created from ASTERIX Cat062 targets.
-# conn_postgres_target = psycopg2.connect(user = "de_old_data",
-#                                   password = "de_old_data",
-#                                   host = "172.16.129.241",
-#                                   port = "5432",
-#                                   database = "aerothai_dwh",
-#                                   options="-c search_path=dbo,public")
-
-conn_postgres_target = psycopg2.connect(user = "postgres",
-                                  password = "password",
-                                  host = "127.0.0.1",
+conn_postgres_target = psycopg2.connect(user = "de_old_data",
+                                  password = "de_old_data",
+                                  host = "172.16.129.241",
                                   port = "5432",
-                                  database = "temp",
+                                  database = "aerothai_dwh",
                                   options="-c search_path=dbo,public")
+
+# conn_postgres_target = psycopg2.connect(user = "postgres",
+#                                   password = "password",
+#                                   host = "127.0.0.1",
+#                                   port = "5432",
+#                                   database = "temp",
+#                                   options="-c search_path=dbo,public")
 
 with conn_postgres_target:
 
@@ -33,12 +33,10 @@ with conn_postgres_target:
     year_list = ['2022']
     #month_list = ['04']
     month_list = ['05']
-    day_list = ['01','02','03','04','05','06']
-
-    # day_list = ['08','09','10',
-    #             '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
-    #             '21', '22', '23', '24', '25']
-
+    day_list = ['01','02','03','04','05','06','07','08','09','10',
+                '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
+                '21', '22', '23', '24', '25','26','27','28','29','30','31']
+    # day_list = ['29','30']
     for year in year_list:
         for month in month_list:
             yyyymm = year + month
