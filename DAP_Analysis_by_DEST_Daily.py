@@ -59,9 +59,9 @@ filter_list = {
     "All": f"(t.measured_fl < a.upper/100 "
         f" AND t.measured_fl > 0 "
         f" AND public.ST_WITHIN(t.\"position\",a.geom) "
-        f" AND f.frule LIKE 'I' )"
-        # f" AND (f.sur LIKE '%L%' OR f.sur LIKE '%H%' OR f.sur LIKE '%E%') "
-        # f" ) "
+        f" AND f.frule LIKE 'I' "
+        f" AND (f.sur LIKE '%L%' OR f.sur LIKE '%H%' OR f.sur LIKE '%E%') "
+        f" ) "
 }
 
 with conn_postgres:
@@ -72,48 +72,13 @@ with conn_postgres:
     cursor_postgres.execute(postgres_sql_text)
     airport_list = [r[0] for r in cursor_postgres.fetchall()]
 
-    # equipage_list = list(equipage_filter.keys())
-    # print(equipage_list)
     equipage_count_df = pd.DataFrame()
 
-    # year_list = ['2022']
-    # month_list = ['04']
-    # day_list = ['25','26','27','28','29','30']
-    # equipage_count_temp_1 = pd.DataFrame()
-    # for year in year_list:
-    #     for month in month_list:
-    #         for day in day_list:
-    #             equipage_count_temp = count_target(year, month, day, filter_list, airport_list)
-    #             equipage_count_temp_1 = pd.concat([equipage_count_temp_1, equipage_count_temp])
-
-    # year_list = ['2022']
-    # month_list = ['05']
-    # day_list = ['01','02','03','04','05','06','07','08','09','10',
-    #             '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
-    #             '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
-    #
-    # equipage_count_temp_2 = pd.DataFrame()
-    # for year in year_list:
-    #     for month in month_list:
-    #         for day in day_list:
-    #             equipage_count_temp = count_target(year, month, day, filter_list, airport_list)
-    #             equipage_count_temp_2 = pd.concat([equipage_count_temp_2, equipage_count_temp])
-    #
-    # year_list = ['2022']
-    # month_list = ['06']
-    # day_list = ['01','02','03','04','05','06','07','08','09','10',
-    #             '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
-    #             '21', '22', '23', '24', '25', '26', '27', '28', '29', '30']
-    # equipage_count_temp_3 = pd.DataFrame()
-    # for year in year_list:
-    #     for month in month_list:
-    #         for day in day_list:
-    #             equipage_count_temp = count_target(year, month, day, filter_list, airport_list)
-    #             equipage_count_temp_3 = pd.concat([equipage_count_temp_3, equipage_count_temp])
-
     year_list = ['2022']
-    month_list = ['07']
-    day_list = ['01','02','03','05','06','07','08','09']
+    month_list = ['05']
+    day_list = ['01','02','03','04','05','06','07','08','09','10',
+                '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
+                '21', '22', '23', '24', '25', '26', '27', '28', '29', '30' ,'31']
     equipage_count_temp_4 = pd.DataFrame()
     for year in year_list:
         for month in month_list:
@@ -127,7 +92,7 @@ equipage_count_df = pd.concat([equipage_count_temp_4])
 equipage_count_df = equipage_count_df.set_index(['time','dap'])
 print(equipage_count_df)
 df = equipage_count_df.transpose()
-df.to_csv("/Users/pongabha/Desktop/DAP_by_SSR_site_transposed_2.csv")
+df.to_csv("/Users/pongabha/Desktop/DAP_by_SSR_site_2022-05.csv")
 
 # # Create figure
 # fig = go.Figure(
