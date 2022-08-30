@@ -32,11 +32,10 @@ with conn_postgres_target:
 
     year_list = ['2022']
     month_list = ['08']
-    # day_list = ['01','02','03','04','05','06','07','08','09','10',
+    # day_list = ['01', '02', '03', '04', '05','06','07','08','09','10',
     #             '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
-    #             '21', '22', '23', '24', '25','26','27','28','29','30','31']
-    day_list = [ '22']
-    # day_list = ['29','30']
+    #             '21', '22', '23', '24', '25','26'] #,'27','28','29','30',] #'31']
+    day_list = ['26',]
     for year in year_list:
         for month in month_list:
             yyyymm = year + month
@@ -343,6 +342,8 @@ with conn_postgres_target:
 
                 postgres_sql_text = f"DROP TABLE IF EXISTS track.track_cat62_{yyyymmdd}; \n"  \
                                     f"SELECT track.track_{yyyymmdd}_temp.geom," \
+                                    f"track.track_{yyyymmdd}_temp.start_time," \
+                                    f"track.track_{yyyymmdd}_temp.end_time," \
                                     f"track.track_{yyyymmdd}_temp.track_duration," \
                                     f"track.track_{yyyymmdd}_temp.track_length," \
                                     f"flight_data.flight_{yyyymm}.* " \

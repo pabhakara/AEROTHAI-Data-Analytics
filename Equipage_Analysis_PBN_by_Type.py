@@ -46,7 +46,7 @@ equipage_list = list(filter.keys())
 equipage_count_df = pd.DataFrame()
 with conn_postgres:
     for equipage in equipage_list:
-        year_list = ['2021', '2020', '2019', '2018', '2017', '2016']
+        year_list = ['2021', '2020', '2019', '2018', '2017']
         month_list = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         equipage_count_temp_3 = pd.DataFrame()
         for year in reversed(year_list):
@@ -172,7 +172,7 @@ for k in range(0, 8):
 
 # Add figure title
 fig.update_layout(
-    title_text="Historical Monthly IFR Movements with CPDLC by type (January 2013 to July 2022)"
+    title_text="Historical Monthly IFR Movements with PBN by type (January 2017 to July 2022)"
 )
 
 # Set x-axis title
@@ -221,7 +221,7 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html(f"/Users/pongabha/Desktop/{analysis}.html")
-df.to_csv(f"/Users/pongabha/Desktop/{analysis}.csv")
+fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis}.html")
+df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis}.csv")
 #fig.write_image("/Users/pongabha/Desktop/ADS-B.png")
 fig.show()

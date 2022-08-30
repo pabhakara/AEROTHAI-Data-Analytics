@@ -38,6 +38,7 @@ def count_target(year,month,day,filter_list,airport_list):
                                 f"WHERE {filter_list[filter]} " \
                                 f"AND (f.dest like '{airport}') " \
                                 f"AND t.ias_dap IS NULL; "
+            print(postgres_sql_text)
             cursor_postgres = conn_postgres.cursor()
             cursor_postgres.execute(postgres_sql_text)
             record_no = cursor_postgres.fetchall()
@@ -80,7 +81,7 @@ with conn_postgres:
     #             '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
     #             '21', '22', '23', '24', '25', '26', '27', '28', '29', '30' ,'31']
     day_list = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10',
-                '11', '12', '13', '14', '15', '16', '17', '18', '19']
+                '11', '12', '13', '14', '15', '16', '17', '18', '19','20','21', '22', '23', '24', '25',]
     equipage_count_temp_4 = pd.DataFrame()
     for year in year_list:
         for month in month_list:
