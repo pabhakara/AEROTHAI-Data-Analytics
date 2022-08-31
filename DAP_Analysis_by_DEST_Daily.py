@@ -38,7 +38,7 @@ def count_target(year,month,day,filter_list,airport_list):
                                 f"WHERE {filter_list[filter]} " \
                                 f"AND (f.dest like '{airport}') " \
                                 f"AND t.ias_dap IS NULL; "
-            print(postgres_sql_text)
+            #print(postgres_sql_text)
             cursor_postgres = conn_postgres.cursor()
             cursor_postgres.execute(postgres_sql_text)
             record_no = cursor_postgres.fetchall()
