@@ -13,14 +13,14 @@ encoding = 'Latin1'
 
 dbx = db.cursor()
 
-# DB = psycopg2.connect(user = "de_old_data",
-#                                   password = "de_old_data",
-#                                   host = "172.16.129.241",
-#                                   port = "5432",
-#                                   database = "aerothai_dwh",
-#                                   options="-c search_path=dbo,flight_data")
+DB = psycopg2.connect(user = "de_old_data",
+                                  password = "de_old_data",
+                                  host = "172.16.129.241",
+                                  port = "5432",
+                                  database = "aerothai_dwh",
+                                  options="-c search_path=dbo,flight_data")
 
-DB = psycopg2.connect("dbname='temp'")
+#DB = psycopg2.connect("dbname='temp'")
 
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
@@ -49,11 +49,11 @@ tables = []
 #prefix = ''
 #postfix = '_vtbd_tecos_dep'
 
-prefix = ''
-postfix = '_radar'
-
 # prefix = ''
-# postfix = '_fdmc'
+# postfix = '_radar'
+
+prefix = ''
+postfix = '_fdmc'
 
 # prefix = 'target_'
 # postfix = ''
@@ -70,8 +70,8 @@ postfix = '_radar'
 # year_list = ['2019']
 # month_list = ['08','09','10','11','12']
 
-year_list = ['2015']
-month_list = ['12']
+year_list = ['2022']
+month_list = ['08']
 #month_list = ['07']
 
 for year in year_list:

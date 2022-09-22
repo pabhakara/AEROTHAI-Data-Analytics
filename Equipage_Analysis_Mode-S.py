@@ -113,7 +113,7 @@ with conn_postgres:
 
         equipage_count_temp_4 = pd.DataFrame()
         year_list = ['2022']
-        month_list = ['01','02','03','04','05','06','07']
+        month_list = ['01','02','03','04','05','06','07','08']
         for year in year_list:
             for month in month_list:
                 print(f"{year}-{month}")
@@ -194,9 +194,18 @@ fig.add_trace(
     secondary_y=True,
 )
 
+fig.add_trace(
+    go.Line(name="No Mode-S %",
+                           x=df.index,
+                           y=df['No Mode-S']/(df['Mode-S EHS']+df['Mode-S ELS']+df['No Mode-S'])*100,
+            line=dict(color="#1DCA1D")
+                        ),
+    secondary_y=True,
+)
+
 # Add figure title
 fig.update_layout(
-    title_text="Historical Monthly IFR Movements with Mode-S (January 2013 to June 2022)"
+    title_text="Historical Monthly IFR Movements with Mode-S (January 2013 to August 2022)"
 )
 
 # Set x-axis title
@@ -245,7 +254,7 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html("/Users/pongabha/Desktop/Mode-S.html")
-df.to_csv("/Users/pongabha/Desktop/Mode-S.csv")
+fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/Mode-S.html")
+df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/Mode-S.csv")
 #fig.write_image("/Users/pongabha/Desktop/ADS-B.png")
 fig.show()

@@ -27,19 +27,11 @@ conn_postgres = psycopg2.connect(user="postgres",
                                  database="temp",
                                  options="-c search_path=dbo," + schema_name)
 
-analysis = "PBN & GLS"
+analysis = "GLS"
 
 filter = {
-    "RNAV 10 (RNP 10)": "(pbn_type like '%A%')" ,
-    "RNAV 5": "(pbn_type like '%B%')" ,
-    "RNAV 2": "(pbn_type like '%C%')",
-    "RNAV 1": "(pbn_type like '%D%')",
-    "RNP 4": "(pbn_type like '%L%')",
-    "RNP 1": "(pbn_type like '%O%')",
-    "RNP APCH": "(pbn_type like '%S%')",
-    "RNP AR APCH": "(pbn_type like '%T%')",
-    "GLS": "(comnav like '%A%/%')",
-    "Total": "(pbn_type like '%')",
+    "GLS": "(comnav like '%A%/%') and dest LIKE 'VTBS'",
+    "Total": "(pbn_type like '%') and dest LIKE 'VTBS'",
 }
 
 
@@ -121,7 +113,7 @@ print(df)
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 
 # Add traces
-for k in range(0,9):
+for k in range(0,1):
     fig.add_trace(
         go.Bar(name=equipage_list[k],
                           x=df.index,
@@ -130,7 +122,7 @@ for k in range(0,9):
         secondary_y=False,
     )
 
-for k in range(0, 9):
+for k in range(0,1):
     fig.add_trace(
         go.Line(name=f"{equipage_list[k]} as % of Total IFR",
                           x=df.index,
@@ -173,7 +165,7 @@ for k in range(0, 9):
 
 # Add figure title
 fig.update_layout(
-    title_text="Historical Monthly IFR Movements with PBN by type (January 2017 to July 2022)"
+    title_text=f"Historical Monthly IFR Movements with {analysis} by type (January 2017 to July 2022)"
 )
 
 # Set x-axis title

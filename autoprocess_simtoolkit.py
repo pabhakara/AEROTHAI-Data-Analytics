@@ -33,12 +33,11 @@ tic()
 
 #from dbname_and_paths import db_name,path_script,schema_name,airac
 
-db_name = 'navigraph'
-#db_name = 'test'
+db_name = 'temp'
 schema_name = 'public'
 
 #airac_list = ['2106','2107','2108','2109','2110','2111','2112','2113','2201','2202','2203','2204','2205','2206','2207']
-airac_list = ['2208']
+airac_list = ['2209']
 airac_list = reversed(airac_list)
 
 for airac in airac_list:
@@ -118,7 +117,8 @@ for airac in airac_list:
 
     # Move the tables from PUBLIC SCHEMA to airac_xxx SCHEMA
 
-    schema_name_2 = f"airac_{airac}"
+    schema_name_2 = f"airac_current"
+    #schema_name_2 = f"airac_{airac}"
 
     print(schema_name_2)
 

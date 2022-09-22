@@ -26,16 +26,22 @@ conn_postgres_target = psycopg2.connect(user = "de_old_data",
 #                                   database = "temp",
 #                                   options="-c search_path=dbo,public")
 
+filter =  "NOT (latitude is NULL) \n" + \
+          "AND NOT(flight_id is NULL) \n" + \
+          "AND NOT(geo_alt < 1) \n" \
+          "AND ground_speed < 700 \n" \
+          "AND ground_speed > 50 \n"
+
 with conn_postgres_target:
 
     cursor_postgres_target = conn_postgres_target.cursor()
 
     year_list = ['2022']
-    month_list = ['08']
-    # day_list = ['01', '02', '03', '04', '05','06','07','08','09','10',
+    month_list = ['09']
+    # day_list = [ '01','02', '03', '04', '05','06','07','08','09','10',
     #             '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
-    #             '21', '22', '23', '24', '25','26'] #,'27','28','29','30',] #'31']
-    day_list = ['26','27','28']
+    #             '21', '22', '23', '24', '25','26','27','28','29','30','31']
+    day_list = ['19']
     for year in year_list:
         for month in month_list:
             yyyymm = year + month
@@ -97,12 +103,11 @@ with conn_postgres_target:
                                         "flight_id," + \
                                         "latitude," + \
                                         "longitude," + \
-                                        "measured_fl \n" + \
+                                        "geo_alt \n" + \
                                         "FROM sur_air.cat062_" + yyyymmdd_next + "\n " + \
-                                        "WHERE not(latitude is NULL) \n" + \
-                                        "AND NOT(dep is NULL) \n" + \
-                                        "AND NOT(flight_id is NULL) \n" + \
-                                        "AND concat(track_no, acid, mode_a_code) IN \n" \
+                                        f"WHERE \n {filter}" + \
+                                        "AND concat(track_no, acid, mode_a_code) \n" + \
+                                        "IN \n" \
                                         "(SELECT distinct concat(track_no, acid, mode_a_code) \n" \
                                         "from \n" \
                                         "(SELECT track_no, acid, mode_a_code, count(*) \n" \
@@ -115,12 +120,12 @@ with conn_postgres_target:
                                         str(next_day.month).zfill(2) + "-" + \
                                         str(next_day.day).zfill(2) + \
                                         " 00:00:30\' \n " \
-                                        "AND NOT(dest IS NULL) AND NOT(latitude IS NULL) \n" \
+                                        f"AND {filter} \n" \
                                         "UNION \n" \
                                         "SELECT 'b' as temp, * \n FROM " \
-                                        "sur_air.cat062_" + yyyymmdd +  \
-                                        "\n WHERE app_time > \'" + year + "-" + month + "-" + day + " 23:59:30\' \n" \
-                                        "AND NOT(dest IS NULL) AND NOT(latitude IS NULL) \n" \
+                                        "sur_air.cat062_" + yyyymmdd + "\n" \
+                                        f"WHERE \n {filter}" \
+                                        "AND app_time > \'" + year + "-" + month + "-" + day + " 23:59:30\' \n" \
                                         "ORDER BY track_no, app_time ) a \n" \
                                         "GROUP BY track_no, acid, mode_a_code, temp) b \n" \
                                         "GROUP BY track_no, acid, mode_a_code) c \n" \
@@ -128,11 +133,9 @@ with conn_postgres_target:
                                         "UNION \n" \
                                         "SELECT " \
                                         "track_no, time_of_track, icao_24bit_dap, mode_a_code, acid, " \
-                                        "acid_dap, dep, dest, flight_key, flight_id, latitude, longitude, measured_fl \n" \
-                                        "FROM sur_air.cat062_" + yyyymmdd + "\n"\
-                                        "WHERE NOT (latitude is NULL) " \
-                                        "AND NOT(dep is NULL) \n" \
-                                        "AND NOT(flight_id is NULL) \n"  \
+                                        "acid_dap, dep, dest, flight_key, flight_id, latitude, longitude, geo_alt \n" \
+                                        "FROM sur_air.cat062_" + yyyymmdd + "\n" \
+                                        f"WHERE \n {filter}" \
                                         "AND NOT concat(track_no, acid, mode_a_code) IN \n" \
                                         "(SELECT distinct concat(track_no, acid, mode_a_code) \n" \
                                         "from \n" \
@@ -140,20 +143,18 @@ with conn_postgres_target:
                                         "from \n" \
                                         "(SELECT track_no, acid, mode_a_code, temp, count(*) \n" \
                                         "from \n" \
-                                        "(SELECT 'a' as temp, * FROM sur_air.cat062_" + yyyymmdd_previous + \
-                                        "\n WHERE app_time > \'" + \
+                                        "(SELECT 'a' as temp, * FROM sur_air.cat062_" + yyyymmdd_previous + "\n"\
+                                        f"WHERE \n {filter}" \
+                                        "AND app_time > \'" + \
                                         str(previous_day.year).zfill(2) + "-" + \
                                         str(previous_day.month).zfill(2) + "-" + \
                                         str(previous_day.day).zfill(2) + \
                                         " 23:59:30\' \n " \
-                                        "AND NOT(dest IS NULL) AND NOT(latitude IS NULL) \n" \
                                         "UNION \n" \
                                         "SELECT 'b' as temp, * \n FROM " \
-                                        "sur_air.cat062_" + yyyymmdd + \
-                                        "\n WHERE app_time < \'" + year + "-" + month + "-" + day + " 00:00:30\' \n" \
-                                        "AND NOT(dest IS NULL) " \
-                                        "AND NOT(latitude IS NULL) \n" \
-                                        "AND NOT(flight_id is NULL) \n" + \
+                                        "sur_air.cat062_" + yyyymmdd + "\n" \
+                                        f"WHERE \n {filter}" \
+                                        "AND app_time < \'" + year + "-" + month + "-" + day + " 00:00:30\' \n" \
                                         "ORDER BY track_no, app_time ) a \n" \
                                         "GROUP BY track_no, acid, mode_a_code, temp) b \n" \
                                         "GROUP BY track_no, acid, mode_a_code) c \n" \
@@ -187,7 +188,7 @@ with conn_postgres_target:
                     icao_24bit_dap = none_to_null(str(temp_1['icao_24bit_dap']))
                     mode_a_code = none_to_null(str(temp_1['mode_a_code']))
 
-                    measured_fl = none_to_null(str(temp_1['measured_fl']))
+                    geo_alt = none_to_null(str(temp_1['geo_alt']))
 
                     track_no_1 = str(temp_1['track_no'])
                     track_no_2 = str(temp_2['track_no'])
@@ -220,12 +221,12 @@ with conn_postgres_target:
                     app_time_1 = str(temp_1['time_of_track'])
                     app_time_2 = str(temp_2['time_of_track'])
 
-                    measured_fl_1 = str(temp_1['measured_fl'])
-                    if measured_fl_1 == 'None':
-                        measured_fl_1 = "-1"
-                    measured_fl_2 = str(temp_2['measured_fl'])
-                    if measured_fl_2 == 'None':
-                        measured_fl_2 = "-1"
+                    geo_alt_1 = str(temp_1['geo_alt'])
+                    if geo_alt_1 == 'None':
+                        geo_alt_1 = "-1"
+                    geo_alt_2 = str(temp_2['geo_alt'])
+                    if geo_alt_2 == 'None':
+                        geo_alt_2 = "-1"
 
                     while k < num_of_records - 1:
                         while (temp_1['track_no'] == temp_2['track_no']) and \
@@ -237,7 +238,7 @@ with conn_postgres_target:
 
                             postgres_sql_text = postgres_sql_text + \
                                                 longitude_1 + " " + latitude_1 + " " + \
-                                                measured_fl_1 + ","
+                                                geo_alt_1 + ","
                             k = k + 1
                             if k == num_of_records-1:
                                 break
@@ -250,10 +251,10 @@ with conn_postgres_target:
                             temp_2 = record[k + 1]
 
                         postgres_sql_text += longitude_1 + " " + latitude_1 + " " + \
-                                                measured_fl_1 + ","
+                                                geo_alt_1 + ","
 
                         postgres_sql_text += longitude_1 + " " + latitude_1 + " " + \
-                                            measured_fl_1 + ")',4326),'"
+                                            geo_alt_1 + ")',4326),'"
 
                         postgres_sql_text += app_time_1 +"')"
 
@@ -290,12 +291,12 @@ with conn_postgres_target:
                         app_time_1 = str(temp_1['time_of_track'])
                         app_time_2 = str(temp_2['time_of_track'])
 
-                        measured_fl_1 = str(temp_1['measured_fl'])
-                        if measured_fl_1 == 'None':
-                            measured_fl_1 = "-1"
-                        measured_fl_2 = str(temp_2['measured_fl'])
-                        if measured_fl_2 == 'None':
-                            measured_fl_2 = "-1"
+                        geo_alt_1 = str(temp_1['geo_alt'])
+                        if geo_alt_1 == 'None':
+                            geo_alt_1 = "-1"
+                        geo_alt_2 = str(temp_2['geo_alt'])
+                        if geo_alt_2 == 'None':
+                            geo_alt_2 = "-1"
 
                         if k < num_of_records:
 

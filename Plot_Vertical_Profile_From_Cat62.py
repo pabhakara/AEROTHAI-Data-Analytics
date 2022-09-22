@@ -22,19 +22,19 @@ def none_to_null(etd):
     return x
 
 
-# conn_postgres_source = psycopg2.connect(user="pongabhaab",
-#                                              password="pongabhaab",
-#                                              host="172.16.129.241",
-#                                              port="5432",
-#                                              database="aerothai_dwh",
-#                                              options="-c search_path=dbo,sur_air")
-
-conn_postgres_source = psycopg2.connect(user="postgres",
-                                             password="password",
-                                             host="localhost",
+conn_postgres_source = psycopg2.connect(user="pongabhaab",
+                                             password="pongabhaab",
+                                             host="172.16.129.241",
                                              port="5432",
-                                             database="temp",
+                                             database="aerothai_dwh",
                                              options="-c search_path=dbo,sur_air")
+
+# conn_postgres_source = psycopg2.connect(user="postgres",
+#                                              password="password",
+#                                              host="localhost",
+#                                              port="5432",
+#                                              database="temp",
+#                                              options="-c search_path=dbo,sur_air")
 
 output_filepath = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Flight_Proflie_Plots/'
 files = glob.glob(f"{output_filepath}*")
@@ -42,10 +42,11 @@ for f in files:
     os.remove(f)
 
 year = '2022'
-month = '05'
-day = '25'
+month = '09'
+day = '07'
 
-STAR_list = ['LEBIM','NORTA','EASTE','WILLA','DOLNI']
+#STAR_list = ['LEBIM','NORTA','EASTE','WILLA','DOLNI']
+STAR_list = ['%']
 
 with conn_postgres_source:
     cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -53,16 +54,19 @@ with conn_postgres_source:
     # from the source PostgreSQL database
     for STAR in STAR_list:
         postgres_sql_text = f"SELECT DISTINCT t.flight_key, f.actype, '{STAR}' " \
-                            f"FROM sur_air.vtbs_arrivals_{year}{month}{day} t " \
+                            f"FROM sur_air.cat062_{year}{month}{day} t " \
                             f"LEFT JOIN flight_data.flight_{year}{month} f " \
                             f"ON t.flight_id = f.id " \
-                            f"WHERE (f.dep LIKE 'V%' AND f.dest LIKE '%') " \
-                            f"AND f.planned_profile LIKE '%{STAR}%' " \
-                            f"AND t.acid LIKE '%' " \
+                            f"WHERE (f.dep LIKE 'Z%' AND f.dest LIKE '%') " \
+                            f"AND f.item15_route LIKE '%{STAR}%' " \
+                            f"AND t.acid LIKE '%UAE363%' " \
                             f"AND f.frule LIKE '%'; "
         cursor_postgres_source.execute(postgres_sql_text)
+        print(postgres_sql_text)
+
         record = cursor_postgres_source.fetchall()
-        summary_df = pd.DataFrame(record, columns=['flight_key', 'actype'])
+        print(record)
+        summary_df = pd.DataFrame(record, columns=['flight_key', 'actype','star'])
 
     flight_key_list = list(summary_df['flight_key'])
 
@@ -83,7 +87,7 @@ with conn_postgres_source:
         postgres_sql_text = f"SELECT t.flight_key, t.app_time, t.sector, t.dist_from_last_position, t.measured_fl " \
                             f", t.final_state_selected_alt_dap " \
                             f", t.latitude, t.longitude " \
-                            f"FROM sur_air.vtbs_arrivals_{year}{month}{day} t " \
+                            f"FROM sur_air.cat062_{year}{month}{day} t " \
                             f"LEFT JOIN flight_data.flight_{year}{month} f " \
                             f"ON t.flight_id = f.id " \
                             f"LEFT JOIN airac_current.airports a " \
@@ -145,8 +149,8 @@ with conn_postgres_source:
 
         # Add figure title
         fig.update_layout(
-            # title_text=f"Vertical Profile of Flight {flight_key[0]} Type:{flight_key[1]}"
-            title_text=f"Vertical Profile"
+            title_text=f"Vertical Profile of Flight {flight_key}"
+            #title_text=f"Vertical Profile"
         )
 
         # Set x-axis title

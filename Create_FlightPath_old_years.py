@@ -14,13 +14,13 @@ try:
                                   password = "password",
                                   host = "127.0.0.1",
                                   port = "5432",
-                                  database = "flight_track")
+                                  database = "temp")
 
     cursor_postgres = conn_postgres.cursor()
 
 # create the table name that will store the radar track
-    year_list = ['2015','2016','2017']
-    month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
+    year_list = ['2022']
+    month_list = ['08']
 
     for year in year_list:
         for month in month_list:
