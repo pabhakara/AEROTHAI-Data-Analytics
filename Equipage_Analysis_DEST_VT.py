@@ -65,48 +65,51 @@ filter = {
 #     "ADS-B":"(item10_cns like '%/%B%'or item10_cns like '%/%U%' or item10_cns like '%/%V%') ",
 # }
 
+date_list = pd.date_range(start='2013-01-01', end='2022-09-25',freq='M')
+
 equipage_list = filter.keys()
 equipage_count_df = pd.DataFrame()
 with conn_postgres:
     for equipage in equipage_list:
         year_list = ['2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013']
         month_list = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
-        for year in reversed(year_list):
-            for month in month_list:
-                print(f"{year}-{month}")
-                # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
-                postgres_sql_text = f"SELECT '{year}-{month}',dest,count(*) " \
-                                    f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
-                                    f"WHERE {filter[equipage]} " \
-                                    f"and dest like '%'" \
-                                    f"and frule like 'I' " \
-                                    f"GROUP BY dest;"
-                cursor_postgres = conn_postgres.cursor()
-                cursor_postgres.execute(postgres_sql_text)
-                record = cursor_postgres.fetchall()
-                # equipage_count_temp = pd.DataFrame(record, columns=['year_month', 'equipage', 'dest', 'count'])
-                equipage_count_temp = pd.DataFrame(record, columns=['time', 'dest', 'count'])
-                equipage_count_df = (pd.concat([equipage_count_df, equipage_count_temp], ignore_index=True))
+        for date in date_list:
+            year = f"{date.year}"
+            month = f"{date.month:02d}"
+            print(f"{year}-{month}")
+            # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
+            postgres_sql_text = f"SELECT '{year}-{month}',dest,count(*) " \
+                                f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
+                                f"WHERE {filter[equipage]} " \
+                                f"and dest like '%'" \
+                                f"and frule like 'I' " \
+                                f"GROUP BY dest;"
+            cursor_postgres = conn_postgres.cursor()
+            cursor_postgres.execute(postgres_sql_text)
+            record = cursor_postgres.fetchall()
+            # equipage_count_temp = pd.DataFrame(record, columns=['year_month', 'equipage', 'dest', 'count'])
+            equipage_count_temp = pd.DataFrame(record, columns=['time', 'dest', 'count'])
+            equipage_count_df = (pd.concat([equipage_count_df, equipage_count_temp], ignore_index=True))
 
-        year_list = ['2022']
-        month_list = ['01','02','03','04','05','06']
-        for year in year_list:
-            for month in month_list:
-                print(f"{year}-{month}")
-                # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
-                postgres_sql_text = f"SELECT '{year}-{month}',dest,count(*) " \
-                                    f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
-                                    f"WHERE {filter[equipage]} " \
-                                    f"and dest like '%'" \
-                                    f"and frule like 'I' " \
-                                    f"GROUP BY dest;"
-                cursor_postgres = conn_postgres.cursor()
-                cursor_postgres.execute(postgres_sql_text)
-                record = cursor_postgres.fetchall()
-                # equipage_count_temp = pd.DataFrame(record, columns=['year_month', 'equipage', 'dest', 'count'])
-                # equipage_count_temp = pd.DataFrame(record, columns=['time', 'equipage', 'count'])
-                equipage_count_temp = pd.DataFrame(record, columns=['time', 'dest', 'count'])
-                equipage_count_df = (pd.concat([equipage_count_df, equipage_count_temp], ignore_index=True))
+        # year_list = ['2022']
+        # month_list = ['01','02','03','04','05','06']
+        # for year in year_list:
+        #     for month in month_list:
+        #         print(f"{year}-{month}")
+        #         # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
+        #         postgres_sql_text = f"SELECT '{year}-{month}',dest,count(*) " \
+        #                             f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
+        #                             f"WHERE {filter[equipage]} " \
+        #                             f"and dest like '%'" \
+        #                             f"and frule like 'I' " \
+        #                             f"GROUP BY dest;"
+        #         cursor_postgres = conn_postgres.cursor()
+        #         cursor_postgres.execute(postgres_sql_text)
+        #         record = cursor_postgres.fetchall()
+        #         # equipage_count_temp = pd.DataFrame(record, columns=['year_month', 'equipage', 'dest', 'count'])
+        #         # equipage_count_temp = pd.DataFrame(record, columns=['time', 'equipage', 'count'])
+        #         equipage_count_temp = pd.DataFrame(record, columns=['time', 'dest', 'count'])
+        #         equipage_count_df = (pd.concat([equipage_count_df, equipage_count_temp], ignore_index=True))
 #print(equipage_count_df)
 df = equipage_count_df
 # df = equipage_count_df.query('equipage == "Mode-S EHS"')
