@@ -86,6 +86,18 @@ date_list = pd.date_range(start='2013-01-01', end='2022-09-25',freq='M')
 
 equipage_list = list(filter.keys())
 equipage_count_df = pd.DataFrame()
+
+color_list = ['#636EFA',
+     '#EF553B',
+     '#00CC96',
+     '#AB63FA',
+     '#FFA15A',
+     '#19D3F3',
+     '#FF6692',
+     '#B6E880',
+     '#FF97FF',
+     '#FECB52']
+
 with conn_postgres:
     for equipage in equipage_list:
         equipage_count_temp_3 = pd.DataFrame()

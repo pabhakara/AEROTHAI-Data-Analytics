@@ -18,7 +18,7 @@ conn_postgres = psycopg2.connect(user = "postgres",
                                   database = "surv_coverage")
 
 #source_list = ['All','CMA','HTY','PSL','PUT','SVB','UBL','UDN','ROT','STN','CPN','CTR']
-source_list = ['Samui']
+source_list = ['Ubonratchathani']
 type = 'ADS-B'
 table_name = 'surv_coverage'
 
@@ -30,7 +30,7 @@ with conn_postgres:
 
     for source in source_list:
         print(source)
-        for fl in range(500,20500,500):
+        for fl in range(500,50500,500):
         #for fl in range(22500,50500,500):
             print(fl)
             filename = source + "_ADSB_Coverage_"+ str(fl) +"FT.kml"

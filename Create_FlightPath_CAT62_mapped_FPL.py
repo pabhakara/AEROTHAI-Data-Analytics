@@ -34,7 +34,7 @@ filter =  "NOT (latitude is NULL) \n" + \
           "AND ground_speed > 50 \n"
 
 
-date_list = pd.date_range(start='2022-09-25', end='2022-09-25')
+date_list = pd.date_range(start='2022-09-30', end='2022-09-30')
 
 with conn_postgres_target:
 

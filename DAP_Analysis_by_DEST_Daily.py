@@ -64,6 +64,7 @@ filter_list = {
         f" AND (f.sur LIKE '%L%' OR f.sur LIKE '%H%' OR f.sur LIKE '%E%') "
         # f" ) "
 }
+date_list = pd.date_range(start='2022-05-01', end='2022-09-25',freq='D')
 
 with conn_postgres:
     postgres_sql_text = f"SELECT airport_identifier FROM airac_current.airports "\
@@ -75,20 +76,21 @@ with conn_postgres:
 
     equipage_count_df = pd.DataFrame()
 
-    year_list = ['2022']
-    month_list = ['09']
+    # year_list = ['2022']
+    # month_list = ['09']
+    # # day_list = ['01','02','03','04','05','06','07','08','09','10',
+    # #             '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
+    # #             '21', '22', '23', '24', '25', '26', '27', '28', '29', '30','31']
     # day_list = ['01','02','03','04','05','06','07','08','09','10',
-    #             '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
-    #             '21', '22', '23', '24', '25', '26', '27', '28', '29', '30','31']
-    day_list = ['01','02','03','04','05','06','07','08','09','10',
-                '11', '12', '13', '14','15','16','17']
+    #             '11', '12', '13', '14','15','16','17']
     equipage_count_temp_4 = pd.DataFrame()
-    for year in year_list:
-        for month in month_list:
-            for day in day_list:
-                equipage_count_temp = count_target(year, month, day, filter_list, airport_list)
-                equipage_count_temp_4 = pd.concat([equipage_count_temp_4, equipage_count_temp])
-                print(f"working on {year}{month}{day}")
+    for date in date_list:
+        year = f"{date.year}"
+        month = f"{date.month:02d}"
+        day = f"{date.day:02d}"
+        equipage_count_temp = count_target(year, month, day, filter_list, airport_list)
+        equipage_count_temp_4 = pd.concat([equipage_count_temp_4, equipage_count_temp])
+        print(f"working on {year}{month}{day}")
 
 #equipage_count_df = pd.concat([equipage_count_temp_2,equipage_count_temp_3,equipage_count_temp_4])
 equipage_count_df = pd.concat([equipage_count_temp_4])

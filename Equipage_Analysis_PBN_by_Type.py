@@ -35,13 +35,14 @@ filter = {
     "RNAV 2": "(pbn_type like '%C%')",
     "RNAV 1": "(pbn_type like '%D%')",
     "RNP 4": "(pbn_type like '%L%')",
+    "RNP 2": "(item18 like '%RNP2%')",
     "RNP 1": "(pbn_type like '%O%')",
     "RNP APCH": "(pbn_type like '%S%')",
     "RNP AR APCH": "(pbn_type like '%T%')",
     "GLS": "(comnav like '%A%/%')",
     "Total": "(pbn_type like '%')",
 }
-date_list = pd.date_range(start='2018-01-01', end='2022-07-25',freq='M')
+date_list = pd.date_range(start='2017-01-01', end='2022-07-25',freq='M')
 
 equipage_list = list(filter.keys())
 equipage_count_df = pd.DataFrame()
@@ -95,13 +96,25 @@ print(df)
 # Create figure with secondary y-axis
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 
+color_list = ['#636EFA',
+     '#EF553B',
+     '#00CC96',
+     '#AB63FA',
+     '#FFA15A',
+     '#19D3F3',
+     '#FF6692',
+     '#B6E880',
+     '#FF97FF',
+     '#FECB52']
+
 # Add traces
 for k in range(0,9):
     fig.add_trace(
         go.Bar(name=equipage_list[k],
                           x=df.index,
                           y=df[equipage_list[k]],
-                          offsetgroup=k),
+                          offsetgroup=k,
+                          marker_color=color_list[k]),
         secondary_y=False,
     )
 
@@ -109,7 +122,8 @@ for k in range(0, 9):
     fig.add_trace(
         go.Line(name=f"{equipage_list[k]} as % of Total IFR",
                           x=df.index,
-                          y=df[equipage_list[k]]/df[equipage_list[-1]]*100),
+                          y=df[equipage_list[k]]/df[equipage_list[-1]]*100,
+                          marker_color=color_list[k]),
         secondary_y=True,
     )
     # fig.add_trace(

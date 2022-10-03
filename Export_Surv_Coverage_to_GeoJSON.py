@@ -1,17 +1,18 @@
 import os
 import psycopg2.extras
 
-db_name = 'navigraph'
+db_name = 'surv_coverage'
 
-schema_name = 'airac_current_vt'
+schema_name = 'public'
 
-directory_path = f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/NavData/{schema_name}/"
+directory_path = f"/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/" \
+                   f"Simulated Coverage/geojson/"
 
 # Create target Directory if don't exist
 if not os.path.exists(directory_path):
     os.mkdir(directory_path)
 else:
-    os.rmdir(directory_path)
+    os.remove(directory_path)
     os.mkdir(directory_path)
 
 conn_postgres = psycopg2.connect(
@@ -37,10 +38,10 @@ with conn_postgres:
         table_name = table[0]
         print(table_name)
         os.system(f"ogr2ogr -f \"GeoJSON\" \"{directory_path}{table_name}.geojson\" "
-                  "PG:\"host=localhost dbname=navigraph user=postgres password=password port=5432\" "
+                  f"PG:\"host=localhost dbname={db_name} user=postgres password=password port=5432\" "
                   f"\"{schema_name}.{table_name}(geom)\"")
 
-schema_name = 'airspace'
+schema_name = 'public'
 
 conn_postgres = psycopg2.connect(
     user='postgres', password='password',
@@ -60,5 +61,5 @@ with conn_postgres:
         table_name = table[0]
         print(table_name)
         os.system(f"ogr2ogr -f \"GeoJSON\" \"{directory_path}{table_name}.geojson\" "
-                  "PG:\"host=localhost dbname=navigraph user=postgres password=password port=5432\" "
+                  f"PG:\"host=localhost dbname={db_name} user=postgres password=password port=5432\" "
                   f"\"{schema_name}.{table_name}(geom)\"")
