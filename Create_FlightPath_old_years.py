@@ -20,7 +20,7 @@ try:
 
 # create the table name that will store the radar track
     year_list = ['2022']
-    month_list = ['08']
+    month_list = ['09']
 
     for year in year_list:
         for month in month_list:

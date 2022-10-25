@@ -4,8 +4,11 @@ import time
 
 t = time.time()
 
+#mysql_db = 'flight'
+mysql_db = 'flight_vtbs'
+
 db = mysql.connector.connect(host='172.16.101.32',
-                             database='flight',
+                             database=mysql_db,
                              user='pabhakara',
                              password='327146ra',
                              auth_plugin='mysql_native_password')
@@ -13,25 +16,28 @@ encoding = 'Latin1'
 
 dbx = db.cursor()
 
-DB = psycopg2.connect(user = "de_old_data",
-                                  password = "de_old_data",
-                                  host = "172.16.129.241",
-                                  port = "5432",
-                                  database = "aerothai_dwh",
-                                  options="-c search_path=dbo,flight_data")
+# DB = psycopg2.connect(user = "de_old_data",
+#                                   password = "de_old_data",
+#                                   host = "172.16.129.241",
+#                                   port = "5432",
+#                                   database = "aerothai_dwh",
+#                                   options="-c search_path=dbo,flight_data")
 
 #DB = psycopg2.connect("dbname='temp'")
+
+DB = psycopg2.connect(user="postgres",
+                                 password="password",
+                                 host="localhost",
+                                 port="5432",
+                                 database="temp",
+                                 options="-c search_path=dbo,tecos")
 
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
 
-mysql_db = 'flight'
-#mysql_db = 'flight_vtbd'
-
 #mysql = '''show tables from flight_vtbd'''
 
 mysql = f'show tables from {mysql_db}'
-
 
 dbx.execute(mysql)
 ts = dbx.fetchall()
@@ -45,18 +51,17 @@ ts = dbx.fetchall()
 tables = []
 
 
-
-#prefix = ''
-#postfix = '_vtbd_tecos_dep'
+prefix = ''
+postfix = '_vtbs_tecos_dep'
 
 # prefix = ''
 # postfix = '_radar'
 
-prefix = ''
-postfix = '_fdmc'
+# prefix = ''
+# postfix = '_fdmc'
 
-# prefix = 'target_'
-# postfix = ''
+#prefix = 'target_'
+#postfix = ''
 
 # prefix = 'distances_'
 # postfix = ''
@@ -64,21 +69,42 @@ postfix = '_fdmc'
 # prefix = ''
 # postfix = '_radar_position_at_fix'
 
-# year_list = ['2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013']
+year_list_3 = ['2022']
+month_list_3 = ['06']
+
+for year in year_list_3:
+    for month in month_list_3:
+        text = f"{prefix}{year}_{month}{postfix}"
+        print(text)
+        tables = tables + [text]
+#
+# year_list = ['2021','2020','2018','2017', '2016', '2015']
 # month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
 
 # year_list = ['2019']
 # month_list = ['08','09','10','11','12']
 
-year_list = ['2022']
-month_list = ['08']
+# year_list = ['2022']
+# month_list = ['07','08','09']
 #month_list = ['07']
 
-for year in year_list:
-    for month in month_list:
-        text = f"{prefix}{year}_{month}{postfix}"
-        print(text)
-        tables = tables + [text]
+# for year in year_list:
+#     for month in month_list:
+#         text = f"{prefix}{year}_{month}{postfix}"
+#         print(text)
+#         tables = tables + [text]
+
+# year_list_2 = ['2019']
+# month_list_2 = ['01','02','03','07','08','09','10','11','12']
+#
+# for year in year_list_2:
+#     for month in month_list_2:
+#         text = f"{prefix}{year}_{month}{postfix}"
+#         print(text)
+#         tables = tables + [text]
+
+
+
 
 for table in tables:
     mysql = f'describe {mysql_db}.{table}'
@@ -89,7 +115,7 @@ for table in tables:
     # DC.execute(psql)
     #DB.commit()
 
-    psql = f'create table "{table}" ('
+    psql = f'drop table if exists "{table}"; create table "{table}" ('
     for row in rows:
         name = row[0]
         type = row[1] #.decode('ascii')

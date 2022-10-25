@@ -33,8 +33,7 @@ filter =  "NOT (latitude is NULL) \n" + \
           "AND ground_speed < 700 \n" \
           "AND ground_speed > 50 \n"
 
-
-date_list = pd.date_range(start='2022-09-30', end='2022-09-30')
+date_list = pd.date_range(start='2022-10-22', end='2022-10-22')
 
 with conn_postgres_target:
 
@@ -45,16 +44,6 @@ with conn_postgres_target:
         month = f"{date.month:02d}"
         day = f"{date.day:02d}"
 
-    # year_list = ['2022']
-    # month_list = ['09']
-    # # day_list = [ '01','02', '03', '04', '05','06','07','08','09','10',
-    # #             '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
-    # #             '21', '22', '23', '24', '25','26','27','28','29','30','31']
-    # day_list = ['25']
-    # for year in year_list:
-    #     for month in month_list:
-    #         yyyymm = year + month
-    #         for day in day_list:
         t = time.time()
         yyyymmdd = f"{year}{month}{day:}"
         yyyymm = f"{year}{month}"
