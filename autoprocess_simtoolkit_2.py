@@ -17,6 +17,7 @@ from Create_Holding_Legs_from_IAPs import *
 from SQLite_File_to_PostgreSQL import *
 
 import psycopg2
+import psycopg2.extras
 
 def tic():
     #Homemade version of matlab tic and toc functions
@@ -79,28 +80,28 @@ for airac in airac_list:
     # #
     #print(schema_name)
 
-    create_mora_grid(db_name,schema_name)
-
-    create_sid_legs(db_name,schema_name)
-    create_sid_legs_rf(db_name,schema_name)
-    create_sid_legs_without_rf(db_name,schema_name)
-
-    create_star_legs(db_name,schema_name)
-    create_star_legs_rf(db_name,schema_name)
-    create_star_legs_without_rf(db_name,schema_name)
+    # create_mora_grid(db_name,schema_name)
     #
-    create_iap_legs_rf(db_name,schema_name)
-    create_iap_legs_af(db_name,schema_name)
-    create_iap_legs(db_name,schema_name)
+    # create_sid_legs(db_name,schema_name)
+    # create_sid_legs_rf(db_name,schema_name)
+    # create_sid_legs_without_rf(db_name,schema_name)
     #
-    create_ats_route_segments(db_name,schema_name)
-    create_ats_route(db_name,schema_name)
-
-    create_runway_segments(db_name,schema_name)
+    # create_star_legs(db_name,schema_name)
+    # create_star_legs_rf(db_name,schema_name)
+    # create_star_legs_without_rf(db_name,schema_name)
+    # #
+    # create_iap_legs_rf(db_name,schema_name)
+    # create_iap_legs_af(db_name,schema_name)
+    # create_iap_legs(db_name,schema_name)
+    # #
+    # create_ats_route_segments(db_name,schema_name)
+    # create_ats_route(db_name,schema_name)
+    #
+    # create_runway_segments(db_name,schema_name)
     create_runway_segments_extended(db_name,schema_name)
 
-    create_holding_legs(db_name,schema_name)
-    create_holding_legs_from_iaps(db_name,schema_name)
+    # create_holding_legs(db_name,schema_name)
+    # create_holding_legs_from_iaps(db_name,schema_name)
 
 
 
@@ -116,13 +117,13 @@ for airac in airac_list:
     conn3.autocommit = True
     cursor3 = conn3.cursor()
 
-    sql_file = open(path_script + 'clean_up_legs.sql', 'r')
-    cursor3.execute(sql_file.read())
+    # sql_file = open(path_script + 'clean_up_legs.sql', 'r')
+    # cursor3.execute(sql_file.read())
 
     # Move the tables from PUBLIC SCHEMA to airac_xxx SCHEMA
 
     #schema_name_2 = f"airac_current"
-    schema_name_2 = f"airac_{airac}"
+    schema_name_2 = f"airac_{airac}_temp"
 
     print(schema_name_2)
 
@@ -167,25 +168,25 @@ for airac in airac_list:
         #print(postgres_sql_text)
         cursor_postgres.execute(postgres_sql_text)
         table_name_list = cursor_postgres.fetchall()
-        for table_name in table_name_list:
-            #print(table_name[0])
-            postgres_sql_text = f" DROP TABLE IF EXISTS {schema_name_2}_vt.{table_name[0]};" \
-                                f" SELECT * " \
-                                f" INTO {schema_name_2}_vt.{table_name[0]}" \
-                                f" FROM {schema_name_2}.{table_name[0]}" \
-                                f" WHERE public.ST_Intersects(geom," \
-                                f" (SELECT public.ST_Buffer(geom,10) " \
-                                f" FROM airspace.fir " \
-                                f" WHERE name like 'BANGKOK%'));" # \
-                                # f" DROP TABLE {schema_name}_vt.{table_name[0]};" \
-                                # f" ALTER TABLE {schema_name}_vt.{table_name[0]}_vt RENAME TO {table_name[0]};"
-            print(postgres_sql_text)
-            cursor_postgres.execute(postgres_sql_text)
-            conn_postgres.commit()
-        postgres_sql_text = f" DROP TABLE IF EXISTS {schema_name_2}_vt.tbl_header;" \
-                            f" SELECT * " \
-                            f" INTO {schema_name_2}_vt.tbl_header" \
-                            f" FROM {schema_name_2}.tbl_header;"
-        cursor_postgres.execute(postgres_sql_text)
-        conn_postgres.commit()
+        # for table_name in table_name_list:
+        #     #print(table_name[0])
+        #     postgres_sql_text = f" DROP TABLE IF EXISTS {schema_name_2}_vt.{table_name[0]};" \
+        #                         f" SELECT * " \
+        #                         f" INTO {schema_name_2}_vt.{table_name[0]}" \
+        #                         f" FROM {schema_name_2}.{table_name[0]}" \
+        #                         f" WHERE public.ST_Intersects(geom," \
+        #                         f" (SELECT public.ST_Buffer(geom,10) " \
+        #                         f" FROM airspace.fir " \
+        #                         f" WHERE name like 'BANGKOK%'));" # \
+        #                         # f" DROP TABLE {schema_name}_vt.{table_name[0]};" \
+        #                         # f" ALTER TABLE {schema_name}_vt.{table_name[0]}_vt RENAME TO {table_name[0]};"
+        #     print(postgres_sql_text)
+        #     cursor_postgres.execute(postgres_sql_text)
+        #     conn_postgres.commit()
+        # postgres_sql_text = f" DROP TABLE IF EXISTS {schema_name_2}_vt.tbl_header;" \
+        #                     f" SELECT * " \
+        #                     f" INTO {schema_name_2}_vt.tbl_header" \
+        #                     f" FROM {schema_name_2}.tbl_header;"
+        # cursor_postgres.execute(postgres_sql_text)
+        # conn_postgres.commit()
 toc

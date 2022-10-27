@@ -30,7 +30,7 @@ conn_postgres_target = psycopg2.connect(user="de_old_data",
 #                                   options="-c search_path=dbo,public")
 
 
-date_list = pd.date_range(start='2022-10-22', end='2022-10-22')
+date_list = pd.date_range(start='2022-10-23', end='2022-10-23')
 
 with conn_postgres_target:
     date = date_list[0]

@@ -33,7 +33,7 @@ filter =  "NOT (latitude is NULL) \n" + \
           "AND ground_speed < 700 \n" \
           "AND ground_speed > 50 \n"
 
-date_list = pd.date_range(start='2022-10-22', end='2022-10-22')
+date_list = pd.date_range(start='2022-10-18', end='2022-10-18')
 
 with conn_postgres_target:
 
@@ -48,11 +48,18 @@ with conn_postgres_target:
         yyyymmdd = f"{year}{month}{day:}"
         yyyymm = f"{year}{month}"
 
-        print(f"working on {yyyymmdd}")
+        print(f"working on creating track_cat62_{yyyymmdd}")
 
         start_day = dt.datetime.strptime(f"{year}-{month}-{day}", '%Y-%m-%d')
         next_day = start_day + dt.timedelta(days=1)
         previous_day = start_day + dt.timedelta(days=-1)
+
+        year_next = f"{next_day.year}"
+        month_next = f"{next_day.month:02d}"
+        day_next = f"{next_day.day:02d}"
+
+        yyyymm_next = str(next_day.year).zfill(2) + str(next_day.month).zfill(2)
+        yyyymm_previous = str(previous_day.year).zfill(2) + str(previous_day.month).zfill(2)
 
         yyyymmdd_next = str(next_day.year).zfill(2) + str(next_day.month).zfill(2) + str(next_day.day).zfill(2)
         yyyymmdd_previous = str(previous_day.year).zfill(2) + str(previous_day.month).zfill(2) + str(previous_day.day).zfill(2)
@@ -360,6 +367,74 @@ with conn_postgres_target:
         postgres_sql_text = f"DROP TABLE IF EXISTS track.track_{yyyymmdd}_temp;" \
                             f"GRANT SELECT ON ALL TABLES IN SCHEMA track TO public;"
         print(postgres_sql_text)
+        cursor_postgres_target.execute(postgres_sql_text)
+        conn_postgres_target.commit()
+
+        # Add dest_rwy to the tracks =====================================================
+
+        print(f"working adding arrival runway to {yyyymmdd} tracks")
+
+        postgres_sql_text = f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+                            f"DROP COLUMN IF EXISTS dest_rwy;\n" \
+                            f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+                            f"ADD COLUMN dest_rwy character varying(3) DEFAULT '-';\n"
+        cursor_postgres_target.execute(postgres_sql_text)
+        conn_postgres_target.commit()
+        
+        # Create an SQL query that selects surveillance targets from the source PostgreSQL database
+        postgres_sql_text = f"UPDATE track.track_cat62_{yyyymmdd} t\n" \
+                             f"SET dest_rwy = f.dest_rwy\n" \
+                             f"FROM\n" \
+                             f"(SELECT flight_key,dest_rwy\n" \
+                             f"FROM\n" \
+                             f"(SELECT flight_key,dest,dest_rwy,max(count)\n" \
+                             f"FROM\n" \
+                             f"(SELECT flight_key,dest, right(procedure_identifier,2) as dest_rwy,COUNT(*)\n" \
+                             f"FROM\n" \
+                             f"	(SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
+                             f"	FROM sur_air.cat062_{yyyymmdd} t, \n" \
+                             f"	flight_data.flight_{yyyymm} f,\n" \
+                             f"	temp.vt_finalpath_buffer b\n" \
+                             f"	WHERE  t.flight_id = f.id\n" \
+                             f"	AND (f.dest LIKE 'VT%')\n" \
+                             f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
+                             f"	UNION\n" \
+                             f"	SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
+                             f"	FROM sur_air.cat062_{yyyymmdd_next} t, \n" \
+                             f"	flight_data.flight_{yyyymm_next} f,\n" \
+                             f"	temp.vt_finalpath_buffer b\n" \
+                             f"	WHERE  t.flight_id = f.id\n" \
+                             f"	AND (f.dest LIKE 'VT%')\n" \
+                             f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
+                             f"	) a\n" \
+                             f"WHERE dest = airport_identifier AND vert = 2\n" \
+                             f"AND length(procedure_identifier) = 3\n" \
+                             f"GROUP BY flight_key,dest,procedure_identifier\n" \
+                             f"UNION\n" \
+                             f"SELECT flight_key,dest, right(procedure_identifier,3) as dest_rwy,COUNT(*) \n" \
+                             f"FROM \n" \
+                             f"	(SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
+                             f"	FROM sur_air.cat062_{yyyymmdd} t, \n" \
+                             f"	flight_data.flight_{yyyymm} f,\n" \
+                             f"	temp.vt_finalpath_buffer b\n" \
+                             f"	WHERE  t.flight_id = f.id\n" \
+                             f"	AND (f.dest LIKE 'VT%')\n" \
+                             f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
+                             f"	UNION\n" \
+                             f"	SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
+                             f"	FROM sur_air.cat062_{yyyymmdd_next} t, \n" \
+                             f"	flight_data.flight_{yyyymm_next} f,\n" \
+                             f"	temp.vt_finalpath_buffer b\n" \
+                             f"	WHERE  t.flight_id = f.id\n" \
+                             f"	AND (f.dest LIKE 'VT%')\n" \
+                             f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
+                             f"	) a\n" \
+                             f"WHERE dest = airport_identifier AND vert = 2\n" \
+                             f"AND length(procedure_identifier) = 4\n" \
+                             f"GROUP BY flight_key,dest,procedure_identifier) a\n" \
+                             f"GROUP BY flight_key,dest,dest_rwy) b\n" \
+                             f") f\n" \
+                             f"WHERE  t.flight_key = f.flight_key;\n"
         cursor_postgres_target.execute(postgres_sql_text)
         conn_postgres_target.commit()
 

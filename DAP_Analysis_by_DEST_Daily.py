@@ -64,7 +64,7 @@ filter_list = {
         f" AND (f.sur LIKE '%L%' OR f.sur LIKE '%H%' OR f.sur LIKE '%E%') "
         # f" ) "
 }
-date_list = pd.date_range(start='2022-10-01', end='2022-10-23',freq='D')
+date_list = pd.date_range(start='2022-10-23', end='2022-10-23',freq='D')
 
 with conn_postgres:
     postgres_sql_text = f"SELECT airport_identifier FROM airac_current.airports "\
@@ -88,7 +88,7 @@ equipage_count_df = pd.concat([equipage_count_temp_4])
 equipage_count_df = equipage_count_df.set_index(['time','dap'])
 print(equipage_count_df)
 df = equipage_count_df.transpose()
-df.to_csv(f"/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/DAP/DAP_by_SSR_site_{year}-{month}.csv")
+df.to_csv(f"/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/DAP/DAP_by_SSR_site_{year}-{month}-{day}.csv")
 
 # # Create figure
 # fig = go.Figure(
