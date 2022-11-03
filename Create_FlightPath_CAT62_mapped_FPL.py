@@ -33,7 +33,7 @@ filter =  "NOT (latitude is NULL) \n" + \
           "AND ground_speed < 700 \n" \
           "AND ground_speed > 50 \n"
 
-date_list = pd.date_range(start='2022-10-18', end='2022-10-18')
+date_list = pd.date_range(start='2022-10-29', end='2022-10-29')
 
 with conn_postgres_target:
 
@@ -380,8 +380,8 @@ with conn_postgres_target:
                             f"ADD COLUMN dest_rwy character varying(3) DEFAULT '-';\n"
         cursor_postgres_target.execute(postgres_sql_text)
         conn_postgres_target.commit()
-        
-        # Create an SQL query that selects surveillance targets from the source PostgreSQL database
+
+
         postgres_sql_text = f"UPDATE track.track_cat62_{yyyymmdd} t\n" \
                              f"SET dest_rwy = f.dest_rwy\n" \
                              f"FROM\n" \
@@ -435,6 +435,75 @@ with conn_postgres_target:
                              f"GROUP BY flight_key,dest,dest_rwy) b\n" \
                              f") f\n" \
                              f"WHERE  t.flight_key = f.flight_key;\n"
+        cursor_postgres_target.execute(postgres_sql_text)
+        conn_postgres_target.commit()
+
+        # Add dep to the tracks =====================================================
+
+        print(f"working adding departure runway to {yyyymmdd} tracks")
+
+        postgres_sql_text = f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+                            f"DROP COLUMN IF EXISTS dep_rwy;\n" \
+                            f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+                            f"ADD COLUMN dep_rwy character varying(3) DEFAULT '-';\n"
+        cursor_postgres_target.execute(postgres_sql_text)
+        conn_postgres_target.commit()
+
+        # Create an SQL query that selects surveillance targets from the source PostgreSQL database
+        postgres_sql_text = f"UPDATE track.track_cat62_{yyyymmdd} t\n" \
+                            f"SET dep_rwy = f.dep_rwy\n" \
+                            f"FROM\n" \
+                            f"(SELECT flight_key,dep_rwy\n" \
+                            f"FROM\n" \
+                            f"(SELECT flight_key,dep,dep_rwy,max(count)\n" \
+                            f"FROM\n" \
+                            f"(SELECT flight_key,dep, right(runway_identifier,2) as dep_rwy,COUNT(*)\n" \
+                            f"FROM\n" \
+                            f"	(SELECT t.flight_key,t.position,t.vert,f.dep,b.airport_identifier,b.runway_identifier\n" \
+                            f"	FROM sur_air.cat062_{yyyymmdd} t, \n" \
+                            f"	flight_data.flight_{yyyymm} f,\n" \
+                            f"	temp.vt_dep_buffer b\n" \
+                            f"	WHERE  t.flight_id = f.id\n" \
+                            f"	AND (f.dep LIKE 'VT%')\n" \
+                            f"	AND ST_INTERSECTS(t.position,b.buffer)\n" \
+                            f"	UNION\n" \
+                            f"	SELECT t.flight_key,t.position,t.vert,f.dep,b.airport_identifier,b.runway_identifier\n" \
+                            f"	FROM sur_air.cat062_{yyyymmdd_previous} t, \n" \
+                            f"	flight_data.flight_{yyyymm_previous} f,\n" \
+                            f"	temp.vt_dep_buffer b\n" \
+                            f"	WHERE  t.flight_id = f.id\n" \
+                            f"	AND (f.dep LIKE 'VT%')\n" \
+                            f"	AND ST_INTERSECTS(t.position,b.buffer)\n" \
+                            f"	) a\n" \
+                            f"WHERE dep = airport_identifier AND vert = 1\n" \
+                            f"AND length(runway_identifier) = 4\n" \
+                            f"GROUP BY flight_key,dep,runway_identifier\n" \
+                            f"UNION\n" \
+                            f"SELECT flight_key,dep, right(runway_identifier,3) as dep_rwy,COUNT(*) \n" \
+                            f"FROM \n" \
+                            f"	(SELECT t.flight_key,t.position,t.vert,f.dep,b.airport_identifier,b.runway_identifier\n" \
+                            f"	FROM sur_air.cat062_{yyyymmdd} t, \n" \
+                            f"	flight_data.flight_{yyyymm} f,\n" \
+                            f"	temp.vt_dep_buffer b\n" \
+                            f"	WHERE  t.flight_id = f.id\n" \
+                            f"	AND (f.dep LIKE 'VT%')\n" \
+                            f"	AND ST_INTERSECTS(t.position,b.buffer)\n" \
+                            f"	UNION\n" \
+                            f"	SELECT t.flight_key,t.position,t.vert,f.dep,b.airport_identifier,b.runway_identifier\n" \
+                            f"	FROM sur_air.cat062_{yyyymmdd_previous} t, \n" \
+                            f"	flight_data.flight_{yyyymm_previous} f,\n" \
+                            f"	temp.vt_dep_buffer b\n" \
+                            f"	WHERE  t.flight_id = f.id\n" \
+                            f"	AND (f.dep LIKE 'VT%')\n" \
+                            f"	AND ST_INTERSECTS(t.position,b.buffer)\n" \
+                            f"	) a\n" \
+                            f"WHERE dep = airport_identifier AND vert = 1\n" \
+                            f"AND length(runway_identifier) = 5\n" \
+                            f"GROUP BY flight_key,dep,runway_identifier) a\n" \
+                            f"GROUP BY flight_key,dep,dep_rwy) b\n" \
+                            f") f\n" \
+                            f"WHERE  t.flight_key = f.flight_key;\n"
+        # print(postgres_sql_text)
         cursor_postgres_target.execute(postgres_sql_text)
         conn_postgres_target.commit()
 

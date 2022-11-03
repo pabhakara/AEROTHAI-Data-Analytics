@@ -43,7 +43,7 @@ for f in files:
 
 year = '2022'
 month = '10'
-day = '16'
+day = '17'
 
 #STAR_list = ['LEBIM','NORTA','EASTE','WILLA','DOLNI']
 STAR_list = ['%']
@@ -57,9 +57,9 @@ with conn_postgres_source:
                             f"FROM sur_air.cat062_{year}{month}{day} t " \
                             f"LEFT JOIN flight_data.flight_{year}{month} f " \
                             f"ON t.flight_id = f.id " \
-                            f"WHERE (f.dep LIKE '%' AND f.dest LIKE '%') " \
+                            f"WHERE (f.dep LIKE 'VTBS%' AND f.dest LIKE 'VTCC%') " \
                             f"AND f.item15_route LIKE '%{STAR}%' " \
-                            f"AND t.acid LIKE '%TLM601%' " \
+                            f"AND t.acid LIKE '%%' " \
                             f"AND f.frule LIKE '%'; "
         cursor_postgres_source.execute(postgres_sql_text)
         print(postgres_sql_text)

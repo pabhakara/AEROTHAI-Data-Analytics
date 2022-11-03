@@ -30,7 +30,7 @@ conn_postgres_source = psycopg2.connect(user="de_old_data",
 #                                   options="-c search_path=dbo,public")
 
 
-date_list = pd.date_range(start='2022-09-01', end='2022-09-30')
+date_list = pd.date_range(start='2022-10-27', end='2022-10-27')
 
 with conn_postgres_source:
     cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -102,5 +102,5 @@ with conn_postgres_source:
     df = pd.DataFrame(record,columns=['dof','acid','actype','speed_class','dep','dest','dest_rwy','star','ttg'])
     print(df)
 path = f"/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/TTG BKK APP/"
-filename = f"ttg_{yyyymm}.csv"
+filename = f"ttg_{yyyymmdd}.csv"
 df.to_csv(f"{path}{filename}")

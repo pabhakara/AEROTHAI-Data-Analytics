@@ -22,18 +22,18 @@ conn_postgres_target = psycopg2.connect(user = "postgres",
                                   options="-c search_path=dbo,public")
 
 
-jade_table_list = ["local_flight_plan","handoffs","handoffs_geom","controlled_aircraft_periods"]
+jade_table_list = ["local_flight_plan","handoffs","controlled_aircraft_periods"]
 
-date_list = pd.date_range(start='2022-05-01', end='2022-08-24')
+date_list = pd.date_range(start='2022-05-01', end='2022-10-25')
 
 with conn_postgres_target:
 
     for jade_table in jade_table_list:
         print(f"working on {jade_table}")
         cursor_postgres_target = conn_postgres_target.cursor()
-        postgres_sql_text = f"DROP TABLE IF EXISTS jade_mk.{jade_table}_flightkey; \n" \
+        postgres_sql_text = f"DROP TABLE IF EXISTS temp.{jade_table}_flightkey; \n" \
                             f"SELECT * \n" \
-                            f"INTO jade_mk.{jade_table}_flightkey \n" \
+                            f"INTO temp.{jade_table}_flightkey \n" \
                             f"FROM ("
 
         for date in date_list[:-1]:
