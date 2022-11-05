@@ -11,7 +11,6 @@ from Create_IAP_Legs_simtoolkit import *
 from Create_ATS_Route_Segments_simtoolkit import *
 from Create_ATS_Route_simtoolkit import *
 from Create_Runway_Segments_simtoolkit import *
-from Create_Runway_Segments_extended import *
 from Create_Holding_Legs import *
 from Create_Holding_Legs_from_IAPs import *
 from SQLite_File_to_PostgreSQL import *
@@ -38,7 +37,7 @@ db_name = 'navigraph'
 schema_name = 'public'
 
 #airac_list = ['2106','2107','2108','2109','2110','2111','2112','2113','2201','2202','2203','2204','2205','2206','2207']
-airac_list = ['2210']
+airac_list = ['2211']
 airac_list = reversed(airac_list)
 
 for airac in airac_list:
@@ -97,7 +96,6 @@ for airac in airac_list:
     create_ats_route(db_name,schema_name)
 
     create_runway_segments(db_name,schema_name)
-    create_runway_segments_extended(db_name,schema_name)
 
     create_holding_legs(db_name,schema_name)
     create_holding_legs_from_iaps(db_name,schema_name)
