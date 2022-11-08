@@ -38,10 +38,11 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
 # }
 
 equipage_filter = {
+    "Not ADS-B": "Not(item10_cns like '%/%B%') ",
     "All": "(item10_cns like '%') "
 }
 
-airport_list = ['VTBS','VTBD','VTSP','VTCC','VTSM','VTSS','VTPP','VTSF','VTUU','VTUD']
+airport_list = ['VTBS','VTBD','VTSP','VTCC','VTSM','VTSB','VTSS','VTSG','VTPP','VTSF','VTUU','VTUD']
 
 # filter = {
 #     "ADS-B": " (item10_cns like '%/%B%'or item10_cns like '%/%U%' or item10_cns like '%/%V%')",
@@ -82,7 +83,7 @@ with conn_postgres:
             equipage_count_temp_3 = pd.concat([equipage_count_temp_3, equipage_count_temp_2])
             #print(equipage_count_temp_3)
     year_list = ['2022']
-    month_list = ['01','02','03','04','05','06']
+    month_list = ['01','02','03','04','05','06','07','08']
     equipage_count_temp_4 = pd.DataFrame()
     for year in year_list:
         for month in month_list:
@@ -233,5 +234,12 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html("/Users/pongabha/Desktop/traffic_by_airport.html")
+
+path = '/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis'
+
+fig.write_html(f"{path}/ADS-B_by_airport.html")
 fig.show()
+
+print(equipage_count_df)
+df = equipage_count_df.transpose()
+df.to_csv(f"{path}/non-ADS-B_by_airport.csv")

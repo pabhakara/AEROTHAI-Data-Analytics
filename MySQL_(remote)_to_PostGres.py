@@ -4,8 +4,8 @@ import time
 
 t = time.time()
 
-#mysql_db = 'flight'
-mysql_db = 'flight_vtbs'
+mysql_db = 'flight'
+#mysql_db = 'flight_vtbs'
 
 db = mysql.connector.connect(host='172.16.101.32',
                              database=mysql_db,
@@ -30,7 +30,7 @@ DB = psycopg2.connect(user="postgres",
                                  host="localhost",
                                  port="5432",
                                  database="temp",
-                                 options="-c search_path=dbo,tecos")
+                                 options="-c search_path=dbo,flight_data")
 
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
@@ -50,12 +50,11 @@ ts = dbx.fetchall()
 # '2021_11_vtbs_tecos_arr','2021_12_vtbs_tecos_arr']
 tables = []
 
+# prefix = ''
+# postfix = '_vtbs_tecos_dep'
 
 prefix = ''
-postfix = '_vtbs_tecos_dep'
-
-# prefix = ''
-# postfix = '_radar'
+postfix = '_radar'
 
 # prefix = ''
 # postfix = '_fdmc'
@@ -70,7 +69,7 @@ postfix = '_vtbs_tecos_dep'
 # postfix = '_radar_position_at_fix'
 
 year_list_3 = ['2022']
-month_list_3 = ['06']
+month_list_3 = ['09']
 
 for year in year_list_3:
     for month in month_list_3:
