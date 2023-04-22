@@ -114,8 +114,8 @@ def create_star_legs_af(db_name,schema_name):
                     arc_center_latlong = (temp_2['recommanded_navaid_latitude'], temp_2['recommanded_navaid_longitude'])
                     arc_center_xy = transformer.transform(arc_center_latlong[0], arc_center_latlong[1])
 
-                    sidt_wp_latlong = (temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
-                    sidt_wp_xy = transformer.transform(sidt_wp_latlong[0], sidt_wp_latlong[1])
+                    start_wp_latlong = (temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
+                    start_wp_xy = transformer.transform(start_wp_latlong[0], start_wp_latlong[1])
 
                     end_wp_latlong = (temp_2['waypoint_latitude'], temp_2['waypoint_longitude'])
                     end_wp_xy = transformer.transform(end_wp_latlong[0], end_wp_latlong[1])
@@ -123,15 +123,15 @@ def create_star_legs_af(db_name,schema_name):
                     arc_radius = math.sqrt(
                         (end_wp_xy[0] - arc_center_xy[0]) ** 2 + (end_wp_xy[1] - arc_center_xy[1]) ** 2)
 
-                    if not (sidt_wp_xy[0] == arc_center_xy[0]):
+                    if not (start_wp_xy[0] == arc_center_xy[0]):
 
-                        gamma = math.atan((sidt_wp_xy[1] - arc_center_xy[1]) / (sidt_wp_xy[0] - arc_center_xy[0]))
+                        gamma = math.atan((start_wp_xy[1] - arc_center_xy[1]) / (start_wp_xy[0] - arc_center_xy[0]))
 
                         intermediate_x_comp = math.cos(gamma) * arc_radius + arc_center_xy[0]
                         intermediate_y_comp = math.sin(gamma) * arc_radius + arc_center_xy[1]
 
                         sidt_to_intermediate_distance = math.sqrt(
-                            (sidt_wp_xy[0] - intermediate_x_comp) ** 2 + (sidt_wp_xy[1] - intermediate_y_comp) ** 2)
+                            (start_wp_xy[0] - intermediate_x_comp) ** 2 + (start_wp_xy[1] - intermediate_y_comp) ** 2)
 
                         if sidt_to_intermediate_distance > arc_radius:
                             # flip the intermediate point to the other side of the circle
@@ -144,12 +144,12 @@ def create_star_legs_af(db_name,schema_name):
                     intermediate_wp_xy = [intermediate_x_comp, intermediate_y_comp]
 
                     postgres_sql_text = postgres_sql_text + \
-                                        str(sidt_wp_xy[0]) + " " + str(sidt_wp_xy[1]) + "," + \
-                                        str(sidt_wp_xy[0]) + " " + str(sidt_wp_xy[1]) + ","
+                                        str(start_wp_xy[0]) + " " + str(start_wp_xy[1]) + "," + \
+                                        str(start_wp_xy[0]) + " " + str(start_wp_xy[1]) + ","
 
-                    sidt_wp_xy = intermediate_wp_xy
+                    start_wp_xy = intermediate_wp_xy
 
-                    mid_wp_xy = ((sidt_wp_xy[0] + end_wp_xy[0]) / 2, (sidt_wp_xy[1] + end_wp_xy[1]) / 2)
+                    mid_wp_xy = ((start_wp_xy[0] + end_wp_xy[0]) / 2, (start_wp_xy[1] + end_wp_xy[1]) / 2)
 
                     theta = math.atan((mid_wp_xy[1] - arc_center_xy[1]) / (mid_wp_xy[0] - arc_center_xy[0]))
 
@@ -166,8 +166,8 @@ def create_star_legs_af(db_name,schema_name):
 
                         # mid_wp is NW of arc_center
                         elif mid_wp_xy[0] < arc_center_xy[0] and mid_wp_xy[1] > arc_center_xy[1]:
-                            # end_wp is east of sidt_wp
-                            if end_wp_xy[0] > sidt_wp_xy[0]:
+                            # end_wp is east of start_wp
+                            if end_wp_xy[0] > start_wp_xy[0]:
                                 x_comp = -math.cos(theta) * arc_radius + arc_center_xy[0]
                                 y_comp = -math.sin(theta) * arc_radius + arc_center_xy[1]
                             else:
@@ -175,8 +175,8 @@ def create_star_legs_af(db_name,schema_name):
                                 y_comp = math.sin(theta) * arc_radius + arc_center_xy[1]
                         # mid_wp is SW of arc_center
                         elif mid_wp_xy[0] < arc_center_xy[0] and mid_wp_xy[1] < arc_center_xy[1]:
-                            # end_wp is west of sidt_wp
-                            if end_wp_xy[0] < sidt_wp_xy[0]:
+                            # end_wp is west of start_wp
+                            if end_wp_xy[0] < start_wp_xy[0]:
                                 x_comp = -math.cos(theta) * arc_radius + arc_center_xy[0]
                                 y_comp = -math.sin(theta) * arc_radius + arc_center_xy[1]
                             else:
@@ -196,8 +196,8 @@ def create_star_legs_af(db_name,schema_name):
 
                         # mid_wp is NW of arc_center
                         elif mid_wp_xy[0] < arc_center_xy[0] and mid_wp_xy[1] > arc_center_xy[1]:
-                            # end_wp is west of sidt_wp
-                            if end_wp_xy[0] < sidt_wp_xy[0]:
+                            # end_wp is west of start_wp
+                            if end_wp_xy[0] < start_wp_xy[0]:
                                 x_comp = -math.cos(theta) * arc_radius + arc_center_xy[0]
                                 y_comp = -math.sin(theta) * arc_radius + arc_center_xy[1]
                             else:
@@ -206,8 +206,8 @@ def create_star_legs_af(db_name,schema_name):
 
                         # mid_wp is SW of arc_center
                         elif mid_wp_xy[0] < arc_center_xy[0] and mid_wp_xy[1] < arc_center_xy[1]:
-                            # end_wp is east of sidt_wp
-                            if end_wp_xy[0] > sidt_wp_xy[0]:
+                            # end_wp is east of start_wp
+                            if end_wp_xy[0] > start_wp_xy[0]:
                                 x_comp = -math.cos(theta) * arc_radius + arc_center_xy[0]
                                 y_comp = -math.sin(theta) * arc_radius + arc_center_xy[1]
                             else:
@@ -219,8 +219,8 @@ def create_star_legs_af(db_name,schema_name):
                             y_comp = math.sin(theta) * arc_radius + arc_center_xy[1]
 
                     postgres_sql_text = postgres_sql_text + \
-                                        str(sidt_wp_xy[0]) + " " + str(sidt_wp_xy[1]) + "," + \
-                                        str(sidt_wp_xy[0]) + " " + str(sidt_wp_xy[1]) + "," + \
+                                        str(start_wp_xy[0]) + " " + str(start_wp_xy[1]) + "," + \
+                                        str(start_wp_xy[0]) + " " + str(start_wp_xy[1]) + "," + \
                                         str(x_comp) + " " + str(y_comp) + "," + \
                                         str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + "," + \
                                         str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + "," + \
