@@ -108,31 +108,31 @@ def create_sid_legs_rf(db_name,schema_name):
                      temp_1['path_termination'] == 'IF'):
                 if temp_2['path_termination'] == 'RF':
                     arc_center_latlong = (temp_2['center_waypoint_latitude'], temp_2['center_waypoint_longitude'])
-                    sidt_wp_latlong = (temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
+                    start_wp_latlong = (temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
                     end_wp_latlong = (temp_2['waypoint_latitude'], temp_2['waypoint_longitude'])
 
-                    sidt_wp_xy = transformer.transform(sidt_wp_latlong[0], sidt_wp_latlong[1])
+                    start_wp_xy = transformer.transform(start_wp_latlong[0], start_wp_latlong[1])
                     end_wp_xy = transformer.transform(end_wp_latlong[0], end_wp_latlong[1])
                     arc_center_xy = transformer.transform(arc_center_latlong[0], arc_center_latlong[1])
 
-                    mid_wp_xy = ((sidt_wp_xy[0] + end_wp_xy[0]) / 2, (sidt_wp_xy[1] + end_wp_xy[1]) / 2)
+                    mid_wp_xy = ((start_wp_xy[0] + end_wp_xy[0]) / 2, (start_wp_xy[1] + end_wp_xy[1]) / 2)
 
                     arc_radius = math.sqrt(
-                        (sidt_wp_xy[0] - arc_center_xy[0]) ** 2 + (sidt_wp_xy[1] - arc_center_xy[1]) ** 2)
+                        (start_wp_xy[0] - arc_center_xy[0]) ** 2 + (start_wp_xy[1] - arc_center_xy[1]) ** 2)
 
                     theta = math.atan((mid_wp_xy[1] - arc_center_xy[1]) / (mid_wp_xy[0] - arc_center_xy[0]))
 
-                    if ((end_wp_xy[0] > sidt_wp_xy[0]) and
-                        (end_wp_xy[1] < sidt_wp_xy[1]) and
+                    if ((end_wp_xy[0] > start_wp_xy[0]) and
+                        (end_wp_xy[1] < start_wp_xy[1]) and
                         str(temp_2['turn_direction']) == 'L') or \
-                            ((end_wp_xy[0] > sidt_wp_xy[0]) and
-                             (end_wp_xy[1] > sidt_wp_xy[1]) and
+                            ((end_wp_xy[0] > start_wp_xy[0]) and
+                             (end_wp_xy[1] > start_wp_xy[1]) and
                              str(temp_2['turn_direction']) == 'R') or \
-                            ((end_wp_xy[0] < sidt_wp_xy[0]) and
-                             (end_wp_xy[1] < sidt_wp_xy[1]) and
+                            ((end_wp_xy[0] < start_wp_xy[0]) and
+                             (end_wp_xy[1] < start_wp_xy[1]) and
                              str(temp_2['turn_direction']) == 'L') or \
-                            ((end_wp_xy[0] < sidt_wp_xy[0]) and
-                             (end_wp_xy[1] > sidt_wp_xy[1]) and
+                            ((end_wp_xy[0] < start_wp_xy[0]) and
+                             (end_wp_xy[1] > start_wp_xy[1]) and
                              str(temp_2['turn_direction']) == 'R'):
                         x_comp = -math.cos(theta) * arc_radius + arc_center_xy[0]
                         y_comp = -math.sin(theta) * arc_radius + arc_center_xy[1]
@@ -141,8 +141,8 @@ def create_sid_legs_rf(db_name,schema_name):
                         y_comp = math.sin(theta) * arc_radius + arc_center_xy[1]
 
                     postgres_sql_text = postgres_sql_text + \
-                                        str(sidt_wp_xy[0]) + " " + str(sidt_wp_xy[1]) + "," + \
-                                        str(sidt_wp_xy[0]) + " " + str(sidt_wp_xy[1]) + "," + \
+                                        str(start_wp_xy[0]) + " " + str(start_wp_xy[1]) + "," + \
+                                        str(start_wp_xy[0]) + " " + str(start_wp_xy[1]) + "," + \
                                         str(x_comp) + " " + str(y_comp) + "," + \
                                         str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + "," + \
                                         str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + "," + \
