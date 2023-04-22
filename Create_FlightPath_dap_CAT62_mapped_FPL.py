@@ -33,10 +33,7 @@ filter =  "NOT (latitude is NULL) \n" + \
           "AND ground_speed < 700 \n" \
           "AND ground_speed > 50 \n"
 
-# date_list = pd.date_range(start='2023-03-06', end='2023-03-09')
-
-today = dt.datetime.now()
-date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d') + dt.timedelta(days=-3)]
+date_list = pd.date_range(start='2023-12-27', end='2022-12-27')
 
 with conn_postgres_target:
     cursor_postgres_target = conn_postgres_target.cursor()
@@ -50,11 +47,11 @@ with conn_postgres_target:
         yyyymmdd = f"{year}{month}{day:}"
         yyyymm = f"{year}{month}"
 
-        print(f"working on creating track_cat62_{yyyymmdd}")
+        print(f"working on creating track_daps_cat62_{yyyymmdd}")
 
         start_day = dt.datetime.strptime(f"{year}-{month}-{day}", '%Y-%m-%d')
-        next_day = start_day + dt.timedelta(days=1)
-        previous_day = start_day + dt.timedelta(days=-1)
+        next_day = start_day + dt.timedelta(days=0)
+        previous_day = start_day + dt.timedelta(days=0)
 
         year_next = f"{next_day.year}"
         month_next = f"{next_day.month:02d}"
@@ -93,7 +90,7 @@ with conn_postgres_target:
                                      host="172.16.129.241",
                                      port="5432",
                                      database="aerothai_dwh",
-                                     options="-c search_path=dbo,sur_air")
+                                     options="-c search_path=dbo,temp")
 
         with conn_postgres_source:
 
@@ -113,7 +110,7 @@ with conn_postgres_target:
                                 "latitude," + \
                                 "longitude," + \
                                 "geo_alt \n" + \
-                                "FROM sur_air.cat062_" + yyyymmdd_next + "\n " + \
+                                "FROM temp.daps_cat062_" + yyyymmdd_next + "\n " + \
                                 f"WHERE \n {filter}" + \
                                 "AND concat(track_no, acid, mode_a_code) \n" + \
                                 "IN \n" \
@@ -123,7 +120,7 @@ with conn_postgres_target:
                                 "from \n" \
                                 "(SELECT track_no, acid, mode_a_code, temp, count(*) \n" \
                                 "from \n" \
-                                "(SELECT 'a' as temp, * FROM sur_air.cat062_" + yyyymmdd_next + \
+                                "(SELECT 'a' as temp, * FROM temp.daps_cat062_" + yyyymmdd_next + \
                                 "\n WHERE app_time < \'" + \
                                 str(next_day.year).zfill(2) + "-" + \
                                 str(next_day.month).zfill(2) + "-" + \
@@ -132,7 +129,7 @@ with conn_postgres_target:
                                 f"AND {filter} \n" \
                                 "UNION \n" \
                                 "SELECT 'b' as temp, * \n FROM " \
-                                "sur_air.cat062_" + yyyymmdd + "\n" \
+                                "temp.daps_cat062_" + yyyymmdd + "\n" \
                                 f"WHERE \n {filter}" \
                                 "AND app_time > \'" + year + "-" + month + "-" + day + " 23:59:30\' \n" \
                                 "ORDER BY track_no, app_time ) a \n" \
@@ -143,7 +140,7 @@ with conn_postgres_target:
                                 "SELECT " \
                                 "track_no, time_of_track, icao_24bit_dap, mode_a_code, acid, " \
                                 "acid_dap, dep, dest, flight_key, flight_id, latitude, longitude, geo_alt \n" \
-                                "FROM sur_air.cat062_" + yyyymmdd + "\n" \
+                                "FROM temp.daps_cat062_" + yyyymmdd + "\n" \
                                 f"WHERE \n {filter}" \
                                 "AND NOT concat(track_no, acid, mode_a_code) IN \n" \
                                 "(SELECT distinct concat(track_no, acid, mode_a_code) \n" \
@@ -152,7 +149,7 @@ with conn_postgres_target:
                                 "from \n" \
                                 "(SELECT track_no, acid, mode_a_code, temp, count(*) \n" \
                                 "from \n" \
-                                "(SELECT 'a' as temp, * FROM sur_air.cat062_" + yyyymmdd_previous + "\n"\
+                                "(SELECT 'a' as temp, * FROM temp.daps_cat062_" + yyyymmdd_previous + "\n"\
                                 f"WHERE \n {filter}" \
                                 "AND app_time > \'" + \
                                 str(previous_day.year).zfill(2) + "-" + \
@@ -161,7 +158,7 @@ with conn_postgres_target:
                                 " 23:59:30\' \n " \
                                 "UNION \n" \
                                 "SELECT 'b' as temp, * \n FROM " \
-                                "sur_air.cat062_" + yyyymmdd + "\n" \
+                                "temp.daps_cat062_" + yyyymmdd + "\n" \
                                 f"WHERE \n {filter}" \
                                 "AND app_time < \'" + year + "-" + month + "-" + day + " 00:00:30\' \n" \
                                 "ORDER BY track_no, app_time ) a \n" \
@@ -255,7 +252,6 @@ with conn_postgres_target:
 
                     latitude_1 = str(float(temp_1['latitude']))
                     longitude_1 = str(float(temp_1['longitude']))
-                    geo_alt_1 = str(temp_1['geo_alt'])
                     app_time_1 = str(temp_1['time_of_track'])
 
                     temp_2 = record[k + 1]
@@ -351,14 +347,14 @@ with conn_postgres_target:
         cursor_postgres_target.execute(postgres_sql_text)
         conn_postgres_target.commit()
 
-        postgres_sql_text = f"DROP TABLE IF EXISTS track.track_cat62_{yyyymmdd}; \n"  \
+        postgres_sql_text = f"DROP TABLE IF EXISTS track.track_daps_cat62_{yyyymmdd}; \n"  \
                             f"SELECT track.track_{yyyymmdd}_temp.geom," \
                             f"track.track_{yyyymmdd}_temp.start_time," \
                             f"track.track_{yyyymmdd}_temp.end_time," \
                             f"track.track_{yyyymmdd}_temp.track_duration," \
                             f"track.track_{yyyymmdd}_temp.track_length," \
                             f"flight_data.flight_{yyyymm}.* " \
-                            f"INTO track.track_cat62_{yyyymmdd} " \
+                            f"INTO track.track_daps_cat62_{yyyymmdd} " \
                             f"FROM track.track_{yyyymmdd}_temp " \
                             f"LEFT JOIN flight_data.flight_{yyyymm} ON " \
                             f"track.track_{yyyymmdd}_temp.flight_key = flight_data.flight_{yyyymm}.flight_key;"
@@ -377,15 +373,15 @@ with conn_postgres_target:
 
         print(f"working adding arrival runway to {yyyymmdd} tracks")
 
-        postgres_sql_text = f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+        postgres_sql_text = f"ALTER TABLE track.track_daps_cat62_{yyyymmdd} \n" \
                             f"DROP COLUMN IF EXISTS dest_rwy;\n" \
-                            f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+                            f"ALTER TABLE track.track_daps_cat62_{yyyymmdd} \n" \
                             f"ADD COLUMN dest_rwy character varying(3) DEFAULT '-';\n"
         cursor_postgres_target.execute(postgres_sql_text)
         conn_postgres_target.commit()
 
 
-        postgres_sql_text = f"UPDATE track.track_cat62_{yyyymmdd} t\n" \
+        postgres_sql_text = f"UPDATE track.track_daps_cat62_{yyyymmdd} t\n" \
                              f"SET dest_rwy = f.dest_rwy\n" \
                              f"FROM\n" \
                              f"(SELECT flight_key,dest_rwy\n" \
@@ -395,7 +391,7 @@ with conn_postgres_target:
                              f"(SELECT flight_key,dest, right(procedure_identifier,2) as dest_rwy,COUNT(*)\n" \
                              f"FROM\n" \
                              f"	(SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
-                             f"	FROM sur_air.cat062_{yyyymmdd} t, \n" \
+                             f"	FROM temp.daps_cat062_{yyyymmdd} t, \n" \
                              f"	flight_data.flight_{yyyymm} f,\n" \
                              f"	temp.vt_finalpath_buffer b\n" \
                              f"	WHERE  t.flight_id = f.id\n" \
@@ -403,7 +399,7 @@ with conn_postgres_target:
                              f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
                              f"	UNION\n" \
                              f"	SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
-                             f"	FROM sur_air.cat062_{yyyymmdd_next} t, \n" \
+                             f"	FROM temp.daps_cat062_{yyyymmdd_next} t, \n" \
                              f"	flight_data.flight_{yyyymm_next} f,\n" \
                              f"	temp.vt_finalpath_buffer b\n" \
                              f"	WHERE  t.flight_id = f.id\n" \
@@ -417,7 +413,7 @@ with conn_postgres_target:
                              f"SELECT flight_key,dest, right(procedure_identifier,3) as dest_rwy,COUNT(*) \n" \
                              f"FROM \n" \
                              f"	(SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
-                             f"	FROM sur_air.cat062_{yyyymmdd} t, \n" \
+                             f"	FROM temp.daps_cat062_{yyyymmdd} t, \n" \
                              f"	flight_data.flight_{yyyymm} f,\n" \
                              f"	temp.vt_finalpath_buffer b\n" \
                              f"	WHERE  t.flight_id = f.id\n" \
@@ -425,7 +421,7 @@ with conn_postgres_target:
                              f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
                              f"	UNION\n" \
                              f"	SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
-                             f"	FROM sur_air.cat062_{yyyymmdd_next} t, \n" \
+                             f"	FROM temp.daps_cat062_{yyyymmdd_next} t, \n" \
                              f"	flight_data.flight_{yyyymm_next} f,\n" \
                              f"	temp.vt_finalpath_buffer b\n" \
                              f"	WHERE  t.flight_id = f.id\n" \
@@ -445,15 +441,15 @@ with conn_postgres_target:
 
         print(f"working adding departure runway to {yyyymmdd} tracks")
 
-        postgres_sql_text = f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+        postgres_sql_text = f"ALTER TABLE track.track_daps_cat62_{yyyymmdd} \n" \
                             f"DROP COLUMN IF EXISTS dep_rwy;\n" \
-                            f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+                            f"ALTER TABLE track.track_daps_cat62_{yyyymmdd} \n" \
                             f"ADD COLUMN dep_rwy character varying(3) DEFAULT '-';\n"
         cursor_postgres_target.execute(postgres_sql_text)
         conn_postgres_target.commit()
 
         # Create an SQL query that selects surveillance targets from the source PostgreSQL database
-        postgres_sql_text = f"UPDATE track.track_cat62_{yyyymmdd} t\n" \
+        postgres_sql_text = f"UPDATE track.track_daps_cat62_{yyyymmdd} t\n" \
                             f"SET dep_rwy = f.dep_rwy\n" \
                             f"FROM\n" \
                             f"(SELECT flight_key,dep_rwy\n" \
@@ -463,7 +459,7 @@ with conn_postgres_target:
                             f"(SELECT flight_key,dep, right(runway_identifier,2) as dep_rwy,COUNT(*)\n" \
                             f"FROM\n" \
                             f"	(SELECT t.flight_key,t.position,t.vert,f.dep,b.airport_identifier,b.runway_identifier\n" \
-                            f"	FROM sur_air.cat062_{yyyymmdd} t, \n" \
+                            f"	FROM temp.daps_cat062_{yyyymmdd} t, \n" \
                             f"	flight_data.flight_{yyyymm} f,\n" \
                             f"	temp.vt_dep_buffer b\n" \
                             f"	WHERE  t.flight_id = f.id\n" \
@@ -471,7 +467,7 @@ with conn_postgres_target:
                             f"	AND ST_INTERSECTS(t.position,b.buffer)\n" \
                             f"	UNION\n" \
                             f"	SELECT t.flight_key,t.position,t.vert,f.dep,b.airport_identifier,b.runway_identifier\n" \
-                            f"	FROM sur_air.cat062_{yyyymmdd_previous} t, \n" \
+                            f"	FROM temp.daps_cat062_{yyyymmdd_previous} t, \n" \
                             f"	flight_data.flight_{yyyymm_previous} f,\n" \
                             f"	temp.vt_dep_buffer b\n" \
                             f"	WHERE  t.flight_id = f.id\n" \
@@ -485,7 +481,7 @@ with conn_postgres_target:
                             f"SELECT flight_key,dep, right(runway_identifier,3) as dep_rwy,COUNT(*) \n" \
                             f"FROM \n" \
                             f"	(SELECT t.flight_key,t.position,t.vert,f.dep,b.airport_identifier,b.runway_identifier\n" \
-                            f"	FROM sur_air.cat062_{yyyymmdd} t, \n" \
+                            f"	FROM temp.daps_cat062_{yyyymmdd} t, \n" \
                             f"	flight_data.flight_{yyyymm} f,\n" \
                             f"	temp.vt_dep_buffer b\n" \
                             f"	WHERE  t.flight_id = f.id\n" \
@@ -493,7 +489,7 @@ with conn_postgres_target:
                             f"	AND ST_INTERSECTS(t.position,b.buffer)\n" \
                             f"	UNION\n" \
                             f"	SELECT t.flight_key,t.position,t.vert,f.dep,b.airport_identifier,b.runway_identifier\n" \
-                            f"	FROM sur_air.cat062_{yyyymmdd_previous} t, \n" \
+                            f"	FROM temp.daps_cat062_{yyyymmdd_previous} t, \n" \
                             f"	flight_data.flight_{yyyymm_previous} f,\n" \
                             f"	temp.vt_dep_buffer b\n" \
                             f"	WHERE  t.flight_id = f.id\n" \

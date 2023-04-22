@@ -43,25 +43,11 @@ def create_sid_legs_af(db_name,schema_name):
                             "ALTER TABLE " + table_name + " " \
                                                           "OWNER TO postgres;"
 
-        # postgres_sql_text = postgres_sql_text + "DROP TABLE IF EXISTS " + table_name2 + "; \n" + \
-        #                     "CREATE TABLE " + table_name2 + " " + \
-        #                     "(waypoint_name character varying, " + \
-        #                     "geom geometry)" + \
-        #                     "WITH (OIDS=FALSE); \n" + \
-        #                     "ALTER TABLE " + table_name2 + " " \
-        #                                                    "OWNER TO postgres;"
-
         print(postgres_sql_text)
 
         cursor_postgres.execute(postgres_sql_text)
 
         conn_postgres.commit()
-
-        # postgres_sql_text = " SELECT * FROM tbl_sids " + \
-        #                     " where airport_identifier like '%'  " + \
-        #                     " and not(waypoint_identifier is null) " + \
-        #                     " order by airport_identifier, procedure_identifier, " \
-        #                     " route_type, transition_identifier, seqno"
 
         postgres_sql_text = "select * " \
                             "from tbl_sids " \
@@ -214,18 +200,6 @@ def create_sid_legs_af(db_name,schema_name):
                     else:
                         arc_direction = "CW"
 
-                    # postgres_sql_text2 = "INSERT INTO \"" + table_name2 + "\" " + \
-                    #                      "(\"waypoint_name\"," + \
-                    #                      "\"geom\") " + \
-                    #                      " VALUES('mid_" + str(temp_1['waypoint_identifier']) + "_" + str(
-                    #     temp_2['waypoint_identifier']) + "'," \
-                    #                      + "ST_Transform(ST_SetSRID(ST_MakePoint(" \
-                    #                      + str(mid_wp_xy[0]) + "," + str(mid_wp_xy[1]) + ")," \
-                    #                      + str(UTM_zone) + "), 4326));"
-                    # cursor_postgres.execute(postgres_sql_text2)
-                    #
-                    # conn_postgres.commit()
-
                     if (arc_direction == 'CW'):
                         # mid_wp is NE of arc_center
                         if mid_wp_xy[0] > arc_center_xy[0] and mid_wp_xy[1] > arc_center_xy[1]:
@@ -286,18 +260,6 @@ def create_sid_legs_af(db_name,schema_name):
                             x_comp = math.cos(theta) * arc_radius + arc_center_xy[0]
                             y_comp = math.sin(theta) * arc_radius + arc_center_xy[1]
 
-                    # postgres_sql_text2 = "INSERT INTO \"" + table_name2 + "\" " + \
-                    #                      "(\"waypoint_name\"," + \
-                    #                      "\"geom\") " + \
-                    #                      " VALUES('xy_comp_" + str(temp_1['waypoint_identifier']) \
-                    #                      + "_" + str(temp_2['waypoint_identifier']) + "'," \
-                    #                      + "ST_Transform(ST_SetSRID(ST_MakePoint(" \
-                    #                      + str(x_comp) + "," + str(y_comp) + ")," \
-                    #                      + str(UTM_zone) + "), 4326));"
-                    # cursor_postgres.execute(postgres_sql_text2)
-                    #
-                    # conn_postgres.commit()
-
                     postgres_sql_text = postgres_sql_text + \
                                         str(sidt_wp_xy[0]) + " " + str(sidt_wp_xy[1]) + "," + \
                                         str(sidt_wp_xy[0]) + " " + str(sidt_wp_xy[1]) + "," + \
@@ -305,7 +267,6 @@ def create_sid_legs_af(db_name,schema_name):
                                         str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + "," + \
                                         str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + "," + \
                                         str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + ","
-                    # k = k + 1
 
                 else:
                     waypoint_xy = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
@@ -316,14 +277,11 @@ def create_sid_legs_af(db_name,schema_name):
                                         str(waypoint_xy[0]) + " " + str(waypoint_xy[1]) + ","
 
                 k = k + 1
-                # print(k)
+
                 temp_1 = record[k]
                 if k == num_of_records - 1:
                     break
                 temp_2 = record[k + 1]
-
-                waypoint_latitude = str(float(temp_1['waypoint_latitude']))
-                waypoint_longitude = str(float(temp_1['waypoint_longitude']))
 
             waypoint_xy = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
 
@@ -333,12 +291,10 @@ def create_sid_legs_af(db_name,schema_name):
                                 str(waypoint_xy[0]) + " " + str(waypoint_xy[1]) + ")'), " + \
                                 str(UTM_zone) + "), 4326)); "
 
-            # print(postgres_sql_text)
 
             cursor_postgres.execute(postgres_sql_text)
 
             conn_postgres.commit()
-            #print("sid Legs AF: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
 
             k = k + 1
 
@@ -348,18 +304,6 @@ def create_sid_legs_af(db_name,schema_name):
             else:
                 temp_1 = record[k]
                 temp_2 = record[k + 1]
-
-            # -----
-
-            latitude_1 = str(float(temp_1['waypoint_latitude']))
-
-            latitude_2 = str(float(temp_2['waypoint_latitude']))
-
-            longitude_1 = str(float(temp_1['waypoint_longitude']))
-
-            longitude_2 = str(float(temp_2['waypoint_longitude']))
-
-            # -----
 
             if k < num_of_records:
 
@@ -374,34 +318,6 @@ def create_sid_legs_af(db_name,schema_name):
                 airport_identifier = str(temp_1['airport_identifier'])
                 procedure_identifier = str(temp_1['procedure_identifier'])
                 transition_identifier = str(temp_1['transition_identifier'])
-                seqno = str(temp_1['seqno'])
-                waypoint_icao_code = str(temp_1['waypoint_icao_code'])
-                waypoint_identifier = str(temp_1['waypoint_identifier'])
-                waypoint_latitude = str(temp_1['waypoint_latitude'])
-                waypoint_longitude = str(temp_1['waypoint_longitude'])
-                waypoint_description_code = str(temp_1['waypoint_description_code'])
-                turn_direction = str(temp_1['turn_direction'])
-                rnp = str(temp_1['rnp'])
-                path_termination = str(temp_1['path_termination'])
-                recommanded_navaid = str(temp_1['recommanded_navaid'])
-                recommanded_navaid_latitude = str(temp_1['recommanded_navaid_latitude'])
-                recommanded_navaid_longitude = str(temp_1['recommanded_navaid_longitude'])
-                arc_radius = str(temp_1['arc_radius'])
-                theta = str(temp_1['theta'])
-                rho = str(temp_1['rho'])
-                magnetic_course = str(temp_1['magnetic_course'])
-                route_distance_holding_distance_time = str(temp_1['route_distance_holding_distance_time'])
-                distance_time = str(temp_1['distance_time'])
-                altitude_description = str(temp_1['altitude_description'])
-                altitude1 = str(temp_1['altitude1'])
-                altitude2 = str(temp_1['altitude2'])
-                transition_altitude = str(temp_1['transition_altitude'])
-                speed_limit_description = str(temp_1['speed_limit_description'])
-                speed_limit = str(temp_1['speed_limit'])
-                vertical_angle = str(temp_1['vertical_angle'])
-                center_waypoint = str(temp_1['center_waypoint'])
-                center_waypoint_latitude = str(temp_1['center_waypoint_latitude'])
-                center_waypoint_longitude = str(temp_1['center_waypoint_longitude'])
 
                 UTM_zone = convert_wgs_to_utm(temp_1['waypoint_longitude'], temp_1['waypoint_latitude'])
 

@@ -22,19 +22,19 @@ def none_to_null(etd):
     return x
 
 
-# conn_postgres_source = psycopg2.connect(user="pongabhaab",
-#                                              password="pongabhaab",
-#                                              host="172.16.129.241",
-#                                              port="5432",
-#                                              database="aerothai_dwh",
-#                                              options="-c search_path=dbo,sur_air")
-
-conn_postgres_source = psycopg2.connect(user="postgres",
-                                             password="password",
-                                             host="localhost",
+conn_postgres_source = psycopg2.connect(user="pongabhaab",
+                                             password="pongabhaab",
+                                             host="172.16.129.241",
                                              port="5432",
-                                             database="temp",
+                                             database="aerothai_dwh",
                                              options="-c search_path=dbo,sur_air")
+
+# conn_postgres_source = psycopg2.connect(user="postgres",
+#                                              password="password",
+#                                              host="localhost",
+#                                              port="5432",
+#                                              database="temp",
+#                                              options="-c search_path=dbo,sur_air")
 
 output_filepath = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Flight_Proflie_Plots/'
 files = glob.glob(f"{output_filepath}*")
@@ -43,7 +43,7 @@ for f in files:
 
 year = '2022'
 month = '10'
-day = '17'
+day = '07'
 
 #STAR_list = ['LEBIM','NORTA','EASTE','WILLA','DOLNI']
 STAR_list = ['%']
@@ -57,15 +57,16 @@ with conn_postgres_source:
                             f"FROM sur_air.cat062_{year}{month}{day} t " \
                             f"LEFT JOIN flight_data.flight_{year}{month} f " \
                             f"ON t.flight_id = f.id " \
-                            f"WHERE (f.dep LIKE 'VTBS%' AND f.dest LIKE 'VTCC%') " \
+                            f"WHERE (f.dep LIKE '%' OR f.dest LIKE '%') " \
                             f"AND f.item15_route LIKE '%{STAR}%' " \
-                            f"AND t.acid LIKE '%%' " \
+                            f"AND f.acid LIKE '%%' " \
+                            f"AND f.flight_key LIKE 'AIQ397_WADD_VTBD_2022-10-07 04:30%' " \
                             f"AND f.frule LIKE '%'; "
         cursor_postgres_source.execute(postgres_sql_text)
-        print(postgres_sql_text)
+        #print(postgres_sql_text)
 
         record = cursor_postgres_source.fetchall()
-        print(record)
+        #print(record)
         summary_df = pd.DataFrame(record, columns=['flight_key', 'actype','star'])
 
     flight_key_list = list(summary_df['flight_key'])
@@ -102,7 +103,7 @@ with conn_postgres_source:
         df = pd.DataFrame(record, columns=['flight_key','app_time','sector','dist_from_last_position','measured_fl',
                                            'final_state_selected_alt_dap','latitude','longitude'])
 
-        #print(df)
+        print(df)
 
         accumulated_distance = 0
         accumulated_distance_list = []

@@ -22,21 +22,21 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
                                  options="-c search_path=dbo," + schema_name)
 
 # filter = {
-#     "Mode-S aircraft identification":"(item10_cns like '%/%S%' "
+#     "ADF aircraft identification":"(item10_cns like '%/%S%' "
 #                                      "or item10_cns like '%/%L%' "
 #                                      "or item10_cns like '%/%E%' "
 #                                      "or item10_cns like '%/%H%' "
 #                                      "or item10_cns like '%/%I%') ",
-#     "Mode-S pressure-altitude": "(item10_cns like '%/%L%' "
+#     "ADF pressure-altitude": "(item10_cns like '%/%L%' "
 #                                 "or item10_cns like '%/%E%' "
 #                                 "or item10_cns like '%/%S%' "
 #                                 "or item10_cns like '%/%H%'"
 #                                 "or item10_cns like '%/%P%') ",
-#     "Mode-S extended squitter": "(item10_cns like '%/%L%' "
+#     "ADF extended squitter": "(item10_cns like '%/%L%' "
 #                                 "or item10_cns like '%/%E%' ) ",
-#     "Mode-S enhanced surveillance": "(item10_cns like '%/%L%' "
+#     "ADF enhanced surveillance": "(item10_cns like '%/%L%' "
 #                                     "or item10_cns like '%/%H%' ) ",
-#     "No Mode-S": "NOT(item10_cns like '%/%L%' "
+#     "No ADF": "NOT(item10_cns like '%/%L%' "
 #                  "or item10_cns like '%/%E%' "
 #                  "or item10_cns like '%/%S%' "
 #                  "or item10_cns like '%/%H%'"
@@ -46,31 +46,21 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
 # }
 
 filter = {
-    "Mode-S EHS": "(item10_cns like '%/%L%' "
-                  "or item10_cns like '%/%H%' ) ",
-    "Mode-S ELS": "(item10_cns like '%/%S%' "
-                  "or item10_cns like '%/%E%' "
-                  "or item10_cns like '%/%P%' "
-                  "or item10_cns like '%/%I%' "
-                  "or item10_cns like '%/%X%') ",
-    "No Mode-S": "NOT (item10_cns like '%/%L%' "
-                 "or item10_cns like '%/%E%' "
-                 "or item10_cns like '%/%H%' "
-                 "or item10_cns like '%/%S%' "
-                 "or item10_cns like '%/%P%' "
-                 "or item10_cns like '%/%I%' "
-                 "or item10_cns like '%/%X%') "
+    "ADF No GPS": "(item10_cns like '%F%/%' "
+                  "AND NOT item10_cns like '%G%/%%' ) ",
+    "ADF w/ GPS": "(item10_cns like '%F%/%' "
+                  "AND item10_cns like '%G%/%%' ) "
 }
 
 # filter = {
-#     "Mode-S": "(item10_cns like '%/%L%' "
+#     "ADF": "(item10_cns like '%F%/%' "
 #                  "or item10_cns like '%/%E%' "
 #                  "or item10_cns like '%/%H%' "
 #                  "or item10_cns like '%/%S%' "
 #                  "or item10_cns like '%/%P%' "
 #                  "or item10_cns like '%/%I%' "
 #                  "or item10_cns like '%/%X%') ",
-#     "No Mode-S": "NOT (item10_cns like '%/%L%' "
+#     "No ADF": "NOT (item10_cns like '%/%L%' "
 #                  "or item10_cns like '%/%E%' "
 #                  "or item10_cns like '%/%H%' "
 #                  "or item10_cns like '%/%S%' "
@@ -152,14 +142,6 @@ fig = make_subplots(specs=[[{"secondary_y": True}]])
 
 # Add traces
 fig.add_trace(
-    go.Bar(name=equipage_list[0],
-                      x=df.index,
-                      y=df[equipage_list[0]],
-                      offsetgroup=0),
-    secondary_y=False,
-)
-
-fig.add_trace(
     go.Bar(name=equipage_list[1],
                       x=df.index,
                       y=df[equipage_list[1]],
@@ -168,34 +150,42 @@ fig.add_trace(
 )
 
 fig.add_trace(
-    go.Bar(name=equipage_list[2],
+    go.Bar(name=equipage_list[0],
                       x=df.index,
-                      y=df[equipage_list[2]],
-                      offsetgroup=2),
+                      y=df[equipage_list[0]],
+                      offsetgroup=0),
     secondary_y=False,
 )
 
+# fig.add_trace(
+#     go.Bar(name=equipage_list[2],
+#                       x=df.index,
+#                       y=df[equipage_list[2]],
+#                       offsetgroup=2),
+#     secondary_y=False,
+# )
+
 fig.add_trace(
-    go.Line(name="Mode-S EHS %",
+    go.Line(name="ADF w/o GPS",
                            x=df.index,
-                           y=df['Mode-S EHS']/(df['Mode-S EHS']+df['Mode-S ELS']+df['No Mode-S'])*100,
-            line=dict(color="#808080")
+                           y=df['ADF No GPS']/(df['ADF No GPS']+df['ADF w/ GPS'])*100,
+            line=dict(color="#1DCA1D")
                         ),
     secondary_y=True,
 )
 
 fig.add_trace(
-    go.Line(name="No Mode-S %",
+    go.Line(name="ADF w/ GPS",
                            x=df.index,
-                           y=df['No Mode-S']/(df['Mode-S EHS']+df['Mode-S ELS']+df['No Mode-S'])*100,
-            line=dict(color="#1DCA1D")
+                           y=df['ADF w/ GPS']/(df['ADF No GPS']+df['ADF w/ GPS'])*100,
+            line=dict(color="#808080")
                         ),
     secondary_y=True,
 )
 
 # Add figure title
 fig.update_layout(
-    title_text="Historical Monthly IFR Movements with Mode-S (January 2013 to October 2022)"
+    title_text="Historical Monthly IFR Movements with ADF (January 2013 to October 2022)"
 )
 
 # Set x-axis title
@@ -209,7 +199,7 @@ fig.show()
 
 # Set title
 # fig.update_layout(
-#     title_text="Monthly IFR Movements in Bangkok FIR  with Mode-S Equipage (January 2013 to June 2022)"
+#     title_text="Monthly IFR Movements in Bangkok FIR  with ADF Equipage (January 2013 to June 2022)"
 # )
 
 
@@ -244,7 +234,7 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/Mode-S.html")
-df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/Mode-S.csv")
+fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/ADF.html")
+df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/ADF.csv")
 #fig.write_image("/Users/pongabha/Desktop/ADS-B.png")
 fig.show()

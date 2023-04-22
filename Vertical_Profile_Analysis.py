@@ -6,6 +6,7 @@ from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 from matplotlib.dates import DateFormatter
 import os
 import glob
+import openai
 
 import plotly.express as px
 from plotly.subplots import make_subplots
@@ -45,7 +46,7 @@ for f in files:
     os.remove(f)
 
 year = '2022'
-month = '05'
+month = '10'
 day = '24'
 
 STAR_list = ['LEBIM', 'NORTA', 'EASTE', 'WILLA', 'DOLNI']
@@ -66,7 +67,7 @@ with conn_postgres_source:
                             f"ON t.flight_id = f.id " \
                             f"WHERE (f.dep LIKE '{dep}' AND f.dest LIKE '{dest}') " \
                             f"AND f.item15_route LIKE '%{STAR}%' " \
-                            f"AND t.acid LIKE '%' " \
+                            f"AND t.acid LIKE 'THA%' " \
                             f"AND f.frule LIKE 'I%'" \
                             f"ORDER BY t.flight_key; "
         #print(postgres_sql_text)
@@ -80,7 +81,6 @@ with conn_postgres_source:
     actype_list = list(summary_df['actype'])
 
 # print(flight_key_list)
-#
 # print(summary_df)
 
 track_duration_list = []
@@ -115,7 +115,6 @@ with conn_postgres_source:
         df = pd.DataFrame(record, columns=['flight_key', 'app_time', 'sector', 'dist_from_last_position', 'measured_fl',
                                            'final_state_selected_alt_dap', 'selected_altitude_dap','sector',
                                            'latitude', 'longitude'])
-
 
         accumulated_distance = 0
         accumulated_distance_list = []

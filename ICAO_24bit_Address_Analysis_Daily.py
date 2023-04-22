@@ -27,7 +27,7 @@ conn_postgres_target = psycopg2.connect(user = "de_old_data",
 #                                   database = "temp",
 #                                   options="-c search_path=dbo,public")
 
-date_list = pd.date_range(start='2022-05-01', end='2022-10-31')
+date_list = pd.date_range(start='2022-07-01', end='2022-08-31')
 
 with conn_postgres_target:
 
@@ -78,7 +78,7 @@ with conn_postgres_target:
             f"sur_air.cat062_{yyyymmdd}.icao_24bit_dap as icao_add_dap, " \
             f"flight_data.flight_{yyyymm}.icao_24bit_hex as fpl_hex, count(*) \n" \
             f"from sur_air.cat062_{yyyymmdd}, flight_data.flight_{yyyymm} \n" \
-            f"where sur_air.cat062_{yyyymmdd}.flight_id = flight_data.flight_{yyyymm}.id  \n" \
+            f"where sur_air.cat062_{yyyymmdd}.flight_key = flight_data.flight_{yyyymm}.flight_key  \n" \
             f"and sur_air.cat062_{yyyymmdd}.icao_24bit_dap <> flight_data.flight_{yyyymm}.icao_24bit_hex \n" \
             f" group by dof,callsign, reg, icao_add_dap, fpl_hex; "
 

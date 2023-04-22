@@ -5,7 +5,7 @@ import time
 t = time.time()
 
 mysql_db = 'flight'
-#mysql_db = 'flight_vtbs'
+#mysql_db = 'flight_vtbd'
 
 db = mysql.connector.connect(host='172.16.101.32',
                              database=mysql_db,
@@ -16,21 +16,21 @@ encoding = 'Latin1'
 
 dbx = db.cursor()
 
-# DB = psycopg2.connect(user = "de_old_data",
+#DB = psycopg2.connect(user = "de_old_data",
 #                                   password = "de_old_data",
 #                                   host = "172.16.129.241",
 #                                   port = "5432",
 #                                   database = "aerothai_dwh",
 #                                   options="-c search_path=dbo,flight_data")
 
-#DB = psycopg2.connect("dbname='temp'")
+DB = psycopg2.connect(database="temp",options="-c search_path=dbo,flight_data")
 
-DB = psycopg2.connect(user="postgres",
-                                 password="password",
-                                 host="localhost",
-                                 port="5432",
-                                 database="temp",
-                                 options="-c search_path=dbo,flight_data")
+# DB = psycopg2.connect(user="postgres",
+#                                  password="password",
+#                                  host="localhost",
+#                                  port="5432",
+#                                  database="temp",
+#                                  options="-c search_path=dbo,tecos")
 
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
@@ -42,22 +42,22 @@ mysql = f'show tables from {mysql_db}'
 dbx.execute(mysql)
 ts = dbx.fetchall()
 
-# tables = ['2021_01_vtbs_tecos_arr','2021_02_vtbs_tecos_arr',
-# '2021_03_vtbs_tecos_arr','2021_04_vtbs_tecos_arr',
-# '2021_05_vtbs_tecos_arr','2021_06_vtbs_tecos_arr',
-# '2021_07_vtbs_tecos_arr','2021_08_vtbs_tecos_arr',
-# '2021_09_vtbs_tecos_arr','2021_10_vtbs_tecos_arr',
-# '2021_11_vtbs_tecos_arr','2021_12_vtbs_tecos_arr']
+# tables = ['2021_01_vtbd_tecos_arr','2021_02_vtbd_tecos_arr',
+# '2021_03_vtbd_tecos_arr','2021_04_vtbd_tecos_arr',
+# '2021_05_vtbd_tecos_arr','2021_06_vtbd_tecos_arr',
+# '2021_07_vtbd_tecos_arr','2021_08_vtbd_tecos_arr',
+# '2021_09_vtbd_tecos_arr','2021_10_vtbd_tecos_arr',
+# '2021_11_vtbd_tecos_arr','2021_12_vtbd_tecos_arr']
 tables = []
 
 # prefix = ''
-# postfix = '_vtbs_tecos_dep'
-
-prefix = ''
-postfix = '_radar'
+# postfix = '_vtbd_tecos_arr'
 
 # prefix = ''
-# postfix = '_fdmc'
+# postfix = '_radar'
+
+prefix = ''
+postfix = '_fdmc'
 
 #prefix = 'target_'
 #postfix = ''
@@ -68,8 +68,8 @@ postfix = '_radar'
 # prefix = ''
 # postfix = '_radar_position_at_fix'
 
-year_list_3 = ['2022']
-month_list_3 = ['09']
+year_list_3 = ['2023']
+month_list_3 = ['01']
 
 for year in year_list_3:
     for month in month_list_3:

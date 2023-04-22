@@ -4,8 +4,6 @@ def create_iap_legs_rf(db_name,schema_name):
     from pyproj import Transformer
     import math
 
-    #from autoprocess_simtoolkit import db_name, path_db, schema_name
-
 
     def convert_wgs_to_utm(lon: float, lat: float):
         """Based on lat and lng, return best utm epsg-code"""
@@ -17,7 +15,6 @@ def create_iap_legs_rf(db_name,schema_name):
             return epsg_code
         epsg_code = '327' + utm_band
         return epsg_code
-
 
     # Try to connect to the local PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
     conn_postgres = psycopg2.connect(
@@ -48,12 +45,6 @@ def create_iap_legs_rf(db_name,schema_name):
 
         conn_postgres.commit()
 
-        # postgres_sql_text = " SELECT * FROM public.tbl_iaps " + \
-        #                     " where airport_identifier like '%'  " + \
-        #                     " and not(waypoint_identifier is null) " + \
-        #                     " order by airport_identifier, procedure_identifier, " \
-        #                     " route_type, transition_identifier, seqno"
-
         postgres_sql_text = "select * " \
                             "from public.tbl_iaps " \
                             "where concat(airport_identifier,procedure_identifier,transition_identifier) in " \
@@ -82,39 +73,9 @@ def create_iap_legs_rf(db_name,schema_name):
         area_code = str(temp_1['area_code'])
         airport_identifier = str(temp_1['airport_identifier'])
         procedure_identifier = str(temp_1['procedure_identifier'])
-        route_type = str(temp_1['route_type'])
         transition_identifier = str(temp_1['transition_identifier'])
-        seqno = str(temp_1['seqno'])
-        waypoint_icao_code = str(temp_1['waypoint_icao_code'])
-        waypoint_identifier = str(temp_1['waypoint_identifier'])
-        waypoint_latitude = str(temp_1['waypoint_latitude'])
-        waypoint_longitude = str(temp_1['waypoint_longitude'])
-        waypoint_description_code = str(temp_1['waypoint_description_code'])
-        turn_direction = str(temp_1['turn_direction'])
-        rnp = str(temp_1['rnp'])
-        path_termination = str(temp_1['path_termination'])
-        recommanded_navaid = str(temp_1['recommanded_navaid'])
-        recommanded_navaid_latitude = str(temp_1['recommanded_navaid_latitude'])
-        recommanded_navaid_longitude = str(temp_1['recommanded_navaid_longitude'])
-        arc_radius = str(temp_1['arc_radius'])
-        theta = str(temp_1['theta'])
-        rho = str(temp_1['rho'])
-        magnetic_course = str(temp_1['magnetic_course'])
-        route_distance_holding_distance_time = str(temp_1['route_distance_holding_distance_time'])
-        distance_time = str(temp_1['distance_time'])
-        altitude_description = str(temp_1['altitude_description'])
-        altitude1 = str(temp_1['altitude1'])
-        altitude2 = str(temp_1['altitude2'])
-        transition_altitude = str(temp_1['transition_altitude'])
-        speed_limit_description = str(temp_1['speed_limit_description'])
-        speed_limit = str(temp_1['speed_limit'])
-        vertical_angle = str(temp_1['vertical_angle'])
-        center_waypoint = str(temp_1['center_waypoint'])
-        center_waypoint_latitude = (temp_1['center_waypoint_latitude'])
 
         UTM_zone = convert_wgs_to_utm(temp_1['waypoint_longitude'], temp_1['waypoint_latitude'])
-
-        # transformer = partial(transform, proj_4326, proj_UTM)
 
         transformer = Transformer.from_crs("epsg:4326", "epsg:" + str(UTM_zone))
 
@@ -185,7 +146,6 @@ def create_iap_legs_rf(db_name,schema_name):
                                         str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + "," + \
                                         str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + "," + \
                                         str(end_wp_xy[0]) + " " + str(end_wp_xy[1]) + ","
-                    # k = k + 1
 
                 else:
                     waypoint_xy = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
@@ -196,14 +156,11 @@ def create_iap_legs_rf(db_name,schema_name):
                                         str(waypoint_xy[0]) + " " + str(waypoint_xy[1]) + ","
 
                 k = k + 1
-                # print(k)
+
                 temp_1 = record[k]
                 if k == num_of_records - 1:
                     break
                 temp_2 = record[k + 1]
-
-                waypoint_latitude = str(float(temp_1['waypoint_latitude']))
-                waypoint_longitude = str(float(temp_1['waypoint_longitude']))
 
             waypoint_xy = transformer.transform(temp_1['waypoint_latitude'], temp_1['waypoint_longitude'])
 
@@ -213,12 +170,9 @@ def create_iap_legs_rf(db_name,schema_name):
                                 str(waypoint_xy[0]) + " " + str(waypoint_xy[1]) + ")'), " + \
                                 str(UTM_zone) + "), 4326)); "
 
-            # print(postgres_sql_text)
-
             cursor_postgres.execute(postgres_sql_text)
 
             conn_postgres.commit()
-            #print("IAP Legs RF: " + str("{:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
 
             k = k + 1
 
@@ -228,18 +182,6 @@ def create_iap_legs_rf(db_name,schema_name):
             else:
                 temp_1 = record[k]
                 temp_2 = record[k + 1]
-
-            # -----
-
-            latitude_1 = str(float(temp_1['waypoint_latitude']))
-
-            latitude_2 = str(float(temp_2['waypoint_latitude']))
-
-            longitude_1 = str(float(temp_1['waypoint_longitude']))
-
-            longitude_2 = str(float(temp_2['waypoint_longitude']))
-
-            # -----
 
             if k < num_of_records:
 
@@ -254,34 +196,6 @@ def create_iap_legs_rf(db_name,schema_name):
                 airport_identifier = str(temp_1['airport_identifier'])
                 procedure_identifier = str(temp_1['procedure_identifier'])
                 transition_identifier = str(temp_1['transition_identifier'])
-                seqno = str(temp_1['seqno'])
-                waypoint_icao_code = str(temp_1['waypoint_icao_code'])
-                waypoint_identifier = str(temp_1['waypoint_identifier'])
-                waypoint_latitude = str(temp_1['waypoint_latitude'])
-                waypoint_longitude = str(temp_1['waypoint_longitude'])
-                waypoint_description_code = str(temp_1['waypoint_description_code'])
-                turn_direction = str(temp_1['turn_direction'])
-                rnp = str(temp_1['rnp'])
-                path_termination = str(temp_1['path_termination'])
-                recommanded_navaid = str(temp_1['recommanded_navaid'])
-                recommanded_navaid_latitude = str(temp_1['recommanded_navaid_latitude'])
-                recommanded_navaid_longitude = str(temp_1['recommanded_navaid_longitude'])
-                arc_radius = str(temp_1['arc_radius'])
-                theta = str(temp_1['theta'])
-                rho = str(temp_1['rho'])
-                magnetic_course = str(temp_1['magnetic_course'])
-                route_distance_holding_distance_time = str(temp_1['route_distance_holding_distance_time'])
-                distance_time = str(temp_1['distance_time'])
-                altitude_description = str(temp_1['altitude_description'])
-                altitude1 = str(temp_1['altitude1'])
-                altitude2 = str(temp_1['altitude2'])
-                transition_altitude = str(temp_1['transition_altitude'])
-                speed_limit_description = str(temp_1['speed_limit_description'])
-                speed_limit = str(temp_1['speed_limit'])
-                vertical_angle = str(temp_1['vertical_angle'])
-                center_waypoint = str(temp_1['center_waypoint'])
-                center_waypoint_latitude = str(temp_1['center_waypoint_latitude'])
-                center_waypoint_longitude = str(temp_1['center_waypoint_longitude'])
 
                 UTM_zone = convert_wgs_to_utm(temp_1['waypoint_longitude'], temp_1['waypoint_latitude'])
 
