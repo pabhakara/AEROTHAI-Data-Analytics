@@ -174,7 +174,7 @@ for airac in airac_list:
                                 f" WHERE public.ST_Intersects(geom," \
                                 f" (SELECT public.ST_Buffer(geom,10) " \
                                 f" FROM airspace.fir " \
-                                f" WHERE name like 'BANGKOK%'));" # \
+                                f" WHERE name like 'YAN%'));" # \
                                 # f" DROP TABLE {schema_name}_vt.{table_name[0]};" \
                                 # f" ALTER TABLE {schema_name}_vt.{table_name[0]}_vt RENAME TO {table_name[0]};"
             print(postgres_sql_text)

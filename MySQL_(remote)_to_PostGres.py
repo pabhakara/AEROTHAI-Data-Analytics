@@ -4,8 +4,8 @@ import time
 
 t = time.time()
 
-mysql_db = 'flight'
-#mysql_db = 'flight_vtbd'
+#mysql_db = 'flight'
+mysql_db = 'flight_vtbd'
 
 db = mysql.connector.connect(host='172.16.101.32',
                              database=mysql_db,
@@ -23,14 +23,14 @@ dbx = db.cursor()
 #                                   database = "aerothai_dwh",
 #                                   options="-c search_path=dbo,flight_data")
 
-DB = psycopg2.connect(database="temp",options="-c search_path=dbo,flight_data")
+# DB = psycopg2.connect(database="temp",options="-c search_path=dbo,flight_data")
 
-# DB = psycopg2.connect(user="postgres",
-#                                  password="password",
-#                                  host="localhost",
-#                                  port="5432",
-#                                  database="temp",
-#                                  options="-c search_path=dbo,tecos")
+DB = psycopg2.connect(user="postgres",
+                                 password="password",
+                                 host="localhost",
+                                 port="5432",
+                                 database="temp",
+                                 options="-c search_path=dbo,tecos")
 
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
@@ -50,14 +50,14 @@ ts = dbx.fetchall()
 # '2021_11_vtbd_tecos_arr','2021_12_vtbd_tecos_arr']
 tables = []
 
-# prefix = ''
-# postfix = '_vtbd_tecos_arr'
+prefix = ''
+postfix = '_vtbd_tecos_arr'
 
 # prefix = ''
 # postfix = '_radar'
 
-prefix = ''
-postfix = '_fdmc'
+# prefix = ''
+# postfix = '_fdmc'
 
 #prefix = 'target_'
 #postfix = ''
@@ -68,8 +68,8 @@ postfix = '_fdmc'
 # prefix = ''
 # postfix = '_radar_position_at_fix'
 
-year_list_3 = ['2023']
-month_list_3 = ['01']
+year_list_3 = ['2022']
+month_list_3 = ['12']
 
 for year in year_list_3:
     for month in month_list_3:
