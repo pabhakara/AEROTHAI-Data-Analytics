@@ -96,28 +96,28 @@ with conn_postgres:
                 equipage_count_temp_3 = pd.concat([equipage_count_temp_3, equipage_count_temp_2])
 
         equipage_count_temp_4 = pd.DataFrame()
-        # year_list = ['2022']
-        # month_list = ['01','02','03','04','05','06']
-        # for year in year_list:
-        #     for month in month_list:
-        #         print(f"{year}-{month}")
-        #         equipage_count_temp_2 = pd.DataFrame([f"{year}-{month}"], columns=['time'])
-        #
-        #         # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
-        #         postgres_sql_text = f"SELECT count(*) " \
-        #                             f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
-        #                             f"WHERE {filter[equipage]} " \
-        #                             f"and dest like '%'" \
-        #                             f"and frule like 'I';" \
-        #             # f"GROUP BY dest;"
-        #         cursor_postgres = conn_postgres.cursor()
-        #         cursor_postgres.execute(postgres_sql_text)
-        #         record = cursor_postgres.fetchall()
-        #         # print(equipage)
-        #         equipage_count_temp = pd.DataFrame([record[0][0]], columns=[equipage])
-        #         equipage_count_temp_2 = pd.concat([equipage_count_temp_2, equipage_count_temp], axis=1)
-        #         equipage_count_temp_2 = equipage_count_temp_2.set_index('time')
-        #         equipage_count_temp_4 = pd.concat([equipage_count_temp_4, equipage_count_temp_2])
+        year_list = ['2023']
+        month_list = ['01','02','03','04']
+        for year in year_list:
+            for month in month_list:
+                print(f"{year}-{month}")
+                equipage_count_temp_2 = pd.DataFrame([f"{year}-{month}"], columns=['time'])
+
+                # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
+                postgres_sql_text = f"SELECT count(*) " \
+                                    f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
+                                    f"WHERE {filter[equipage]} " \
+                                    f"and dest like '%'" \
+                                    f"and frule like 'I';" \
+                    # f"GROUP BY dest;"
+                cursor_postgres = conn_postgres.cursor()
+                cursor_postgres.execute(postgres_sql_text)
+                record = cursor_postgres.fetchall()
+                # print(equipage)
+                equipage_count_temp = pd.DataFrame([record[0][0]], columns=[equipage])
+                equipage_count_temp_2 = pd.concat([equipage_count_temp_2, equipage_count_temp], axis=1)
+                equipage_count_temp_2 = equipage_count_temp_2.set_index('time')
+                equipage_count_temp_4 = pd.concat([equipage_count_temp_4, equipage_count_temp_2])
         equipage_count_df[equipage] = pd.concat([equipage_count_temp_3, equipage_count_temp_4])
 df = equipage_count_df
 
@@ -221,7 +221,7 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/ADS-B.html")
-df.to_csv("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/ADS-B.csv")
+fig.write_html("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/ADS-B_new.html")
+df.to_csv("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/ADS-B_new.csv")
 #fig.write_image("/Users/pongabha/Desktop/ADS-B.png")
 fig.show()

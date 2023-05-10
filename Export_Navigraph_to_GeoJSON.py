@@ -3,7 +3,7 @@ import psycopg2.extras
 
 db_name = 'navigraph'
 
-schema_name = 'airac_current_vy'
+schema_name = 'airac_2304_vy'
 
 directory_path = f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/NavData/{schema_name}/"
 
