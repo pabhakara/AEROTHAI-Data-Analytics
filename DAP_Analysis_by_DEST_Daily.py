@@ -65,14 +65,14 @@ filter_list = {
         # f" ) "
 }
 
-filter_list = {
-    "All": f"(t.measured_fl < a.upper/100 "
-        f" AND t.measured_fl > 0 "
-        f" AND public.ST_WITHIN(t.\"position\",a.geom) "
-        f" AND f.frule LIKE 'I' )"
-}
+# filter_list = {
+#     "All": f"(t.measured_fl < a.upper/100 "
+#         f" AND t.measured_fl > 0 "
+#         f" AND public.ST_WITHIN(t.\"position\",a.geom) "
+#         f" AND f.frule LIKE 'I' )"
+# }
 
-date_list = pd.date_range(start='2023-02-01', end='2023-02-12',freq='D')
+date_list = pd.date_range(start='2023-02-13', end='2023-05-13',freq='D')
 
 with conn_postgres:
     postgres_sql_text = f"SELECT airport_identifier FROM airac_current.airports "\
@@ -96,7 +96,7 @@ equipage_count_df = pd.concat([equipage_count_temp_4])
 equipage_count_df = equipage_count_df.set_index(['time','dap'])
 print(equipage_count_df)
 df = equipage_count_df.transpose()
-df.to_csv(f"/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/DAP/DAP_by_SSR_site_{year}-{month}-no_ADS-B_FPL_filter.csv")
+df.to_csv(f"/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/DAP/DAP_by_SSR_site_{year}-{month}-new.csv")
 
 # # Create figure
 # fig = go.Figure(

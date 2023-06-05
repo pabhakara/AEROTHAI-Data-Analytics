@@ -22,28 +22,28 @@ def none_to_null(etd):
     return x
 
 
-conn_postgres_source = psycopg2.connect(user="pongabhaab",
-                                             password="pongabhaab",
-                                             host="172.16.129.241",
-                                             port="5432",
-                                             database="aerothai_dwh",
-                                             options="-c search_path=dbo,sur_air")
-
-# conn_postgres_source = psycopg2.connect(user="postgres",
-#                                              password="password",
-#                                              host="localhost",
+# conn_postgres_source = psycopg2.connect(user="pongabhaab",
+#                                              password="pongabhaab",
+#                                              host="172.16.129.241",
 #                                              port="5432",
-#                                              database="temp",
+#                                              database="aerothai_dwh",
 #                                              options="-c search_path=dbo,sur_air")
+
+conn_postgres_source = psycopg2.connect(user="postgres",
+                                             password="password",
+                                             host="localhost",
+                                             port="5432",
+                                             database="temp",
+                                             options="-c search_path=dbo,sur_air")
 
 output_filepath = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Flight_Proflie_Plots/'
 files = glob.glob(f"{output_filepath}*")
 for f in files:
     os.remove(f)
 
-year = '2022'
-month = '10'
-day = '07'
+year = '2023'
+month = '05'
+day = '18'
 
 #STAR_list = ['LEBIM','NORTA','EASTE','WILLA','DOLNI']
 STAR_list = ['%']
@@ -57,10 +57,8 @@ with conn_postgres_source:
                             f"FROM sur_air.cat062_{year}{month}{day} t " \
                             f"LEFT JOIN flight_data.flight_{year}{month} f " \
                             f"ON t.flight_id = f.id " \
-                            f"WHERE (f.dep LIKE '%' OR f.dest LIKE '%') " \
-                            f"AND f.item15_route LIKE '%{STAR}%' " \
+                            f"WHERE (f.dep LIKE 'VTC%' AND f.dest LIKE 'VTS%') " \
                             f"AND f.acid LIKE '%%' " \
-                            f"AND f.flight_key LIKE 'AIQ397_WADD_VTBD_2022-10-07 04:30%' " \
                             f"AND f.frule LIKE '%'; "
         cursor_postgres_source.execute(postgres_sql_text)
         #print(postgres_sql_text)

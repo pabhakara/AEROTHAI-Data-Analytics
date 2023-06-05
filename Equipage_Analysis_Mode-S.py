@@ -82,7 +82,7 @@ filter = {
 # filter = {
 #     "ADS-B":"(item10_cns like '%/%B%'or item10_cns like '%/%U%' or item10_cns like '%/%V%') ",
 # }
-date_list = pd.date_range(start='2013-01-01', end='2022-10-31',freq='M')
+date_list = pd.date_range(start='2013-01-01', end='2023-04-30',freq='M')
 
 equipage_list = list(filter.keys())
 equipage_count_df = pd.DataFrame()
@@ -195,7 +195,7 @@ fig.add_trace(
 
 # Add figure title
 fig.update_layout(
-    title_text="Historical Monthly IFR Movements with Mode-S (January 2013 to October 2022)"
+    title_text="Historical Monthly IFR Movements with Mode-S (January 2013 to April 2023)"
 )
 
 # Set x-axis title
