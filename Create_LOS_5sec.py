@@ -1,4 +1,6 @@
 import psycopg2
+import pandas as pd
+
 import time
 
 from mysql.connector import Error
@@ -19,7 +21,7 @@ conn_postgres = psycopg2.connect(user = "de_old_data",
                                   database = "aerothai_dwh",
                                   options="-c search_path=dbo,los")
 
-date_list = pd.date_range(start='2022-05-01', end='2023-05-31')
+date_list = pd.date_range(start='2023-03-01', end='2023-04-01')
 
 
 with conn_postgres:
@@ -75,6 +77,6 @@ with conn_postgres:
                             f"RENAME TO los_{year}_{month}_{day};" \
                             f"DELETE FROM los_{year}_{month}_{day} " \
                             f"WHERE (frule_a = 'V' and frule_b = 'V');"
-        print(postgres_sql_text)
+        print(f"working on {year}{month}{day} los")
         cursor_postgres.execute(postgres_sql_text)
         conn_postgres.commit()
