@@ -1,4 +1,5 @@
 import psycopg2
+import datetime as dt
 import pandas as pd
 
 import time
@@ -21,14 +22,17 @@ conn_postgres = psycopg2.connect(user = "de_old_data",
                                   database = "aerothai_dwh",
                                   options="-c search_path=dbo,los")
 
-date_list = pd.date_range(start='2023-03-01', end='2023-04-01')
+#date_list = pd.date_range(start='2023-06-09', end='2023-06-10')
+
+today = dt.datetime.now()
+date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d') + dt.timedelta(days=-4)]
 
 
 with conn_postgres:
 
     cursor_postgres = conn_postgres.cursor()
 
-    for date in date_list[:-1]:
+    for date in date_list[:]:
         year = f"{date.year}"
         month = f"{date.month:02d}"
         day = f"{date.day:02d}"
@@ -76,7 +80,13 @@ with conn_postgres:
                             f"ALTER TABLE los.los_{year}_{month}_{day}_temp " \
                             f"RENAME TO los_{year}_{month}_{day};" \
                             f"DELETE FROM los_{year}_{month}_{day} " \
-                            f"WHERE (frule_a = 'V' and frule_b = 'V');"
+                            f"WHERE (frule_a = 'V' and frule_b = 'V');" \
+                            f"GRANT USAGE ON SCHEMA los TO ponkritsa; " \
+                            f"GRANT SELECT ON ALL TABLES IN SCHEMA los TO ponkritsa; " \
+                            f"GRANT USAGE ON SCHEMA los TO saifonob; " \
+                            f"GRANT SELECT ON ALL TABLES IN SCHEMA los TO saifonob; " \
+                            f"GRANT USAGE ON SCHEMA los TO pongabhaab; " \
+                            f"GRANT SELECT ON ALL TABLES IN SCHEMA los TO pongabhaab; "
         print(f"working on {year}{month}{day} los")
         cursor_postgres.execute(postgres_sql_text)
         conn_postgres.commit()
