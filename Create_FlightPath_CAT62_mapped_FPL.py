@@ -89,7 +89,7 @@ with conn_postgres_target:
         # Create a connection to the schema in the remote PostgreSQL database
         # where the source data tables are located.
         conn_postgres_source = psycopg2.connect(user="pongabhaab",
-                                     password="pongabhaab",
+                                     password="pongabhaab2",
                                      host="172.16.129.241",
                                      port="5432",
                                      database="aerothai_dwh",

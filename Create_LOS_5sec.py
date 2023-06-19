@@ -25,7 +25,7 @@ conn_postgres = psycopg2.connect(user = "de_old_data",
 #date_list = pd.date_range(start='2023-06-09', end='2023-06-10')
 
 today = dt.datetime.now()
-date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d') + dt.timedelta(days=-4)]
+date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d') + dt.timedelta(days=-3)]
 
 
 with conn_postgres:
@@ -86,7 +86,9 @@ with conn_postgres:
                             f"GRANT USAGE ON SCHEMA los TO saifonob; " \
                             f"GRANT SELECT ON ALL TABLES IN SCHEMA los TO saifonob; " \
                             f"GRANT USAGE ON SCHEMA los TO pongabhaab; " \
-                            f"GRANT SELECT ON ALL TABLES IN SCHEMA los TO pongabhaab; "
+                            f"GRANT SELECT ON ALL TABLES IN SCHEMA los TO pongabhaab; " \
+                            f"GRANT USAGE ON SCHEMA los TO de_old_data; " \
+                            f"GRANT SELECT ON ALL TABLES IN SCHEMA los TO de_old_data; "
         print(f"working on {year}{month}{day} los")
         cursor_postgres.execute(postgres_sql_text)
         conn_postgres.commit()

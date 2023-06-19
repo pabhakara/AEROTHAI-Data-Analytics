@@ -42,8 +42,8 @@ for f in files:
     os.remove(f)
 
 year = '2023'
-month = '05'
-day = '18'
+month = '06'
+day = '14'
 
 #STAR_list = ['LEBIM','NORTA','EASTE','WILLA','DOLNI']
 STAR_list = ['%']
@@ -57,8 +57,8 @@ with conn_postgres_source:
                             f"FROM sur_air.cat062_{year}{month}{day} t " \
                             f"LEFT JOIN flight_data.flight_{year}{month} f " \
                             f"ON t.flight_id = f.id " \
-                            f"WHERE (f.dep LIKE 'VTC%' AND f.dest LIKE 'VTS%') " \
-                            f"AND f.acid LIKE '%%' " \
+                            f"WHERE (f.dep LIKE '%' AND f.dest LIKE '%') " \
+                            f"AND f.acid LIKE '%BOE%' " \
                             f"AND f.frule LIKE '%'; "
         cursor_postgres_source.execute(postgres_sql_text)
         #print(postgres_sql_text)
