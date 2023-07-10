@@ -16,12 +16,12 @@ encoding = 'Latin1'
 
 dbx = db.cursor()
 
-DB = psycopg2.connect(user = "de_old_data",
-                                  password = "de_old_data",
-                                  host = "172.16.129.241",
-                                  port = "5432",
-                                  database = "aerothai_dwh",
-                                  options="-c search_path=dbo,flight_data")
+# DB = psycopg2.connect(user = "de_old_data",
+#                                   password = "de_old_data",
+#                                   host = "172.16.129.241",
+#                                   port = "5432",
+#                                   database = "aerothai_dwh",
+#                                   options="-c search_path=dbo,flight_data")
 
 DB = psycopg2.connect(database="temp",options="-c search_path=dbo,flight_data")
 
@@ -53,11 +53,11 @@ tables = []
 # prefix = ''
 # postfix = '_vtbd_tecos_arr'
 
-# prefix = ''
-# postfix = '_radar'
-
 prefix = ''
-postfix = '_fdmc'
+postfix = '_radar'
+
+# prefix = ''
+# postfix = '_fdmc'
 
 #prefix = 'target_'
 #postfix = ''
@@ -69,7 +69,7 @@ postfix = '_fdmc'
 # postfix = '_radar_position_at_fix'
 
 year_list_3 = ['2023']
-month_list_3 = ['01','02','03','04']
+month_list_3 = ['01','02','03','04','05','06']
 
 for year in year_list_3:
     for month in month_list_3:

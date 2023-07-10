@@ -70,12 +70,7 @@ with conn_postgres_target:
             previous_day.day).zfill(2)
 
         # Create an sql query that creates a new table for radar tracks in the target PostgreSQL database
-        postgres_sql_text = f"DROP TABLE IF EXISTS entry_fl_and_exit_fl_{yyyymmdd}; \n" + \
-                            f"CREATE TABLE entry_fl_and_exit_fl_{yyyymmdd} " + \
-                            "(flight_key character varying,  " \
-                            "entry_fl double precision,  " \
-                            "exit_fl double precision)" + \
-                            "WITH (OIDS=FALSE);"
+        postgres_sql_text = f"DROP TABLE IF EXISTS maintain_fl_{yyyymmdd}; \n" + \
 
         # print(postgres_sql_text)
         cursor_postgres_target.execute(postgres_sql_text)
@@ -112,63 +107,47 @@ with conn_postgres_target:
 
             num_of_records = len(flight_key_list)
 
-            for flight_key in flight_key_list:
-
-                # temp_1 = record[k]
-                #flight_key = none_to_null(str(temp_1['flight_key']))
-                #print(flight_key)
-
-                postgres_sql_text = f"SELECT flight_key,measured_fl as entry_fl  " \
-                                        f"FROM (SELECT *  " \
-                                        f"	  FROM sur_air.cat062_{yyyymmdd}  " \
-                                        f"	  UNION  " \
-                                        f"	  SELECT *  " \
-                                        f"	  FROM sur_air.cat062_{yyyymmdd_next}) x  " \
-                                        f"WHERE flight_key = '{flight_key[0]}'  " \
-                                        f"AND NOT sector IS NULL  " \
-                                        f"ORDER BY app_time ASC  " \
-                                        f"LIMIT 1"
-
-                cursor_postgres_source.execute(postgres_sql_text)
-                record_1 = cursor_postgres_source.fetchall()
-
-                postgres_sql_text = f"SELECT flight_key,measured_fl as exit_fl  " \
-                                    f"FROM (SELECT *  " \
-                                    f"	  FROM sur_air.cat062_{yyyymmdd} " \
-                                    f"    UNION  " \
-                                    f"	  SELECT *  " \
-                                    f"	  FROM sur_air.cat062_{yyyymmdd_next}) x  " \
-                                    f"WHERE flight_key = '{flight_key[0]}'  " \
-                                    f"AND NOT sector IS NULL  " \
-                                    f"ORDER BY app_time DESC  " \
-                                    f"LIMIT 1"
-
-                cursor_postgres_source.execute(postgres_sql_text)
-                record_2 = cursor_postgres_source.fetchall()
-
-
-                if len(record_1) >0:
-                    temp_1 = record_1[0]
-                    temp_2 = record_2[0]
-
-                    entry_fl = none_to_null(str(temp_1['entry_fl']))
-                    exit_fl = none_to_null(str(temp_2['exit_fl']))
-
-                    postgres_sql_text = f"INSERT INTO entry_fl_and_exit_fl_{yyyymmdd}  " \
-                                        f"(\"flight_key\"," + \
-                                        "\"entry_fl\", " \
-                                        "\"exit_fl\")"
-
-                    #print(postgres_sql_text)
-
-                    postgres_sql_text += f" VALUES('{flight_key[0]}', " \
-                                         f"{entry_fl}, " \
-                                         f"{exit_fl});"
-
-                    #print(postgres_sql_text)
-                    cursor_postgres_target.execute(postgres_sql_text)
-                    conn_postgres_target.commit()
-
-                    print('track_' + yyyymmdd + str(" {:.3f}".format((k / num_of_records) * 100, 2)) + "% Completed")
-
-                    k = k + 1
+            postgres_sql_text = f"SELECT x.flight_key,x.measured_fl as maintain_fl "\
+                                f"INTO maitain_fl_{yyyymmdd} " \
+                                    f"FROM "\
+                                    f"( "\
+                                    f"SELECT flight_key, measured_fl, COUNT(*) "\
+                                    f"FROM "\
+                                    f"(SELECT app_time,flight_key,measured_fl "\
+                                    f"FROM sur_air.cat062_{yyyymmdd_next} "\
+                                    f"WHERE vert = 0 AND flight_key LIKE '%{year}-{month}-{day}%' "\
+                                    f"and measured_fl > 2 AND NOT sector IS NULL "\
+                                    f"UNION "\
+                                    f"SELECT app_time,flight_key,measured_fl "\
+                                    f"FROM sur_air.cat062_{yyyymmdd} "\
+                                    f"WHERE vert = 0 AND flight_key LIKE '%{year}-{month}-{day}%' "\
+                                    f"and measured_fl > 2 AND NOT sector IS NULL "\
+                                    f") a "\
+                                    f"GROUP BY flight_key, measured_fl "\
+                                    f") x, "\
+                                    f"( "\
+                                    f"SELECT flight_key,max(count) "\
+                                    f"FROM "\
+                                    f"( "\
+                                    f"SELECT flight_key, measured_fl, COUNT(*) "\ 
+                                    f"FROM "\
+                                    f"(SELECT app_time,flight_key,measured_fl "\
+                                    f"FROM sur_air.cat062_{yyyymmdd_next} "\
+                                    f"WHERE vert = 0 AND flight_key LIKE '%{year}-{month}-{day}%' "\
+                                    f"and measured_fl > 2 AND NOT sector IS NULL "\
+                                    f"UNION "\
+                                    f"SELECT app_time,flight_key,measured_fl "\
+                                    f"FROM sur_air.cat062_{yyyymmdd} "\
+                                    f"WHERE vert = 0 AND flight_key LIKE '%{year}-{month}-{day}%' "\
+                                    f"and measured_fl > 2 AND NOT sector IS NULL "\
+                                    f") a "\
+                                    f"GROUP BY flight_key, measured_fl "\
+                                    f"ORDER BY flight_key, count DESC "\
+                                    f") x "\
+                                    f"GROUP BY flight_key "\
+                                    f") y "\
+                                    f"WHERE x.flight_key = y.flight_key AND x.count = y.max "\
+                                    f"AND x.count > 12*1 "\
+                                    f"ORDER BY flight_key"
+            cursor_postgres_target.execute(postgres_sql_text)
+            conn_postgres_target.commit()

@@ -27,20 +27,15 @@ conn_postgres = psycopg2.connect(user="postgres",
                                  database="temp",
                                  options="-c search_path=dbo," + schema_name)
 
-analysis = "PBN at VTBS"
+analysis = "PBCS at VTBS"
 
 filter = {
-    "RNAV 10 (RNP 10)": "(pbn_type like '%A%')" ,
-    "RNAV 5": "(pbn_type like '%B%')" ,
-    "RNAV 2": "(pbn_type like '%C%')",
-    "RNAV 1": "(pbn_type like '%D%')",
-    "RNP 4": "(pbn_type like '%L%')",
-    "RNP 2": "(item18 like '%RNP2%')",
-    "RNP 1": "(pbn_type like '%O%')",
-    "RNP APCH": "(pbn_type like '%S%')",
-    "RNP AR APCH": "(pbn_type like '%T%')",
-    "GLS": "(comnav like '%A%/%')",
-    "Total": "(pbn_type like '%')",
+    "CPDLC RCP 400": "(comnav like '%P1%')" ,
+    "CPDLC RCP 240": "(comnav like '%P2%')" ,
+    "RSP 400": "(item18 like '%SUR/RSP400%')",
+    "RSP 180":"(item18 like '%SUR/RSP180%')",
+
+    "Total": "(comnav like '%')"
 }
 date_list = pd.date_range(start='2017-01-01', end='2023-06-30',freq='M')
 
@@ -100,16 +95,18 @@ fig = make_subplots(specs=[[{"secondary_y": True}]])
 color_list = ['#636EFA',
      '#EF553B',
      '#00CC96',
-     '#AB63FA',
-     '#FFA15A',
-     '#19D3F3',
-     '#FF6692',
-     '#B6E880',
-     '#FF97FF',
-     '#FECB52']
+     '#68228B',
+     '#006400']
+     # '#AB63FA',
+     # '#FFA15A']
+     # '#19D3F3',
+     # '#FF6692',
+     # '#B6E880',
+     # '#FF97FF',
+     # '#FECB52']
 
 # Add traces
-for k in range(0,9):
+for k in range(0,4):
     fig.add_trace(
         go.Bar(name=equipage_list[k],
                           x=df.index,
@@ -119,7 +116,7 @@ for k in range(0,9):
         secondary_y=False,
     )
 
-for k in range(0, 9):
+for k in range(0, 4):
     fig.add_trace(
         go.Line(name=f"{equipage_list[k]} as % of Total IFR",
                           x=df.index,
@@ -163,7 +160,7 @@ for k in range(0, 9):
 
 # Add figure title
 fig.update_layout(
-    title_text= f"Historical Monthly IFR Movements with {analysis} by type (January 2017 to June 2023)"
+    title_text= f"Historical Monthly IFR Movements with {analysis} (January 2017 to June 2023)"
 )
 
 # Set x-axis title
