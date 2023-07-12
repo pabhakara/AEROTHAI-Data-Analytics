@@ -27,7 +27,7 @@ conn_postgres = psycopg2.connect(user="postgres",
                                  database="temp",
                                  options="-c search_path=dbo," + schema_name)
 
-analysis = "PBN at VTBS"
+analysis = "PBN"
 
 filter = {
     "RNAV 10 (RNP 10)": "(pbn_type like '%A%')" ,
@@ -42,6 +42,8 @@ filter = {
     "GLS": "(comnav like '%A%/%')",
     "Total": "(pbn_type like '%')",
 }
+
+
 date_list = pd.date_range(start='2017-01-01', end='2023-06-30',freq='M')
 
 equipage_list = list(filter.keys())
@@ -56,9 +58,9 @@ with conn_postgres:
 
             # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
             postgres_sql_text = f"SELECT count(*) " \
-                                f"FROM {schema_name}.\"{year}_{month}_radar\" " \
+                                f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
                                 f"WHERE {filter[equipage]} " \
-                                f"and (dest LIKE 'VTBS') " \
+                                f"and (dest LIKE '%') " \
                                 f"and frule like 'I';" \
                 # f"GROUP BY dest;"
             print(postgres_sql_text)

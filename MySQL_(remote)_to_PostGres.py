@@ -1,11 +1,12 @@
 import psycopg2
 import mysql.connector
 import time
+import pandas as pd
 
 t = time.time()
 
-mysql_db = 'flight'
-#mysql_db = 'flight_vtbd'
+# mysql_db = 'flight'
+mysql_db = 'flight_vtbd'
 
 db = mysql.connector.connect(host='172.16.101.32',
                              database=mysql_db,
@@ -23,14 +24,14 @@ dbx = db.cursor()
 #                                   database = "aerothai_dwh",
 #                                   options="-c search_path=dbo,flight_data")
 
-DB = psycopg2.connect(database="temp",options="-c search_path=dbo,flight_data")
+# DB = psycopg2.connect(database="temp",options="-c search_path=dbo,flight_data")
 
-# DB = psycopg2.connect(user="postgres",
-#                                  password="password",
-#                                  host="localhost",
-#                                  port="5432",
-#                                  database="temp",
-#                                  options="-c search_path=dbo,tecos")
+DB = psycopg2.connect(user="postgres",
+                                 password="password",
+                                 host="localhost",
+                                 port="5432",
+                                 database="temp",
+                                 options="-c search_path=dbo,tecos")
 
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
@@ -42,19 +43,13 @@ mysql = f'show tables from {mysql_db}'
 dbx.execute(mysql)
 ts = dbx.fetchall()
 
-# tables = ['2021_01_vtbd_tecos_arr','2021_02_vtbd_tecos_arr',
-# '2021_03_vtbd_tecos_arr','2021_04_vtbd_tecos_arr',
-# '2021_05_vtbd_tecos_arr','2021_06_vtbd_tecos_arr',
-# '2021_07_vtbd_tecos_arr','2021_08_vtbd_tecos_arr',
-# '2021_09_vtbd_tecos_arr','2021_10_vtbd_tecos_arr',
-# '2021_11_vtbd_tecos_arr','2021_12_vtbd_tecos_arr']
 tables = []
 #
-# prefix = ''
-# postfix = '_vtbd_tecos_arr'
-
 prefix = ''
-postfix = '_radar'
+postfix = '_vtbd_tecos_arr'
+
+# prefix = ''
+# postfix = '_radar'
 
 # prefix = ''
 # postfix = '_fdmc'
@@ -68,42 +63,23 @@ postfix = '_radar'
 # prefix = ''
 # postfix = '_radar_position_at_fix'
 
-year_list_3 = ['2023']
-month_list_3 = ['01','02','03','04','05','06']
+# year_list_3 = ['2022','2021','2020','2019', '2018', '2017']
+# month_list_3 = ['01','02','03','04','05','06','07','08','09','10','11','12']
 
-for year in year_list_3:
-    for month in month_list_3:
-        text = f"{prefix}{year}_{month}{postfix}"
-        print(text)
-        tables = tables + [text]
-#
-# year_list = ['2021','2020','2018','2017', '2016', '2015']
-# month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
+# year_list_3 = ['2023']
+# month_list_3 = ['01','02','03','04','05','06']
+date_list = pd.date_range(start='2023-01-01', end='2023-06-30',freq = 'M')
 
-# year_list = ['2019']
-# month_list = ['08','09','10','11','12']
+# today = dt.datetime.now()
+# date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d') + dt.timedelta(days=-3)]
 
-# year_list = ['2022']
-# month_list = ['07','08','09']
-#month_list = ['07']
+for date in date_list:
+    year = f"{date.year}"
+    month = f"{date.month:02d}"
 
-# for year in year_list:
-#     for month in month_list:
-#         text = f"{prefix}{year}_{month}{postfix}"
-#         print(text)
-#         tables = tables + [text]
-
-# year_list_2 = ['2019']
-# month_list_2 = ['01','02','03','07','08','09','10','11','12']
-#
-# for year in year_list_2:
-#     for month in month_list_2:
-#         text = f"{prefix}{year}_{month}{postfix}"
-#         print(text)
-#         tables = tables + [text]
-
-
-
+    text = f"{prefix}{year}_{month}{postfix}"
+    print(text)
+    tables = tables + [text]
 
 for table in tables:
     mysql = f'describe {mysql_db}.{table}'

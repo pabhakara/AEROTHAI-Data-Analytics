@@ -27,13 +27,13 @@ conn_postgres = psycopg2.connect(user="postgres",
                                  database="temp",
                                  options="-c search_path=dbo," + schema_name)
 
-analysis = "PBCS at VTBS"
+analysis = "PBCS"
 
 filter = {
     "CPDLC RCP 400": "(comnav like '%P1%')" ,
     "CPDLC RCP 240": "(comnav like '%P2%')" ,
-    "RSP 400": "(item18 like '%SUR/RSP400%')",
-    "RSP 180":"(item18 like '%SUR/RSP180%')",
+    "RSP 400": "(item18 like '%RSP400%')",
+    "RSP 180":"(item18 like '%RSP180%')",
 
     "Total": "(comnav like '%')"
 }
@@ -53,7 +53,7 @@ with conn_postgres:
             postgres_sql_text = f"SELECT count(*) " \
                                 f"FROM {schema_name}.\"{year}_{month}_radar\" " \
                                 f"WHERE {filter[equipage]} " \
-                                f"and (dest LIKE 'VTBS') " \
+                                f"and (dest LIKE '%') " \
                                 f"and frule like 'I';" \
                 # f"GROUP BY dest;"
             print(postgres_sql_text)
