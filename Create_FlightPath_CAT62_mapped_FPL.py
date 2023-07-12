@@ -200,7 +200,7 @@ with conn_postgres_target:
             #                     "WHERE count = 2) \n" \
             #                     "ORDER BY track_no, time_of_track ASC;"
 
-            #print(postgres_sql_text)
+            # print(postgres_sql_text)
 
             cursor_postgres_source.execute(postgres_sql_text)
             record = cursor_postgres_source.fetchall()
@@ -208,8 +208,6 @@ with conn_postgres_target:
             num_of_records = len(record)
 
             k = 0
-
-
 
             temp_1 = record[k]
             temp_2 = record[k + 1]
@@ -521,5 +519,177 @@ with conn_postgres_target:
                             f") f\n" \
                             f"WHERE  t.flight_key = f.flight_key;\n"
         # print(postgres_sql_text)
+        cursor_postgres_target.execute(postgres_sql_text)
+        conn_postgres_target.commit()
+
+        cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        # Create an SQL query that selects surveillance targets from the source PostgreSQL database
+        postgres_sql_text = f"SELECT flight_key  " \
+                            f"FROM flight_data.flight_{yyyymm}  " \
+                            f"WHERE flight_key LIKE '%{year}-{month}-{day}%'  " \
+                            f"AND (mapped -> 'TopSky-ATC-MK-CAT062')::integer = 1  " \
+                            f"ORDER BY flight_key ASC;"
+
+        # print(postgres_sql_text)
+
+        cursor_postgres_source.execute(postgres_sql_text)
+        flight_key_list = cursor_postgres_source.fetchall()
+        print(flight_key_list)
+        #
+        # num_of_records = len(record)
+        k = 0
+
+        num_of_records = len(flight_key_list)
+
+        for flight_key in flight_key_list:
+
+            # temp_1 = record[k]
+            # flight_key = none_to_null(str(temp_1['flight_key']))
+            # print(flight_key)
+
+            postgres_sql_text = f"SELECT flight_key,measured_fl as entry_fl  " \
+                                f"FROM (SELECT *  " \
+                                f"	  FROM sur_air.cat062_{yyyymmdd}  " \
+                                f"	  UNION  " \
+                                f"	  SELECT *  " \
+                                f"	  FROM sur_air.cat062_{yyyymmdd_next}) x  " \
+                                f"WHERE flight_key = '{flight_key[0]}'  " \
+                                f"AND NOT sector IS NULL  " \
+                                f"ORDER BY app_time ASC  " \
+                                f"LIMIT 1"
+
+            cursor_postgres_source.execute(postgres_sql_text)
+            record_1 = cursor_postgres_source.fetchall()
+
+            postgres_sql_text = f"SELECT flight_key,measured_fl as exit_fl  " \
+                                f"FROM (SELECT *  " \
+                                f"	  FROM sur_air.cat062_{yyyymmdd} " \
+                                f"    UNION  " \
+                                f"	  SELECT *  " \
+                                f"	  FROM sur_air.cat062_{yyyymmdd_next}) x  " \
+                                f"WHERE flight_key = '{flight_key[0]}'  " \
+                                f"AND NOT sector IS NULL  " \
+                                f"ORDER BY app_time DESC  " \
+                                f"LIMIT 1"
+
+            cursor_postgres_source.execute(postgres_sql_text)
+            record_2 = cursor_postgres_source.fetchall()
+
+            if len(record_1) > 0:
+                temp_1 = record_1[0]
+                temp_2 = record_2[0]
+
+                entry_fl = none_to_null(str(temp_1['entry_fl']))
+                exit_fl = none_to_null(str(temp_2['exit_fl']))
+
+                postgres_sql_text = f"INSERT INTO track.entry_maintain_exit_fl_{yyyymmdd}  " \
+                                    f"(\"flight_key\"," + \
+                                    "\"entry_fl\", " \
+                                    "\"exit_fl\")"
+
+                # print(postgres_sql_text)
+
+                postgres_sql_text += f" VALUES('{flight_key[0]}', " \
+                                     f"{entry_fl}, " \
+                                     f"{exit_fl});"
+
+                # print(postgres_sql_text)
+                cursor_postgres_target.execute(postgres_sql_text)
+                conn_postgres_target.commit()
+
+                print('entry_maintain_exit_fl_' + yyyymmdd + str(" {:.3f}".format((k / num_of_records) * 100, 2))
+                      + "% Completed")
+
+                k = k + 1
+
+        cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        # Create an SQL query that selects surveillance targets from the source PostgreSQL database
+        postgres_sql_text = f"SELECT flight_key  " \
+                            f"FROM flight_data.flight_{yyyymm}  " \
+                            f"WHERE flight_key LIKE '%{year}-{month}-{day}%'  " \
+                            f"AND (mapped -> 'TopSky-ATC-MK-CAT062')::integer = 1  " \
+                            f"ORDER BY flight_key ASC;"
+
+        # print(postgres_sql_text)
+
+        cursor_postgres_source.execute(postgres_sql_text)
+        flight_key_list = cursor_postgres_source.fetchall()
+
+        k = 0
+
+        num_of_records = len(flight_key_list)
+
+        postgres_sql_text = f"UPDATE track.entry_maintain_exit_fl_{yyyymmdd} t \n" \
+                            f"SET maintain_fl = f.maintain_fl \n" \
+                            f"FROM \n" \
+                            f"(SELECT x.flight_key,x.measured_fl as maintain_fl \n" \
+                            f"FROM \n" \
+                            f"( \n" \
+                            f"SELECT flight_key, measured_fl, COUNT(*)  \n" \
+                            f"FROM  \n" \
+                            f"(SELECT app_time,flight_key,measured_fl \n" \
+                            f"FROM sur_air.cat062_{yyyymmdd_next} \n" \
+                            f"WHERE vert = 0 AND flight_key LIKE '%{year}-{month}-{day}%' \n" \
+                            f"and measured_fl > 100 AND NOT sector IS NULL \n" \
+                            f"UNION \n" \
+                            f"SELECT app_time,flight_key,measured_fl \n" \
+                            f"FROM sur_air.cat062_{yyyymmdd} \n" \
+                            f"WHERE vert = 0 AND flight_key LIKE '%{year}-{month}-{day}%' \n" \
+                            f"and measured_fl > 100 AND NOT sector IS NULL \n" \
+                            f") a \n" \
+                            f"GROUP BY flight_key, measured_fl \n" \
+                            f") x, \n" \
+                            f"( \n" \
+                            f"SELECT flight_key,max(count) \n" \
+                            f"FROM \n" \
+                            f"( \n" \
+                            f"SELECT flight_key, measured_fl, COUNT(*)  \n" \
+                            f"FROM  \n" \
+                            f"(SELECT app_time,flight_key,measured_fl \n" \
+                            f"FROM sur_air.cat062_{yyyymmdd_next} \n" \
+                            f"WHERE vert = 0 AND flight_key LIKE '%{year}-{month}-{day}%' \n" \
+                            f"and measured_fl > 100 AND NOT sector IS NULL \n" \
+                            f"UNION \n" \
+                            f"SELECT app_time,flight_key,measured_fl \n" \
+                            f"FROM sur_air.cat062_{yyyymmdd} \n" \
+                            f"WHERE vert = 0 AND flight_key LIKE '%{year}-{month}-{day}%' \n" \
+                            f"and measured_fl > 100 AND NOT sector IS NULL \n" \
+                            f") a \n" \
+                            f"GROUP BY flight_key, measured_fl \n" \
+                            f"ORDER BY flight_key, count DESC \n" \
+                            f") x \n" \
+                            f"GROUP BY flight_key \n" \
+                            f") y \n" \
+                            f"WHERE x.flight_key = y.flight_key AND x.count = y.max \n" \
+                            f"AND x.count > 12*1 \n" \
+                            f"ORDER BY flight_key) f \n" \
+                            f"WHERE t.flight_key = f.flight_key \n"
+        # print(postgres_sql_text)
+        cursor_postgres_target.execute(postgres_sql_text)
+        conn_postgres_target.commit()
+
+        postgres_sql_text = f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+                            f"ADD COLUMN IF NOT EXISTS entry_fl double precision; \n" \
+                            f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+                            f"ADD COLUMN IF NOT EXISTS maintain_fl double precision; \n" \
+                            f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+                            f"ADD COLUMN IF NOT EXISTS exit_fl double precision; \n" \
+                            f"UPDATE track.track_cat62_{yyyymmdd} t \n" \
+                            f"SET entry_fl = f.entry_fl FROM (SELECT * FROM track.entry_maintain_exit_fl_{yyyymmdd}) f \n" \
+                            f"WHERE t.flight_key = f.flight_key; \n" \
+                            f"UPDATE track.track_cat62_{yyyymmdd} t \n" \
+                            f"SET maintain_fl = f.maintain_fl FROM (SELECT * FROM track.entry_maintain_exit_fl_{yyyymmdd}) f \n" \
+                            f"WHERE t.flight_key = f.flight_key; \n" \
+                            f"UPDATE track.track_cat62_{yyyymmdd} t \n" \
+                            f"SET exit_fl = f.exit_fl FROM (SELECT * FROM track.entry_maintain_exit_fl_{yyyymmdd}) f \n" \
+                            f"WHERE t.flight_key = f.flight_key;"
+
+        cursor_postgres_target.execute(postgres_sql_text)
+        conn_postgres_target.commit()
+
+        postgres_sql_text = f"DROP TABLE track.entry_maintain_exit_fl_{yyyymmdd};"
+
         cursor_postgres_target.execute(postgres_sql_text)
         conn_postgres_target.commit()
