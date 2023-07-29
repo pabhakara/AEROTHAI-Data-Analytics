@@ -37,7 +37,7 @@ db_name = 'navigraph'
 schema_name = 'public'
 
 #airac_list = ['2106','2107','2108','2109','2110','2111','2112','2113','2201','2202','2203','2204','2205','2206','2207']
-airac_list = ['2306']
+airac_list = ['2307']
 airac_list = reversed(airac_list)
 
 for airac in airac_list:
@@ -74,9 +74,14 @@ for airac in airac_list:
     #
     sql_file = open(path_script + 'create_wp.sql', 'r')
     cursor2.execute(sql_file.read())
-    conn2.close()
+    #conn2.close()
     # #
     #print(schema_name)
+
+    postgres_sql_text = f"DELETE FROM public.tbl_runways WHERE runway_true_bearing IS NULL;"
+    cursor2.execute(postgres_sql_text)
+    conn2.commit()
+    conn2.close()
 
     create_mora_grid(db_name,schema_name)
 

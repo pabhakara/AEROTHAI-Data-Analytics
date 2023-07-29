@@ -35,7 +35,7 @@ filter = "NOT (latitude is NULL) \n" + \
          "AND ground_speed < 700 \n " \
          "AND ground_speed > 50 \n"
 
-date_list = pd.date_range(start='2023-07-01', end='2023-07-09')
+date_list = pd.date_range(start='2023-07-10', end='2023-07-10')
 
 # today = dt.datetime.now()
 # date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d') + dt.timedelta(days=-3)]
@@ -249,3 +249,28 @@ with conn_postgres_target:
             #print(postgres_sql_text)
             cursor_postgres_target.execute(postgres_sql_text)
             conn_postgres_target.commit()
+
+            postgres_sql_text = f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+                                f"ADD COLUMN IF NOT EXISTS entry_fl double precision; \n" \
+                                f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+                                f"ADD COLUMN IF NOT EXISTS maintain_fl double precision; \n" \
+                                f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+                                f"ADD COLUMN IF NOT EXISTS exit_fl double precision; \n" \
+                                f"UPDATE track.track_cat62_{yyyymmdd} t \n" \
+                                f"SET entry_fl = f.entry_fl FROM (SELECT * FROM track.entry_maintain_exit_fl_{yyyymmdd}) f \n" \
+                                f"WHERE t.flight_key = f.flight_key; \n" \
+                                f"UPDATE track.track_cat62_{yyyymmdd} t \n" \
+                                f"SET maintain_fl = f.maintain_fl FROM (SELECT * FROM track.entry_maintain_exit_fl_{yyyymmdd}) f \n" \
+                                f"WHERE t.flight_key = f.flight_key; \n" \
+                                f"UPDATE track.track_cat62_{yyyymmdd} t \n" \
+                                f"SET exit_fl = f.exit_fl FROM (SELECT * FROM track.entry_maintain_exit_fl_{yyyymmdd}) f \n" \
+                                f"WHERE t.flight_key = f.flight_key;"
+
+            cursor_postgres_target.execute(postgres_sql_text)
+            conn_postgres_target.commit()
+
+            postgres_sql_text = f"DROP TABLE track.entry_maintain_exit_fl_{yyyymmdd};"
+
+            cursor_postgres_target.execute(postgres_sql_text)
+            conn_postgres_target.commit()
+
