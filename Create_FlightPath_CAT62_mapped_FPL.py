@@ -35,7 +35,7 @@ filter = "NOT (latitude is NULL) \n" + \
          "AND ground_speed < 700 \n" \
          "AND ground_speed > 50 \n"
 
-# date_list = pd.date_range(start='2023-06-01', end='2023-06-31')
+# date_list = pd.date_range(start='2023-08-02', end='2023-08-02')
 
 today = dt.datetime.now()
 date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d') + dt.timedelta(days=-3)]

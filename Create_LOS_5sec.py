@@ -22,7 +22,7 @@ conn_postgres = psycopg2.connect(user = "de_old_data",
                                   database = "aerothai_dwh",
                                   options="-c search_path=dbo,los")
 
-#date_list = pd.date_range(start='2023-06-09', end='2023-06-10')
+# date_list = pd.date_range(start='2023-07-22', end='2023-07-22')
 
 today = dt.datetime.now()
 date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d') + dt.timedelta(days=-3)]
