@@ -14,36 +14,30 @@ import plotly.express as px
 pd.options.plotting.backend = "plotly"
 
 schema_name = 'flight_data'
-# conn_postgres = psycopg2.connect(user="pongabhaab",
-#                                  password="pongabhaab",
-#                                  host="172.16.129.241",
-#                                  port="5432",
-#                                  database="aerothai_dwh",
-#                                 options="-c search_path=dbo," + schema_name)
-conn_postgres = psycopg2.connect(user="postgres",
-                                 password="password",
-                                 host="localhost",
+conn_postgres = psycopg2.connect(user="pongabhaab",
+                                 password="pongabhaab2",
+                                 host="172.16.129.241",
                                  port="5432",
-                                 database="temp",
-                                 options="-c search_path=dbo," + schema_name)
+                                 database="aerothai_dwh",
+                                options="-c search_path=dbo," + schema_name)
+# conn_postgres = psycopg2.connect(user="postgres",
+#                                  password="password",
+#                                  host="localhost",
+#                                  port="5432",
+#                                  database="temp",
+#                                  options="-c search_path=dbo," + schema_name)
 
-analysis = "PBN"
+analysis = "traffic_type"
 
 filter = {
-    "RNAV 10 (RNP 10)": "(pbn_type like '%A%')" ,
-    "RNAV 5": "(pbn_type like '%B%')" ,
-    "RNAV 2": "(pbn_type like '%C%')",
-    "RNAV 1": "(pbn_type like '%D%')",
-    "RNP 4": "(pbn_type like '%L%')",
-    "RNP 2": "(item18 like '%RNP2%')",
-    "RNP 1": "(pbn_type like '%O%')",
-    "RNP APCH": "(pbn_type like '%S%')",
-    "RNP AR APCH": "(pbn_type like '%T%')",
-    "GLS": "(comnav like '%A%/%')",
-    "Total": "(pbn_type like '%')",
+    "Domestic": "(dep like 'VT%' AND dest LIKE 'VT%')" ,
+    "Inbound": "(NOT dep like 'VT%' AND dest LIKE 'VT%')" ,
+    "Outbound": "(dep like 'VT%' AND NOT dest LIKE 'VT%')",
+    "Overfly": "(NOT dep like 'VT%' AND NOT dest LIKE 'VT%')",
+    "Total": "(dep like '%' AND dest LIKE '%')",
 }
 
-date_list = pd.date_range(start='2017-01-31', end='2023-08-31',freq='M')
+date_list = pd.date_range(start='2013-01-01', end='2023-05-31',freq='M')
 
 equipage_list = list(filter.keys())
 equipage_count_df = pd.DataFrame()
@@ -57,9 +51,8 @@ with conn_postgres:
 
             # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
             postgres_sql_text = f"SELECT count(*) " \
-                                f"FROM {schema_name}.\"{year}_{month}_radar\" " \
+                                f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
                                 f"WHERE {filter[equipage]} " \
-                                f"and (dest LIKE '%') " \
                                 f"and frule like 'I';" \
                 # f"GROUP BY dest;"
             print(postgres_sql_text)
@@ -101,16 +94,10 @@ fig = make_subplots(specs=[[{"secondary_y": True}]])
 color_list = ['#636EFA',
      '#EF553B',
      '#00CC96',
-     '#AB63FA',
-     '#FFA15A',
-     '#19D3F3',
-     '#FF6692',
-     '#B6E880',
-     '#FF97FF',
-     '#FECB52']
+     '#AB63FA',]
 
 # Add traces
-for k in range(0,9):
+for k in range(0,4):
     fig.add_trace(
         go.Bar(name=equipage_list[k],
                           x=df.index,
@@ -120,7 +107,7 @@ for k in range(0,9):
         secondary_y=False,
     )
 
-for k in range(0, 9):
+for k in range(0, 4):
     fig.add_trace(
         go.Line(name=f"{equipage_list[k]} as % of Total IFR",
                           x=df.index,

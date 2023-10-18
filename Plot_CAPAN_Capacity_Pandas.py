@@ -20,17 +20,22 @@ def toc():
 
 tic()
 
-traffic_percentage = '130'
+traffic_percentage = '100'
 
-root_path = "/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capacity Study 2022"
-scenario = f"/BANGKOK_ACC - 2022-05-27 - Traffic {traffic_percentage}%"
-output_filepath = '/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capacity Study 2022/Output Plots/'
+#root_path = "/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capacity Study 2022"
+
+root_path = "/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/airspace analysis/FIR Capacity Study/2023"
+
+scenario = f"/FIR_Capacity_2023-08-21_02 - Traffic {traffic_percentage}%"
+
+output_filepath = f"/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/airspace analysis/" \
+                  f"FIR Capacity Study/2023/Output Plots/"
 
 combined_df = pd.DataFrame()
 
-for iter_num in range(1,10):
+for iter_num in range(1,2):
 
-    sectorcrossing_input_file = f"/RUNS/12SEC_VTBS19_NO_MIL/output/sectorcrossing.out.{iter_num}"
+    sectorcrossing_input_file = f"/output/sectorcrossing.out.{iter_num}"
     print(sectorcrossing_input_file)
 
     sectorcrossing_df = pd.read_csv(f'{root_path}{scenario}{sectorcrossing_input_file}',
@@ -50,7 +55,7 @@ for iter_num in range(1,10):
     sectorcrossing_df = sectorcrossing_df[column_selection].copy()
     #print(sectorcrossing_df)
 
-    task_input_file = f"/RUNS/12SEC_VTBS19_NO_MIL/output/task.out.{iter_num}"
+    task_input_file = f"/output/task.out.{iter_num}"
 
     task_df = pd.read_csv(root_path + scenario + task_input_file ,delimiter=';',header=0,
                                 dtype={' 6Actor': 'category',
@@ -101,7 +106,8 @@ for iter_num in range(1,10):
     traffic_count_df = pd.DataFrame()
 
     sector_list = ['SECTOR_1N', 'SECTOR_1S', 'SECTOR_2N', 'SECTOR_2S', 'SECTOR_3N', 'SECTOR_3S',
-                    'SECTOR_4N', 'SECTOR_4S', 'SECTOR_5N', 'SECTOR_5S', 'SECTOR_6N', 'SECTOR_6S']
+                    'SECTOR_4N', 'SECTOR_4S', 'SECTOR_5N', 'SECTOR_5S', 'SECTOR_6N', 'SECTOR_6S'
+                    'SECTOR_7N', 'SECTOR_7S', 'SECTOR_8N', 'SECTOR_8S']
 
     sector_list_df = pd.DataFrame(sector_list)
 

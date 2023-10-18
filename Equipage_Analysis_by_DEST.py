@@ -14,7 +14,7 @@ pd.options.plotting.backend = "plotly"
 
 schema_name = 'flight_data'
 conn_postgres = psycopg2.connect(user="pongabhaab",
-                                 password="pongabhaab",
+                                 password="pongabhaab2",
                                  host="172.16.129.241",
                                  port="5432",
                                  database="aerothai_dwh",
@@ -33,7 +33,7 @@ equipage_list = list(equipage_filter.keys())
 print(equipage_list)
 equipage_count_df = pd.DataFrame()
 with conn_postgres:
-    year_list = ['2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013']
+    year_list = ['2022','2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013']
     month_list = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
     # year_list = []
     # month_list = []
@@ -58,8 +58,8 @@ with conn_postgres:
                     equipage_count_temp_2 = pd.concat([equipage_count_temp_2, equipage_count_temp],axis=1)
             equipage_count_temp_2 = equipage_count_temp_2.set_index('time')
             equipage_count_temp_3 = pd.concat([equipage_count_temp_3, equipage_count_temp_2])
-    year_list = ['2022']
-    month_list = ['01','02','03','04','05','06','07','08']
+    year_list = ['2023']
+    month_list = ['01','02','03','04','05','06','07']
     #month_list = ['08']
     equipage_count_temp_4 = pd.DataFrame()
     for year in year_list:

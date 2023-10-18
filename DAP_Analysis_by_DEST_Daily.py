@@ -50,7 +50,7 @@ pd.options.plotting.backend = "plotly"
 
 schema_name = 'flight_data'
 conn_postgres = psycopg2.connect(user="pongabhaab",
-                                 password="pongabhaab",
+                                 password="pongabhaab2",
                                  host="172.16.129.241",
                                  port="5432",
                                  database="aerothai_dwh",
@@ -72,7 +72,7 @@ filter_list = {
 #         f" AND f.frule LIKE 'I' )"
 # }
 
-date_list = pd.date_range(start='2023-02-13', end='2023-05-13',freq='D')
+date_list = pd.date_range(start='2023-05-14', end='2023-05-15',freq='D')
 
 with conn_postgres:
     postgres_sql_text = f"SELECT airport_identifier FROM airac_current.airports "\
@@ -96,7 +96,8 @@ equipage_count_df = pd.concat([equipage_count_temp_4])
 equipage_count_df = equipage_count_df.set_index(['time','dap'])
 print(equipage_count_df)
 df = equipage_count_df.transpose()
-df.to_csv(f"/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/DAP/DAP_by_SSR_site_{year}-{month}-new.csv")
+df.to_csv(f"/Users/pongabha/Dropbox/Workspace/Surveillance Enhancement/DAP/"
+          f"DAP_by_SSR_site_up_to_{year}-{month}-{day}.csv")
 
 # # Create figure
 # fig = go.Figure(

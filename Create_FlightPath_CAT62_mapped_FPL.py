@@ -3,6 +3,7 @@ import psycopg2.extras
 import time
 import datetime as dt
 import pandas as pd
+from sqlalchemy import create_engine
 
 
 def none_to_null(etd):
@@ -38,7 +39,8 @@ filter = "NOT (latitude is NULL) \n" + \
 # date_list = pd.date_range(start='2023-08-02', end='2023-08-02')
 
 today = dt.datetime.now()
-date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d') + dt.timedelta(days=-3)]
+date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
+             + dt.timedelta(days=-3)]
 
 track_suffix = ""
 sur_air_suffix = ""
@@ -135,8 +137,6 @@ with conn_postgres_target:
                                 f"AND flight_key LIKE '%{year}-{month}-{day}%' ) a " \
                                 f"ORDER BY flight_key, time_of_track ASC;"
 
-
-
             # Create an SQL query that selects surveillance targets from the source PostgreSQL database
             # postgres_sql_text = "SELECT track_no, " + \
             #                     "time_of_track," + \
@@ -212,7 +212,7 @@ with conn_postgres_target:
             #                     "WHERE count = 2) \n" \
             #                     "ORDER BY track_no, time_of_track ASC;"
 
-            # print(postgres_sql_text)
+            print(postgres_sql_text)
 
             cursor_postgres_source.execute(postgres_sql_text)
             record = cursor_postgres_source.fetchall()

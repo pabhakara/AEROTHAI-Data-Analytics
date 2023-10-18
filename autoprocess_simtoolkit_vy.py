@@ -156,7 +156,7 @@ for airac in airac_list:
     with conn_postgres:
         cursor_postgres = conn_postgres.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-        postgres_sql_text = f" CREATE SCHEMA IF NOT EXISTS {schema_name_2}_vy; " \
+        postgres_sql_text = f" CREATE SCHEMA IF NOT EXISTS {schema_name_2}_indonesia; " \
                             " SELECT tablename FROM pg_tables " \
                             f" WHERE schemaname = '{schema_name_2}' " \
                             " AND NOT(tablename like '%head%') " \
@@ -167,22 +167,26 @@ for airac in airac_list:
         table_name_list = cursor_postgres.fetchall()
         for table_name in table_name_list:
             #print(table_name[0])
-            postgres_sql_text = f" DROP TABLE IF EXISTS {schema_name_2}_vy.{table_name[0]};" \
+            postgres_sql_text = f" DROP TABLE IF EXISTS {schema_name_2}_indonesia.{table_name[0]};" \
                                 f" SELECT * " \
-                                f" INTO {schema_name_2}_vy.{table_name[0]}" \
+                                f" INTO {schema_name_2}_indonesia.{table_name[0]}" \
                                 f" FROM {schema_name_2}.{table_name[0]}" \
                                 f" WHERE public.ST_Intersects(geom," \
                                 f" (SELECT public.ST_Buffer(geom,2) " \
                                 f" FROM airspace.fir " \
-                                f" WHERE name like 'YAN%'));" # \
-                                # f" DROP TABLE {schema_name}_vy.{table_name[0]};" \
-                                # f" ALTER TABLE {schema_name}_vy.{table_name[0]}_vy RENAME TO {table_name[0]};"
+                                f" WHERE name like 'JAKARTA%') OR" \
+                                f" public.ST_Intersects(geom," \
+                                f" (SELECT public.ST_Buffer(geom,2) " \
+                                f" FROM airspace.fir " \
+                                f" WHERE name like 'UJUNG%')));" # \
+                                # f" DROP TABLE {schema_name}_indonesia.{table_name[0]};" \
+                                # f" ALTER TABLE {schema_name}_indonesia.{table_name[0]}_indonesia RENAME TO {table_name[0]};"
             print(postgres_sql_text)
             cursor_postgres.execute(postgres_sql_text)
             conn_postgres.commit()
-        postgres_sql_text = f" DROP TABLE IF EXISTS {schema_name_2}_vy.tbl_header;" \
+        postgres_sql_text = f" DROP TABLE IF EXISTS {schema_name_2}_indonesia.tbl_header;" \
                             f" SELECT * " \
-                            f" INTO {schema_name_2}_vy.tbl_header" \
+                            f" INTO {schema_name_2}_indonesia.tbl_header" \
                             f" FROM {schema_name_2}.tbl_header;"
         cursor_postgres.execute(postgres_sql_text)
         conn_postgres.commit()

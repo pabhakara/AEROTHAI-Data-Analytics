@@ -19,13 +19,26 @@ def toc():
 
 tic()
 
-traffic_percentage = '130'
+traffic_percentage = '200'
 
-root_path = "/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capacity Study 2022"
-scenario = f"/BANGKOK_ACC - 2022-05-27 - Traffic {traffic_percentage}%"
-output_filepath = '/Users/pongabha/Dropbox/Workspace/airspace analysis/FIR Capacity Study 2022/Output Plots/'
+root_path = "/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/airspace analysis/FIR Capacity Study/"
 
-sectorcrossing_input_file = "/RUNS/12SEC_VTBS19_NO_MIL/output/sectorcrossing.out.1"
+scenario = f"/2023/FIR_Capacity_2023-09-26 - Traffic {traffic_percentage}%"
+
+#scenario = f"/2023/FIR_Capacity_2023-09-15 12 sectors - Traffic {traffic_percentage}%"
+
+
+# scenario = f"/SID_STAR_ROUTE_VT"
+
+# scenario = f"/New_Northern_Routes 2023-09-06"
+
+output_filepath = f"/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/airspace analysis/" \
+                  f"FIR Capacity Study/2023/Output Plots/"
+
+# output_filepath = f"/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/airspace analysis/" \
+#                   f"FIR Capacity Study{scenario}/Output Plots/"
+
+sectorcrossing_input_file = "/output/sectorcrossing.out.1"
 
 sectorcrossing_df = pd.read_csv(root_path + scenario + sectorcrossing_input_file,
                                 delimiter=';',header=0,
@@ -36,10 +49,12 @@ sectorcrossing_df.columns = sectorcrossing_df.columns.str.replace(' ','')
 sectorcrossing_df.columns = sectorcrossing_df.columns.str.replace('{','',regex=True)
 sectorcrossing_df = sectorcrossing_df.iloc[: , :-1]
 sectorcrossing_df = sectorcrossing_df[sectorcrossing_df['2Sector'].str.contains('SECTOR_')]
+sectorcrossing_df = sectorcrossing_df[sectorcrossing_df['28SectorEvent'].str.contains('#SX')]
+sectorcrossing_df = sectorcrossing_df[sectorcrossing_df['12SchTimeMinutes'] > 2]
 column_selection = ['1Center', '2Sector','13ActualEntryHH','14ActualExitHH']
 sectorcrossing_df = sectorcrossing_df[column_selection].copy()
 
-task_input_file = "/RUNS/12SEC_VTBS19_NO_MIL/output/task.out.1"
+task_input_file = "/output/task.out.1"
 
 task_df = pd.read_csv(root_path + scenario + task_input_file ,delimiter=';',header=0,
                                 dtype={' 6Actor': 'category',
@@ -88,7 +103,8 @@ occupancy_count_df = pd.DataFrame()
 traffic_count_df = pd.DataFrame()
 
 sector_list = ['SECTOR_1N', 'SECTOR_1S', 'SECTOR_2N', 'SECTOR_2S', 'SECTOR_3N', 'SECTOR_3S',
-                'SECTOR_4N', 'SECTOR_4S', 'SECTOR_5N', 'SECTOR_5S', 'SECTOR_6N', 'SECTOR_6S']
+                    'SECTOR_4N', 'SECTOR_4S', 'SECTOR_5N', 'SECTOR_5S', 'SECTOR_6N', 'SECTOR_6S',
+                    'SECTOR_7N', 'SECTOR_7S', 'SECTOR_8N', 'SECTOR_8S']
 
 sector_list_df = pd.DataFrame(sector_list)
 
@@ -101,9 +117,6 @@ filter = (sectorcrossing_df['entry_time'] > str(t + pd.DateOffset(minutes=0))) &
 temp_df = sectorcrossing_df.loc[filter, ['2Sector', 'entry_time']]
 
 total_sector_crossing_df = temp_df.groupby(['2Sector'])['2Sector'].count()
-
-
-
 
 while k <= 60 * 24:
     # ------- workload count ------------
@@ -165,8 +178,11 @@ while k <= 60 * 24:
     t = t + pd.DateOffset(minutes=step)
     k += step
 
-sector_list = ['SECTOR_1N', 'SECTOR_1S', 'SECTOR_2N', 'SECTOR_2S','SECTOR_3N', 'SECTOR_3S',
-               'SECTOR_4N', 'SECTOR_4S', 'SECTOR_5N', 'SECTOR_5S','SECTOR_6N', 'SECTOR_6S']
+sector_list = ['SECTOR_1N', 'SECTOR_1S', 'SECTOR_2N', 'SECTOR_2S', 'SECTOR_3N', 'SECTOR_3S',
+                    'SECTOR_4N', 'SECTOR_4S', 'SECTOR_5N', 'SECTOR_5S', 'SECTOR_6N', 'SECTOR_6S',
+                    'SECTOR_7N', 'SECTOR_7S', 'SECTOR_8N', 'SECTOR_8S']
+sector_list = ['SECTOR_1N', 'SECTOR_1S', 'SECTOR_2N', 'SECTOR_2S', 'SECTOR_3N', 'SECTOR_3S',
+'SECTOR_4N', 'SECTOR_4S', 'SECTOR_5N', 'SECTOR_5S', 'SECTOR_6N', 'SECTOR_6S']
 
 occupancy_count_df = occupancy_count_df[occupancy_count_df['2Sector'].str.contains('SECTOR_')]
 
@@ -192,6 +208,8 @@ for sector in sector_list:
 
     # hh_mm = DateFormatter('%D')
     # ax.xaxis.set_major_formatter(hh_mm)
+
+    print(sector)
 
     ax.hlines(y=70, xmin=combined_df_temp.index[0], xmax=combined_df_temp.index[-1], color='g')
 
