@@ -15,7 +15,7 @@ pd.options.plotting.backend = "plotly"
 
 schema_name = 'flight_data'
 conn_postgres = psycopg2.connect(user="pongabhaab",
-                                 password="pongabhaab",
+                                 password="pongabhaab2",
                                  host="172.16.129.241",
                                  port="5432",
                                  database="aerothai_dwh",
@@ -70,6 +70,7 @@ filter = {
     "CPDLC-FANS 1/A SATCOM (INMARSAT)": "(item10_cns like '%J5%/%')",
     "CPDLC-FANS 1/A SATCOM (MTSAT)": "(item10_cns like '%J6%/%')",
     "CPDLC-FANS 1/A SATCOM (Iridium)": "(item10_cns like '%J7%/%')",
+    "8.33 kHz": "(item10_cns like '%Y%/%')",
 }
 # filter = {
 #     "ADS-B":"(item10_cns like '%/%B%'or item10_cns like '%/%U%' or item10_cns like '%/%V%') ",
@@ -79,7 +80,7 @@ equipage_list = list(filter.keys())
 equipage_count_df = pd.DataFrame()
 with conn_postgres:
     for equipage in equipage_list:
-        year_list = ['2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013']
+        year_list = ['2022','2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013']
         month_list = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         equipage_count_temp_3 = pd.DataFrame()
         for year in reversed(year_list):
@@ -104,7 +105,7 @@ with conn_postgres:
                 equipage_count_temp_3 = pd.concat([equipage_count_temp_3, equipage_count_temp_2])
 
         equipage_count_temp_4 = pd.DataFrame()
-        year_list = ['2022']
+        year_list = ['2023']
         month_list = ['01','02','03','04','05','06','07']
         for year in year_list:
             for month in month_list:
@@ -188,7 +189,7 @@ fig.add_trace(
 
 # Add figure title
 fig.update_layout(
-    title_text="Historical Monthly Thai-registered IFR Movements with CPDLC (January 2013 to July 2022)"
+    title_text="Historical Monthly Thai-registered IFR Movements with CPDLC (January 2013 to October 2023)"
 )
 
 # Set x-axis title

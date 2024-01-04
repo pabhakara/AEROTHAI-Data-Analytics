@@ -63,11 +63,14 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
 # }
 
 filter = {
-        "GLS": "(item10_cns like '%A%/%')",
-        "No GLS": "NOT (item10_cns like '%A%/%')"
+    "8.33 kHz": "(item10_cns like '%Y%/%')",
+    "Not 8.33 kHz": "NOT(item10_cns like '%Y%/%')",
 }
+# filter = {
+#     "ADS-B":"(item10_cns like '%/%B%'or item10_cns like '%/%U%' or item10_cns like '%/%V%') ",
+# }
 
-equipage_list = filter.keys()
+equipage_list = list(filter.keys())
 equipage_count_df = pd.DataFrame()
 with conn_postgres:
     for equipage in equipage_list:
@@ -83,7 +86,7 @@ with conn_postgres:
                 postgres_sql_text = f"SELECT count(*) " \
                                     f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
                                     f"WHERE {filter[equipage]} " \
-                                    f"and dest like 'VT%'" \
+                                    f"and (reg LIKE '%') " \
                                     f"and frule like 'I';" \
                     # f"GROUP BY dest;"
                 cursor_postgres = conn_postgres.cursor()
@@ -127,17 +130,17 @@ print(df)
 # Create figure
 # fig = go.Figure(
 #     data=[
-#     go.Bar(name = "GLS",
+#     go.Bar(name = "ADS-B",
 #            x=df.index,
-#            y=df['GLS'],
+#            y=df['ADS-B'],
 #            offsetgroup=0),
-#     go.Bar(name = "No GLS",
+#     go.Bar(name = "No ADS-B",
 #            x=df.index,
-#            y=df['No GLS'],
+#            y=df['No ADS-B'],
 #            offsetgroup=1),
 #     go.Line(name="Percentage",
 #                x=df.index,
-#                y=df['GLS']/(df['No GLS']+df['GLS']),
+#                y=df['ADS-B']/(df['No ADS-B']+df['ADS-B']),
 #             ),
 #     ]
 # )
@@ -146,25 +149,33 @@ fig = make_subplots(specs=[[{"secondary_y": True}]])
 
 # Add traces
 fig.add_trace(
-    go.Bar(name="GLS",
+    go.Bar(name=equipage_list[0],
                       x=df.index,
-                      y=df['GLS'],
+                      y=df[equipage_list[0]],
                       offsetgroup=0),
     secondary_y=False,
 )
 
 fig.add_trace(
-    go.Bar(name="No GLS",
+    go.Bar(name=equipage_list[1],
                       x=df.index,
-                      y=df['No GLS'],
+                      y=df[equipage_list[1]],
                       offsetgroup=1),
     secondary_y=False,
 )
 
+# fig.add_trace(
+#     go.Bar(name=equipage_list[2],
+#                       x=df.index,
+#                       y=df[equipage_list[2]],
+#                       offsetgroup=2),
+#     secondary_y=False,
+# )
+
 fig.add_trace(
-    go.Line(name="GLS %",
+    go.Line(name="8.33 kHz %",
                            x=df.index,
-                           y=df['GLS']/(df['No GLS']+df['GLS'])*100,
+                           y=df[equipage_list[0]]/(df[equipage_list[0]]+df[equipage_list[1]])*100,
             line=dict(color="#808080")
                         ),
     secondary_y=True,
@@ -172,7 +183,7 @@ fig.add_trace(
 
 # Add figure title
 fig.update_layout(
-    title_text="Historical Monthly IFR Landings at Thailand's Airports with GLS Capability (January 2013 to December 2023)"
+    title_text="Historical Monthly IFR Movements with 8.33 kHz (January 2013 to December 2023)"
 )
 
 # Set x-axis title
@@ -221,7 +232,7 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/GLS.html")
-df.to_csv("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/GLS.csv")
-#fig.write_image("/Users/pongabha/Desktop/GLS.png")
+fig.write_html("/Users/pongabha/Desktop/8.33kHz.html")
+df.to_csv("/Users/pongabha/Desktop/8.33kHz.csv")
+#fig.write_image("/Users/pongabha/Desktop/ADS-B.png")
 fig.show()

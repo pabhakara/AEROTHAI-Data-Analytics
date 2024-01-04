@@ -6,7 +6,7 @@ import pandas as pd
 t = time.time()
 
 mysql_db = 'flight'
-#mysql_db = 'flight_vtbd'
+# mysql_db = 'flight_vtbs'
 
 db = mysql.connector.connect(host='172.16.101.32',
                              database=mysql_db,
@@ -46,7 +46,7 @@ ts = dbx.fetchall()
 tables = []
 #
 # prefix = ''
-# postfix = '_vtbd_tecos_arr'
+# postfix = '_vtbs_tecos_arr'
 
 # prefix = ''
 # postfix = '_radar'
@@ -68,7 +68,7 @@ postfix = '_fdmc'
 
 # year_list_3 = ['2023']
 # month_list_3 = ['01','02','03','04','05','06']
-date_list = pd.date_range(start='2023-07-01', end='2023-08-30',freq = 'M')
+date_list = pd.date_range(start='2023-12-01', end='2023-12-31',freq = 'M')
 
 # today = dt.datetime.now()
 # date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d') + dt.timedelta(days=-3)]

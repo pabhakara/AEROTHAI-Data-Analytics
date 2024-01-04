@@ -22,7 +22,7 @@ conn_postgres = psycopg2.connect(user = "de_old_data",
                                   database = "aerothai_dwh",
                                   options="-c search_path=dbo,los")
 
-# date_list = pd.date_range(start='2023-07-22', end='2023-07-22')
+# date_list = pd.date_range(start='2023-12-29', end='2023-12-31')
 
 today = dt.datetime.now()
 date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
@@ -91,5 +91,6 @@ with conn_postgres:
                             f"GRANT USAGE ON SCHEMA los TO de_old_data; " \
                             f"GRANT SELECT ON ALL TABLES IN SCHEMA los TO de_old_data; "
         print(f"working on {year}{month}{day} los")
+        print(postgres_sql_text)
         cursor_postgres.execute(postgres_sql_text)
         conn_postgres.commit()

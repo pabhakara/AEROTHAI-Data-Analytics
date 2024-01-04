@@ -30,7 +30,7 @@ conn_postgres_target = psycopg2.connect(user="de_old_data",
 #                                   options="-c search_path=dbo,public")
 
 
-date_list = pd.date_range(start='2022-10-23', end='2022-10-23')
+date_list = pd.date_range(start='2023-12-01', end='2023-12-01')
 
 with conn_postgres_target:
     date = date_list[0]
@@ -41,9 +41,9 @@ with conn_postgres_target:
     yyyymm = f"{year}{month}"
 
     cursor_postgres_target = conn_postgres_target.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    postgres_sql_text = f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+    postgres_sql_text = f"ALTER TABLE track.track_cat62_{yyyymm} \n" \
                         f"DROP COLUMN IF EXISTS dest_rwy;\n" \
-                        f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+                        f"ALTER TABLE track.track_cat62_{yyyymm} \n" \
                         f"ADD COLUMN dest_rwy character varying(3) DEFAULT '-';\n"
     cursor_postgres_target.execute(postgres_sql_text)
     conn_postgres_target.commit()
@@ -68,7 +68,7 @@ with conn_postgres_target:
 
         print(f"working on {yyyymmdd}")
         # Create an SQL query that selects surveillance targets from the source PostgreSQL database
-        postgres_sql_text = f"UPDATE track.track_cat62_{yyyymmdd} t\n" \
+        postgres_sql_text = f"UPDATE track.track_cat62_{yyyymm} t\n" \
                              f"SET dest_rwy = f.dest_rwy\n" \
                              f"FROM\n" \
                              f"(SELECT flight_key,dest_rwy\n" \

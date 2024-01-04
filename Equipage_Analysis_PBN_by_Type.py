@@ -43,7 +43,7 @@ filter = {
     "Total": "(pbn_type like '%')",
 }
 
-date_list = pd.date_range(start='2017-01-31', end='2023-08-31',freq='M')
+date_list = pd.date_range(start='2017-01-31', end='2023-12-31',freq='M')
 
 equipage_list = list(filter.keys())
 equipage_count_df = pd.DataFrame()
@@ -164,7 +164,7 @@ for k in range(0, 9):
 
 # Add figure title
 fig.update_layout(
-    title_text= f"Historical Monthly IFR Movements with {analysis} by type (January 2017 to June 2023)"
+    title_text= f"Historical Monthly IFR Movements with {analysis} by type (January 2017 to December 2023)"
 )
 
 # Set x-axis title

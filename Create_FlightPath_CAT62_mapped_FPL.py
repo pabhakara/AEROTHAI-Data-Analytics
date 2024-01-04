@@ -36,11 +36,11 @@ filter = "NOT (latitude is NULL) \n" + \
          "AND ground_speed < 700 \n" \
          "AND ground_speed > 50 \n"
 
-# date_list = pd.date_range(start='2023-08-02', end='2023-08-02')
+date_list = pd.date_range(start='2023-10-29', end='2023-10-29')
 
-today = dt.datetime.now()
-date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
-             + dt.timedelta(days=-3)]
+# today = dt.datetime.now()
+# date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
+#              + dt.timedelta(days=-3)]
 
 track_suffix = ""
 sur_air_suffix = ""
@@ -479,6 +479,7 @@ with conn_postgres_target:
                             f") f\n" \
                             f"WHERE  t.flight_key = f.flight_key;\n"
         cursor_postgres_target.execute(postgres_sql_text)
+        print(postgres_sql_text)
         conn_postgres_target.commit()
 
         # Add dep to the tracks =====================================================
@@ -530,7 +531,7 @@ with conn_postgres_target:
                             f"GROUP BY flight_key,dep,dep_rwy) b\n" \
                             f") f\n" \
                             f"WHERE  t.flight_key = f.flight_key;\n"
-        # print(postgres_sql_text)
+        #print(postgres_sql_text)
         cursor_postgres_target.execute(postgres_sql_text)
         conn_postgres_target.commit()
 

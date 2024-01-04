@@ -37,7 +37,7 @@ filter = {
     "Total": "(dep like '%' AND dest LIKE '%')",
 }
 
-date_list = pd.date_range(start='2013-01-01', end='2023-05-31',freq='M')
+date_list = pd.date_range(start='2013-01-01', end='2023-10-31',freq='M')
 
 equipage_list = list(filter.keys())
 equipage_count_df = pd.DataFrame()
@@ -151,7 +151,7 @@ for k in range(0, 4):
 
 # Add figure title
 fig.update_layout(
-    title_text= f"Historical Monthly IFR Movements with {analysis} by type (January 2017 to June 2023)"
+    title_text= f"Historical Monthly IFR Movements with {analysis} by type (January 2017 to October 2023)"
 )
 
 # Set x-axis title
