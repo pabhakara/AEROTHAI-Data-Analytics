@@ -83,7 +83,7 @@ with conn_postgres:
                 postgres_sql_text = f"SELECT count(*) " \
                                     f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
                                     f"WHERE {filter[equipage]} " \
-                                    f"and dest like 'VT%'" \
+                                    f"and dest like 'VTSP%'" \
                                     f"and frule like 'I';" \
                     # f"GROUP BY dest;"
                 cursor_postgres = conn_postgres.cursor()
@@ -221,7 +221,7 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/GLS.html")
-df.to_csv("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/GLS.csv")
+fig.write_html("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/GLS_VTSP.html")
+df.to_csv("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/GLS_VTSP.csv")
 #fig.write_image("/Users/pongabha/Desktop/GLS.png")
 fig.show()

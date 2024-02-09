@@ -31,7 +31,7 @@ def count_cdo(year, month, day):
                         f"ORDER BY s.flight_key ASC, COUNT(*) DESC "\
                         f") a " \
                         f"WHERE count > 12*3-1 "
-    #print(postgres_sql_text)
+    print(postgres_sql_text)
     cursor_postgres = conn_postgres.cursor()
     cursor_postgres.execute(postgres_sql_text)
     record = cursor_postgres.fetchall()
@@ -53,7 +53,7 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
                                  database="aerothai_dwh",
                                  options="-c search_path=dbo," + schema_name)
 
-date_list = pd.date_range(start='2022-10-01', end='2022-12-31', freq='D')
+date_list = pd.date_range(start='2024-01-20', end='2024-01-20', freq='D')
 
 with conn_postgres:
     equipage_count_df = pd.DataFrame()
@@ -70,4 +70,4 @@ with conn_postgres:
 equipage_count_df = pd.concat([equipage_count_temp_4])
 # equipage_count_df = equipage_count_df.set_index(['time', 'dap'])
 # print(equipage_count_df)
-equipage_count_df.to_csv(f"/Users/pongabha/Desktop/num_of_cdo.csv")
+equipage_count_df.to_csv(f"/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/CAAT/AND/KPI/KPI 2566/num_of_cdo_Q1.csv")

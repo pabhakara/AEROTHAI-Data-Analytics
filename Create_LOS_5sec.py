@@ -22,14 +22,13 @@ conn_postgres = psycopg2.connect(user = "de_old_data",
                                   database = "aerothai_dwh",
                                   options="-c search_path=dbo,los")
 
-# date_list = pd.date_range(start='2023-12-29', end='2023-12-31')
+# date_list = pd.date_range(start='2024-01-23', end='2024-01-26')
 
 today = dt.datetime.now()
 date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
              + dt.timedelta(days=-3)]
 
-
-with conn_postgres:
+with (conn_postgres):
 
     cursor_postgres = conn_postgres.cursor()
 
@@ -82,6 +81,20 @@ with conn_postgres:
                             f"RENAME TO los_{year}_{month}_{day};" \
                             f"DELETE FROM los_{year}_{month}_{day} " \
                             f"WHERE (frule_a = 'V' and frule_b = 'V');" \
+                            f"ALTER TABLE los.los_{year}_{month}_{day} " \
+                            f"DROP COLUMN IF EXISTS time_of_los;" \
+                            f"DROP TABLE IF EXISTS los.los_{year}_{month}_{day}_temp; " \
+                            f"SELECT * INTO los.los_{year}_{month}_{day}_temp " \
+                            f"FROM " \
+                            f"( " \
+                            f"    SELECT a.app_time - b.time_diff as time_of_los, a.* " \
+                            f"FROM los.los_{year}_{month}_{day} a, " \
+                            f"(SELECT MIN(app_time - time_of_track) as time_diff " \
+                            f"FROM " \
+                            f"sur_air.cat062_{year}{month}{day}) b " \
+                            f") a;" \
+                            f"DROP TABLE los.los_{year}_{month}_{day}; " \
+                            f"ALTER TABLE los.los_{year}_{month}_{day}_temp RENAME TO los_{year}_{month}_{day}; " \
                             f"GRANT USAGE ON SCHEMA los TO ponkritsa; " \
                             f"GRANT SELECT ON ALL TABLES IN SCHEMA los TO ponkritsa; " \
                             f"GRANT USAGE ON SCHEMA los TO saifonob; " \

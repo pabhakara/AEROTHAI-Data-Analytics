@@ -2,6 +2,7 @@ import psycopg2
 import psycopg2.extras
 import time
 import datetime as dt
+from subprocess import PIPE,Popen
 import pandas as pd
 from sqlalchemy import create_engine
 
@@ -36,16 +37,16 @@ filter = "NOT (latitude is NULL) \n" + \
          "AND ground_speed < 700 \n" \
          "AND ground_speed > 50 \n"
 
-date_list = pd.date_range(start='2023-10-29', end='2023-10-29')
+# date_list = pd.date_range(start='2024-01-26', end='2024-01-27')
 
-# today = dt.datetime.now()
-# date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
-#              + dt.timedelta(days=-3)]
+today = dt.datetime.now()
+date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
+             + dt.timedelta(days=-3)]
 
 track_suffix = ""
 sur_air_suffix = ""
 
-with conn_postgres_target:
+with (conn_postgres_target):
     cursor_postgres_target = conn_postgres_target.cursor()
 
     for date in date_list:
@@ -718,3 +719,11 @@ with conn_postgres_target:
 
         cursor_postgres_target.execute(postgres_sql_text)
         conn_postgres_target.commit()
+
+        command = f"pg_dump --dbname=postgres://de_old_data:de_old_data@172.16.129.241:5432/aerothai_dwh "\
+                  f"--table=track.track_cat62_{yyyymmdd} | psql -h " \
+                  f"localhost -W -U postgres temp"
+        print(command)
+
+        p = Popen(command, shell=True, stdin=PIPE)
+        p.communicate()

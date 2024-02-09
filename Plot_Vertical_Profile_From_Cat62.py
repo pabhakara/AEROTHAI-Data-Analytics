@@ -21,29 +21,28 @@ def none_to_null(etd):
         x = "'" + etd + "'"
     return x
 
-
-# conn_postgres_source = psycopg2.connect(user="pongabhaab",
-#                                              password="pongabhaab",
-#                                              host="172.16.129.241",
-#                                              port="5432",
-#                                              database="aerothai_dwh",
-#                                              options="-c search_path=dbo,sur_air")
-
-conn_postgres_source = psycopg2.connect(user="postgres",
-                                             password="password",
-                                             host="localhost",
+conn_postgres_source = psycopg2.connect(user="pongabhaab",
+                                             password="pongabhaab2",
+                                             host="172.16.129.241",
                                              port="5432",
-                                             database="temp",
+                                             database="aerothai_dwh",
                                              options="-c search_path=dbo,sur_air")
+
+# conn_postgres_source = psycopg2.connect(user="postgres",
+#                                              password="password",
+#                                              host="localhost",
+#                                              port="5432",
+#                                              database="temp",
+#                                              options="-c search_path=dbo,sur_air")
 
 output_filepath = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Flight_Proflie_Plots/'
 files = glob.glob(f"{output_filepath}*")
 for f in files:
     os.remove(f)
 
-year = '2023'
-month = '06'
-day = '14'
+year = '2024'
+month = '01'
+day = '22'
 
 #STAR_list = ['LEBIM','NORTA','EASTE','WILLA','DOLNI']
 STAR_list = ['%']
@@ -58,7 +57,7 @@ with conn_postgres_source:
                             f"LEFT JOIN flight_data.flight_{year}{month} f " \
                             f"ON t.flight_id = f.id " \
                             f"WHERE (f.dep LIKE '%' AND f.dest LIKE '%') " \
-                            f"AND f.acid LIKE '%BOE%' " \
+                            f"AND f.flight_key LIKE '%CPA653%' " \
                             f"AND f.frule LIKE '%'; "
         cursor_postgres_source.execute(postgres_sql_text)
         #print(postgres_sql_text)
@@ -244,36 +243,16 @@ with conn_postgres_source:
         # fig = px.scatter_3d(df, x='longitude', y='latitude', z='measured_fl',
         #                     color='sector')
 
-    # Add range slider
-    # fig.update_layout(
-    #     xaxis=dict(
-    #         rangeselector=dict(
-    #             buttons=list([
-    #                 dict(count=1,
-    #                      label="1m",
-    #                      step="month",
-    #                      stepmode="backward"),
-    #                 dict(count=6,
-    #                      label="6m",
-    #                      step="month",
-    #                      stepmode="backward"),
-    #                 dict(count=1,
-    #                      label="YTD",
-    #                      step="year",
-    #                      stepmode="todate"),
-    #                 dict(count=1,
-    #                      label="1y",
-    #                      step="year",
-    #                      stepmode="backward"),
-    #                 dict(step="all")
-    #             ])
-    #         ),
-    #         rangeslider=dict(
-    #             visible=True
-    #         ),
-    #         type="date"
-    #     )
-    # )
+    #Add range slider
+    fig.update_layout(
+        xaxis=dict(
+            rangeslider=dict(
+                visible=True
+            ),
+            type="-"
+        )
+    )
+
 
     fig.show()
 

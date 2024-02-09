@@ -11,26 +11,13 @@ import plotly
 import plotly.express as px
 
 
-def count_cdo(year, month, day):
+def find_icao_24bit_fpl_not_matched_dap(year, month, day):
 
-    postgres_sql_text = f"SELECT flight_key,actype, first_flevel,measured_fl, ROUND(count::numeric*5/60,2) as minutes "\
-                        f" FROM "\
-                        f"( "\
-                        f"(SELECT s.flight_key, f.actype, f.first_flevel,ROUND(s.measured_fl) as measured_fl, COUNT(*) "\
-                        f"FROM sur_air.cat062_{year}{month}{day} s, "\
-                        f"flight_data.flight_{year}{month} f "\
-                        f"WHERE s.flight_key = f.flight_key "\
-                        f"AND (f.dep LIKE 'VTBS' OR f.dep LIKE 'VTBD') "\
-                        f"AND f.frule LIKE 'I' "\
-                        f"AND (f.op_type = 'S') "\
-                        f"AND NOT s.measured_fl IS NULL "\
-                        f"AND NOT (LEFT(f.first_flevel,2) LIKE 'F1%' OR LEFT(f.first_flevel,1) LIKE 'S%' OR LEFT(f.first_flevel,1) LIKE 'A%') "\
-                        f"AND s.sector LIKE 'BANGKOK%'  "\
-                        f"AND s.measured_fl > 50 AND s.measured_fl < 160 "\
-                        f"GROUP BY s.flight_key, f.actype, f.first_flevel, ROUND(s.measured_fl)) "\
-                        f"ORDER BY s.flight_key ASC, COUNT(*) DESC "\
-                        f") a " \
-                        f"WHERE count > 12*3-1 "
+    postgres_sql_text = (f"SELECT s.flight_key,s.icao_24bit_dap,f.icao_24bit_hex,f.reg "
+                         f"FROM sur_air.cat062_{year}{month}{day} s, flight_data.flight_{year}{month} f "
+                         f"WHERE s.flight_key is NOT NULL AND s.icao_24bit_dap IS NOT NULL "
+                         f"AND f.flight_key = s.flight_key AND NOT (f.icao_24bit_hex = s.icao_24bit_dap) "
+                         f"GROUP BY s.flight_key,s.icao_24bit_dap,f.icao_24bit_hex,f.reg" )
     #print(postgres_sql_text)
     cursor_postgres = conn_postgres.cursor()
     cursor_postgres.execute(postgres_sql_text)
@@ -62,7 +49,7 @@ with conn_postgres:
         year = f"{date.year}"
         month = f"{date.month:02d}"
         day = f"{date.day:02d}"
-        equipage_count_temp = count_cdo(year, month, day)
+        equipage_count_temp = find_icao_24bit_fpl_not_matched_dap(year, month, day)
         # print(equipage_count_temp)
         equipage_count_temp_4 = pd.concat([equipage_count_temp_4, equipage_count_temp], axis=0)
         print(f"working on {year}{month}{day}")
@@ -70,4 +57,4 @@ with conn_postgres:
 equipage_count_df = pd.concat([equipage_count_temp_4])
 # equipage_count_df = equipage_count_df.set_index(['time', 'dap'])
 # print(equipage_count_df)
-equipage_count_df.to_csv(f"/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/CAAT/AND/KPI/KPI 2566/num_of_cco.csv")
+equipage_count_df.to_csv(f"/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/not_mactched_24bit_address.csv")
