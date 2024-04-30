@@ -5,11 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b70db43c-7c4d-4b3e-9e46-199adf2487f4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Surveillance_Coverage_from_KML_to_PostGres.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Create_FlightPath_Aireon.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Landing_Pair.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Load_Aireon_Data_from_CSV.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pg_dump_FlightPath_CAT62_mapped_FPL.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Adjust_Targets.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calculate_TTG_for_BKK_Arrivals.py" beforeDir="false" afterPath="$PROJECT_DIR$/Calculate_TTG_for_BKK_Arrivals.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Count_CCO.py" beforeDir="false" afterPath="$PROJECT_DIR$/Count_CCO.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Create_FlightPath_CAT62_mapped_FPL.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_FlightPath_CAT62_mapped_FPL.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Create_LOS_5sec.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_LOS_5sec.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Equipage_Analysis_PBN_by_Type.py" beforeDir="false" afterPath="$PROJECT_DIR$/Equipage_Analysis_PBN_by_Type.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Find_ICAO_24bit_FPL_NOT_Matched_DAP.py" beforeDir="false" afterPath="$PROJECT_DIR$/Find_ICAO_24bit_FPL_NOT_Matched_DAP.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MySQL_(remote)_to_PostGres.py" beforeDir="false" afterPath="$PROJECT_DIR$/MySQL_(remote)_to_PostGres.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Non_ADS-B_Capable_with_ADS-B_targets.py" beforeDir="false" afterPath="$PROJECT_DIR$/Non_ADS-B_Capable_with_ADS-B_targets.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/autoprocess_simtoolkit.py" beforeDir="false" afterPath="$PROJECT_DIR$/autoprocess_simtoolkit.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +38,12 @@
     <option name="PUSH_AUTO_UPDATE" value="true" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;pabhakara&quot;
+  }
+}</component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
       <filtered-out-file-type name="LOCAL_BRANCH" />
@@ -35,12 +52,22 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/pabhakara/AEROTHAI_Data_Analytics.git&quot;,
+    &quot;accountId&quot;: &quot;d1104dbb-8c48-4969-8b77-15fb1999f1fc&quot;
+  }
+}</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/MySQL_(remote)_to_PostGres.py" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="1skRxKjYPifICyXiHLSHDz2KUo6" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -49,21 +76,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "last_opened_file_path": "/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.Create_FlightPath_CAT62_mapped_FPL.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Create_LOS_5sec.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Non_ADS-B_Capable_with_ADS-B_targets.executor&quot;: &quot;Run&quot;,
+    &quot;Python.autoprocess_simtoolkit.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Surveillance_Coverage_from_KML_to_PostGres">
-    <configuration name="Create_FlightPath_CAT62" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python.Create_LOS_5sec">
+    <configuration name="Create_FlightPath_CAT62_mapped_FPL" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Data_Analytics" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -74,7 +108,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Create_FlightPath_CAT62.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Create_FlightPath_CAT62_mapped_FPL.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -83,8 +117,9 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Create_FlightPath_FR24" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="Create_LOS_5sec" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Data_Analytics" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -95,7 +130,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Create_FlightPath_FR24.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Create_LOS_5sec.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -104,8 +139,9 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="KML_to_PostGres" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="Non_ADS-B_Capable_with_ADS-B_targets" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Data_Analytics" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -116,28 +152,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/KML_to_PostGres.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="MySQL_(remote)_to_PostGres" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Data_Analytics" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MySQL_(remote)_to_PostGres.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Non_ADS-B_Capable_with_ADS-B_targets.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -148,6 +163,7 @@
     </configuration>
     <configuration name="Surveillance_Coverage_from_KML_to_PostGres" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Data_Analytics" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -167,8 +183,9 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+    <configuration name="autoprocess_simtoolkit" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Data_Analytics" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -179,7 +196,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/autoprocess_simtoolkit.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -190,13 +207,20 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.Create_LOS_5sec" />
+        <item itemvalue="Python.Create_FlightPath_CAT62_mapped_FPL" />
+        <item itemvalue="Python.Non_ADS-B_Capable_with_ADS-B_targets" />
+        <item itemvalue="Python.autoprocess_simtoolkit" />
         <item itemvalue="Python.Surveillance_Coverage_from_KML_to_PostGres" />
-        <item itemvalue="Python.KML_to_PostGres" />
-        <item itemvalue="Python.MySQL_(remote)_to_PostGres" />
-        <item itemvalue="Python.Create_FlightPath_CAT62" />
-        <item itemvalue="Python.Create_FlightPath_FR24" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-0509580d9d50-746f403e7f0c-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-241.14494.241" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">

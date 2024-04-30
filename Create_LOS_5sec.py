@@ -21,8 +21,8 @@ conn_postgres = psycopg2.connect(user = "de_old_data",
                                   port = "5432",
                                   database = "aerothai_dwh",
                                   options="-c search_path=dbo,los")
-
-# date_list = pd.date_range(start='2024-01-23', end='2024-01-26')
+#
+# date_list = pd.date_range(start='2024-04-24', end='2024-04-25')
 
 today = dt.datetime.now()
 date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')

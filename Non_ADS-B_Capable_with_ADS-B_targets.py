@@ -23,7 +23,7 @@ def none_to_null(etd):
 
 
 conn_postgres_source = psycopg2.connect(user="pongabhaab",
-                                             password="pongabhaab",
+                                             password="pongabhaab2",
                                              host="172.16.129.241",
                                              port="5432",
                                              database="aerothai_dwh",
@@ -41,9 +41,9 @@ for f in files:
 #                 '11', '12', '13', '14', '15', '16', '17', '18','19','20'
 #              '21', '22', '23', '24', '25','26','27','28','29','30','31']
 #
-# summary_df = pd.DataFrame()
+summary_df = pd.DataFrame()
 
-date_list = pd.date_range(start='2022-05-01', end='2022-09-20')
+date_list = pd.date_range(start='2022-12-01', end='2022-12-02')
 
 with conn_postgres_source:
     cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -74,13 +74,13 @@ with conn_postgres_source:
                 f"OR 147 = ANY(t.contributing_sensors)) "\
                 f"GROUP BY left(f.acid,3),f.actype, f.reg, f.icao_24bit_hex,f.dof "
         cursor_postgres_source.execute(postgres_sql_text)
-        #print(postgres_sql_text)
+        print(postgres_sql_text)
 
         record = cursor_postgres_source.fetchall()
-        #print(record)
+        print(record)
         df_temp = pd.DataFrame(record, columns=['operator','actype','reg','icao_24bit_hex','dof','count'])
         summary_df = pd.concat([summary_df, df_temp])
         print(date)
 print(summary_df)
 path = f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/"
-summary_df.to_csv(f"{path}Non_ADS-B_equipped_with_ADS-B_targets_{year}{month:02d}_v1.csv")
+summary_df.to_csv(f"{path}Non_ADS-B_equipped_with_ADS-B_targets_{year}{month:02d}.csv")

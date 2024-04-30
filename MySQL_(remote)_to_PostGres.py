@@ -5,8 +5,8 @@ import pandas as pd
 
 t = time.time()
 
-mysql_db = 'flight'
-# mysql_db = 'flight_vtbs'
+# mysql_db = 'flight'
+mysql_db = 'flight_vtbd'
 
 db = mysql.connector.connect(host='172.16.101.32',
                              database=mysql_db,
@@ -24,14 +24,14 @@ dbx = db.cursor()
 #                                   database = "aerothai_dwh",
 #                                   options="-c search_path=dbo,flight_data")
 
-DB = psycopg2.connect(database="temp",options="-c search_path=dbo,flight_data")
+# DB = psycopg2.connect(database="temp",options="-c search_path=dbo,flight_data")
 
-# DB = psycopg2.connect(user="postgres",
-#                                  password="password",
-#                                  host="localhost",
-#                                  port="5432",
-#                                  database="temp",
-#                                  options="-c search_path=dbo,tecos")
+DB = psycopg2.connect(user="postgres",
+                                 password="password",
+                                 host="localhost",
+                                 port="5432",
+                                 database="temp",
+                                 options="-c search_path=dbo,tecos")
 
 DC = DB.cursor()
 DC.execute("set client_encoding = " + encoding)
@@ -45,14 +45,14 @@ ts = dbx.fetchall()
 
 tables = []
 #
-# prefix = ''
-# postfix = '_vtbs_tecos_arr'
+prefix = ''
+postfix = '_vtbd_tecos_dep'
 
 # prefix = ''
 # postfix = '_radar'
 
-prefix = ''
-postfix = '_fdmc'
+# prefix = ''
+# postfix = '_fdmc'
 
 #prefix = 'target_'
 #postfix = ''
@@ -68,7 +68,7 @@ postfix = '_fdmc'
 
 # year_list_3 = ['2023']
 # month_list_3 = ['01','02','03','04','05','06']
-date_list = pd.date_range(start='2023-12-01', end='2023-12-31',freq = 'M')
+date_list = pd.date_range(start='2023-02-01', end='2023-12-31',freq = 'M')
 
 # today = dt.datetime.now()
 # date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d') + dt.timedelta(days=-3)]
