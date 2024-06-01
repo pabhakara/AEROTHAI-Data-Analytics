@@ -5,12 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b70db43c-7c4d-4b3e-9e46-199adf2487f4" name="Default Changelist" comment="test2">
-      <change afterPath="$PROJECT_DIR$/Loop_over_days_IAS_at_FAF.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plot_IAS_From_Cat62.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Data_Analytics.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Data_Analytics.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Create_FlightPath_CAT62_mapped_FPL.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_FlightPath_CAT62_mapped_FPL.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Create_LOS_5sec.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_LOS_5sec.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/autoprocess_simtoolkit.py" beforeDir="false" afterPath="$PROJECT_DIR$/autoprocess_simtoolkit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Load_Aireon_Data_from_CSV.py" beforeDir="false" afterPath="$PROJECT_DIR$/Load_Aireon_Data_from_CSV.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MySQL_(remote)_to_PostGres.py" beforeDir="false" afterPath="$PROJECT_DIR$/MySQL_(remote)_to_PostGres.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +70,9 @@
   &quot;keyToString&quot;: {
     &quot;Python.Create_FlightPath_CAT62_mapped_FPL.executor&quot;: &quot;Run&quot;,
     &quot;Python.Create_LOS_5sec.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Load_Aireon_Data_from_CSV.executor&quot;: &quot;Run&quot;,
     &quot;Python.Loop_over_days_IAS_at_FAF.executor&quot;: &quot;Run&quot;,
+    &quot;Python.MySQL_(remote)_to_PostGres.executor&quot;: &quot;Run&quot;,
     &quot;Python.Non_ADS-B_Capable_with_ADS-B_targets.executor&quot;: &quot;Run&quot;,
     &quot;Python.Plot_IAS_From_Cat62.executor&quot;: &quot;Run&quot;,
     &quot;Python.Plot_Vertical_Profile_From_Cat62.executor&quot;: &quot;Run&quot;,
@@ -87,7 +89,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Create_FlightPath_CAT62_mapped_FPL">
+  <component name="RunManager" selected="Python.terminal_efficiency">
     <configuration name="Create_FlightPath_CAT62_mapped_FPL" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Data_Analytics" />
       <option name="ENV_FILES" value="" />
@@ -97,7 +99,7 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.9 (PycharmProjects)" />
+      <option name="SDK_NAME" value="Python 3.10" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -133,7 +135,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Loop_over_days_IAS_at_FAF" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="Load_Aireon_Data_from_CSV" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Data_Analytics" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -146,7 +148,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Loop_over_days_IAS_at_FAF.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Load_Aireon_Data_from_CSV.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -155,7 +157,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Plot_IAS_From_Cat62" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="MySQL_(remote)_to_PostGres" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Data_Analytics" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -168,7 +170,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Plot_IAS_From_Cat62.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MySQL_(remote)_to_PostGres.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -177,7 +179,8 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+    <configuration name="terminal_efficiency" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Data_Analytics" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -185,12 +188,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-      <option name="SCRIPT_NAME" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/terminal_efficiency.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -199,76 +201,20 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration default="true" type="Tox" factoryName="Tox">
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="docs" factoryName="Docutils task">
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-      <option name="docutils_input_file" value="" />
-      <option name="docutils_output_file" value="" />
-      <option name="docutils_params" value="" />
-      <option name="docutils_task" value="" />
-      <option name="docutils_open_in_browser" value="false" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="docs" factoryName="Sphinx task">
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-      <option name="docutils_input_file" value="" />
-      <option name="docutils_output_file" value="" />
-      <option name="docutils_params" value="" />
-      <option name="docutils_task" value="" />
-      <option name="docutils_open_in_browser" value="false" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="Doctests">
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="CLASS_NAME" value="" />
-      <option name="METHOD_NAME" value="" />
-      <option name="FOLDER_NAME" value="" />
-      <option name="TEST_TYPE" value="TEST_SCRIPT" />
-      <option name="PATTERN" value="" />
-      <option name="USE_PATTERN" value="false" />
-      <method v="2" />
-    </configuration>
+    <list>
+      <item itemvalue="Python.terminal_efficiency" />
+      <item itemvalue="Python.MySQL_(remote)_to_PostGres" />
+      <item itemvalue="Python.Load_Aireon_Data_from_CSV" />
+      <item itemvalue="Python.Create_FlightPath_CAT62_mapped_FPL" />
+      <item itemvalue="Python.Create_LOS_5sec" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Create_FlightPath_CAT62_mapped_FPL" />
+        <item itemvalue="Python.terminal_efficiency" />
         <item itemvalue="Python.Create_LOS_5sec" />
-        <item itemvalue="Python.Plot_IAS_From_Cat62" />
-        <item itemvalue="Python.Loop_over_days_IAS_at_FAF" />
+        <item itemvalue="Python.Create_FlightPath_CAT62_mapped_FPL" />
+        <item itemvalue="Python.MySQL_(remote)_to_PostGres" />
+        <item itemvalue="Python.Load_Aireon_Data_from_CSV" />
       </list>
     </recent_temporary>
   </component>
@@ -631,7 +577,7 @@
       <option name="project" value="LOCAL" />
       <updated>1654989181515</updated>
     </task>
-    <option name="localTasksCounter" value="79" />
+    <option name="localTasksCounter" value="80" />
     <servers />
   </component>
   <component name="UnknownFeatures">

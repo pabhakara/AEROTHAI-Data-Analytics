@@ -8,7 +8,7 @@ engine = create_engine('postgresql://postgres:password@localhost:5432/aireon')
 year = '2023'
 month = '04'
 
-day_list = ['10','11','12','13','14','15']
+day_list = ['15']
 
 for day in day_list:
     path = f"/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/BearCat Aviation/Aireon Data/TOMRDate={year}-{month}-{day}/"
@@ -299,6 +299,7 @@ for day in day_list:
                 "\"FRN160AGVGroundSpeed\", " \
                 "\"FRN131HRPWCFloatingPointLat\", " \
                 "\"FRN131HRPWCFloatingPointLong\", " \
+                "\"FRN90QPosNavCategory\", " \
                 "ST_SetSRID(ST_MakePoint(\"FRN131HRPWCFloatingPointLong\", " \
                 "\"FRN131HRPWCFloatingPointLat\"),4326)" \
                 " AS aircraft_derived_geom " \
@@ -306,3 +307,4 @@ for day in day_list:
 
         cursor_postgres.execute(postgres_sql_text)
         conn_postgres.commit()
+        print(postgres_sql_text)

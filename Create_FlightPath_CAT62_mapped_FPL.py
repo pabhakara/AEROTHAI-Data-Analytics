@@ -1,11 +1,10 @@
-import psycopg2
-import psycopg2.extras
-import time
 import datetime as dt
-from subprocess import PIPE,Popen
-import pandas as pd
-from sqlalchemy import create_engine
+import time
+from subprocess import PIPE, Popen
 
+import psycopg2.extras
+
+import psycopg2
 
 def none_to_null(etd):
     if etd == 'None':

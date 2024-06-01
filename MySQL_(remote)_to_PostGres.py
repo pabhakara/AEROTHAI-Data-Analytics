@@ -68,8 +68,9 @@ postfix = '_vtbd_tecos_dep'
 
 # year_list_3 = ['2023']
 # month_list_3 = ['01','02','03','04','05','06']
-date_list = pd.date_range(start='2023-02-01', end='2023-12-31',freq = 'M')
+date_list = pd.date_range(start='2023-03-01', end='2023-03-31',freq = 'M')
 
+print(date_list)
 # today = dt.datetime.now()
 # date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d') + dt.timedelta(days=-3)]
 
