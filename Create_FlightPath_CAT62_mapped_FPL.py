@@ -2,6 +2,8 @@ import datetime as dt
 import time
 from subprocess import PIPE, Popen
 
+import pandas as pd
+
 import psycopg2.extras
 
 import psycopg2
@@ -36,7 +38,7 @@ filter = "NOT (latitude is NULL) \n" + \
          "AND ground_speed < 700 \n" \
          "AND ground_speed > 50 \n"
 
-# date_list = pd.date_range(start='2024-05-07', end='2024-05-16')
+# date_list = pd.date_range(start='2024-06-05', end='2024-06-07')
 
 today = dt.datetime.now()
 date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')

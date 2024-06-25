@@ -30,7 +30,7 @@ conn_postgres_source = psycopg2.connect(user="de_old_data",
 #                                   options="-c search_path=dbo,public")
 
 
-date_list = pd.date_range(start='2023-10-27', end='2023-10-27')
+date_list = pd.date_range(start='2024-04-11', end='2024-04-12')
 
 with conn_postgres_source:
     cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -86,7 +86,7 @@ with conn_postgres_source:
                             f"		(SELECT DISTINCT airport_identifier,waypoint_identifier,waypoint_latitude,waypoint_longitude,geom, ST_Buffer(geom,0.025) " \
                             f"		FROM airac_current.stars_wp " \
                             f"		WHERE waypoint_identifier IN  " \
-                            f"		('EASTE','NORTA','WILLA','LEBIM','DOLNI','ENDUU','NAKON','WEHHA','SABAI','SEHNA')) b " \
+                            f"		('EASTE','NORTA','WILLA','LEBIM','DOLNI','ENDUU','NAKON','WEHHA','SABAI','SEHNA','')) b " \
                             f"	WHERE  t.flight_id = f.id " \
                             f"	AND (f.dest LIKE 'VTBD' or f.dest LIKE 'VTBS') " \
                             f"  AND a.actype = f.actype " \
