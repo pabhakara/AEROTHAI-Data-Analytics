@@ -14,7 +14,7 @@ pd.options.plotting.backend = "plotly"
 
 schema_name = 'flight_data'
 conn_postgres = psycopg2.connect(user="pongabhaab",
-                                 password="pongabhaab",
+                                 password="pongabhaab2",
                                  host="172.16.129.241",
                                  port="5432",
                                  database="aerothai_dwh",

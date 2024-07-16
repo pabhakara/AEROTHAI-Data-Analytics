@@ -1,3 +1,4 @@
+
 import psycopg2.extras
 import pandas as pd
 
@@ -24,7 +25,7 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
                                  database="aerothai_dwh",
                                  options="-c search_path=dbo," + schema_name)
 
-date_list = pd.date_range(start='2023-06-01', end='2023-06-14', freq='D')
+date_list = pd.date_range(start='2023-01-01', end='2023-12-31', freq='D')
 
 with conn_postgres:
     equipage_count_df = pd.DataFrame()
@@ -39,4 +40,4 @@ with conn_postgres:
 
 equipage_count_df = pd.concat([equipage_count_temp])
 
-equipage_count_df.to_csv(f"/Users/pongabha/Desktop/num_of_acas_ra_2023-06.csv")
+equipage_count_df.to_csv(f"/Users/pongabha/Desktop/num_of_acas_ra_2023.csv")

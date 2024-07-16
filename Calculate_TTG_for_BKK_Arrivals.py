@@ -30,7 +30,7 @@ conn_postgres_source = psycopg2.connect(user="de_old_data",
 #                                   options="-c search_path=dbo,public")
 
 
-date_list = pd.date_range(start='2024-04-11', end='2024-04-12')
+date_list = pd.date_range(start='2024-06-01', end='2024-06-02')
 
 with conn_postgres_source:
     cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)

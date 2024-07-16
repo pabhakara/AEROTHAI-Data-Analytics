@@ -70,8 +70,8 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
 # }
 
 filter = {
-    "ADS-B":"(item10_cns like '%/%B%'or item10_cns like '%/%U%' or item10_cns like '%/%V%') ",
-    "No ADS-B": "NOT (item10_cns like '%/%B%'or item10_cns like '%/%U%' or item10_cns like '%/%V%') ",
+    "ADS-B":"(item10_cns like '%/%B%') ",
+    "No ADS-B": "NOT (item10_cns like '%/%B%') ",
 }
 
 equipage_list = filter.keys()
@@ -90,7 +90,7 @@ with conn_postgres:
                 postgres_sql_text = f"SELECT count(*) " \
                                     f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
                                     f"WHERE {filter[equipage]} " \
-                                    f"and dest like '%'" \
+                                    f"and dest like 'VTPP%'" \
                                     f"and frule like 'I';" \
                     # f"GROUP BY dest;"
                 cursor_postgres = conn_postgres.cursor()
@@ -228,7 +228,7 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/ADS-B.html")
-df.to_csv("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/ADS-B.csv")
+fig.write_html("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/ADS-B W14.html")
+df.to_csv("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/ADS-B W14.csv")
 #fig.write_image("/Users/pongabha/Desktop/ADS-B.png")
 fig.show()

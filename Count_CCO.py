@@ -53,7 +53,7 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
                                  database="aerothai_dwh",
                                  options="-c search_path=dbo," + schema_name)
 
-date_list = pd.date_range(start='2024-01-01', end='2024-01-01', freq='D')
+date_list = pd.date_range(start='2024-06-29', end='2024-07-01', freq='D')
 
 with conn_postgres:
     equipage_count_df = pd.DataFrame()
@@ -70,4 +70,4 @@ with conn_postgres:
 equipage_count_df = pd.concat([equipage_count_temp_4])
 # equipage_count_df = equipage_count_df.set_index(['time', 'dap'])
 # print(equipage_count_df)
-equipage_count_df.to_csv(f"/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/CAAT/AND/KPI/KPI 2566/num_of_cco.csv")
+equipage_count_df.to_csv(f"/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/CAAT/AND/KPI/KPI 2566/num_of_cco_2024-06-30.csv")

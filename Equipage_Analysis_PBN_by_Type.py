@@ -20,6 +20,7 @@ schema_name = 'flight_data'
 #                                  port="5432",
 #                                  database="aerothai_dwh",
 #                                 options="-c search_path=dbo," + schema_name)
+
 conn_postgres = psycopg2.connect(user="postgres",
                                  password="password",
                                  host="localhost",
@@ -29,7 +30,7 @@ conn_postgres = psycopg2.connect(user="postgres",
 
 analysis = "PBN"
 
-filter = {
+filter_old_data = {
     "RNAV 10 (RNP 10)": "(pbn_type like '%A%')" ,
     "RNAV 5": "(pbn_type like '%B%')" ,
     "RNAV 2": "(pbn_type like '%C%')",
@@ -43,7 +44,23 @@ filter = {
     "Total": "(pbn_type like '%')",
 }
 
-date_list = pd.date_range(start='2019-07-01', end='2023-12-31',freq='M')
+filter_new_data = {
+    "RNAV 10 (RNP 10)": "(item18_json->>'PBN' like '%A%')" ,
+    "RNAV 5": "(item18_json->>'PBN' like '%B%')" ,
+    "RNAV 2": "(item18_json->>'PBN' like '%C%')",
+    "RNAV 1": "(item18_json->>'PBN' like '%D%')",
+    "RNP 4": "(item18_json->>'PBN' like '%L%')",
+    "RNP 2": "(item18 like '%RNP2%')",
+    "RNP 1": "(item18_json->>'PBN' like '%O%')",
+    "RNP APCH": "(item18_json->>'PBN' like '%S%')",
+    "RNP AR APCH": "(item18_json->>'PBN' like '%T%')",
+    "GLS": "(comnav like '%A%')",
+    "Total": "(item18_json->>'PBN' like '%')",
+}
+
+filter = filter_new_data
+
+date_list = pd.date_range(start='2019-01-01', end='2024-06-30',freq='M')
 
 equipage_list = list(filter.keys())
 equipage_count_df = pd.DataFrame()
@@ -55,13 +72,23 @@ with conn_postgres:
             month = f"{date.month:02d}"
             equipage_count_temp_2 = pd.DataFrame([f"{year}-{month}"], columns=['time'])
 
-            # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
-            postgres_sql_text = f"SELECT count(*) " \
-                                f"FROM {schema_name}.\"{year}_{month}_radar\" " \
-                                f"WHERE {filter[equipage]} " \
-                                f"and (dest LIKE '%') " \
-                                f"and frule like 'I';" \
-                # f"GROUP BY dest;"
+            if date.year < 2024:
+                # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
+                postgres_sql_text = f"SELECT count(*) " \
+                                    f"FROM {schema_name}.\"{year}_{month}_radar\" " \
+                                    f"WHERE {filter_old_data[equipage]} " \
+                                    f"and (dest LIKE '%') " \
+                                    f"and frule like 'I';" \
+                        # f"GROUP BY dest;"
+            else:
+                # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
+                postgres_sql_text = f"SELECT count(*) " \
+                                    f"FROM {schema_name}.\"flight_{year}{month}\" " \
+                                    f"WHERE {filter_new_data[equipage]} " \
+                                    f"and (dest LIKE '%') " \
+                                    f"and frule like 'I';" \
+                    # f"GROUP BY dest;"
+
             print(postgres_sql_text)
             cursor_postgres = conn_postgres.cursor()
             cursor_postgres.execute(postgres_sql_text)
@@ -213,7 +240,7 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis}.html")
-df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis}.csv")
+# fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis}.html")
+# df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis}.csv")
 #fig.write_image("/Users/pongabha/Desktop/ADS-B.png")
 fig.show()

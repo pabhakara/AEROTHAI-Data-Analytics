@@ -11,6 +11,8 @@ def none_to_null(etd):
     else:
         x = etd
     return x
+
+
 def plot_fpl_route_path(fdmc_bkk_fix):
     #print(fdmc_bkk_fix)
     postgres_sql_text = f"INSERT INTO \"fpl_track_{yyyymm}\" (\"fdmc_bkk_fix\"," + \
@@ -20,9 +22,9 @@ def plot_fpl_route_path(fdmc_bkk_fix):
                          + "ST_LineFromText('LINESTRING("
     k = 0
     wp_ident = fdmc_bkk_fix[0][k]
-    postgres_sql_text_2 = f"SELECT distinct identifier, latitude, longitude,geom " \
-                        f"FROM airac_current.airways_wp_distinct_vt " \
-                        f"WHERE identifier = '{wp_ident}';"
+    postgres_sql_text_2 = f"SELECT distinct identifier, latitude, longitude,st_setsrid(ST_MakePoint(longitude,latitude),4326) as geom " \
+                          f"FROM public.waypoint_2023 " \
+                          f"WHERE identifier = '{wp_ident}';"
     cursor_postgres_source.execute(postgres_sql_text_2)
     wp_temp = cursor_postgres_source.fetchall()
 
@@ -36,9 +38,9 @@ def plot_fpl_route_path(fdmc_bkk_fix):
             # print(postgres_sql_text)
             if len(wp_temp) > 0:
                 wp_ident = fdmc_bkk_fix[0][k]
-                postgres_sql_text_2 = f"SELECT distinct identifier, latitude, longitude,geom " \
-                                      f"FROM airac_current.airways_wp_distinct_vt " \
-                                      f"WHERE identifier = '{wp_ident}';"
+                postgres_sql_text_2 = f"SELECT distinct identifier, latitude, longitude,st_setsrid(ST_MakePoint(longitude,latitude),4326) as geom " \
+                          f"FROM public.waypoint_2023 " \
+                          f"WHERE identifier = '{wp_ident}';"
                 cursor_postgres_source.execute(postgres_sql_text_2)
                 wp_temp = cursor_postgres_source.fetchall()
 
@@ -54,6 +56,8 @@ def plot_fpl_route_path(fdmc_bkk_fix):
         print(postgres_sql_text)
         cursor_postgres_target.execute(postgres_sql_text)
         conn_postgres_target.commit()
+
+
 # Create a connection to the remote PostGresSQL database in which we will store our trajectories
 # created from ASTERIX Cat062 targets.
 # conn_postgres_target = psycopg2.connect(user = "de_old_data",
@@ -63,12 +67,12 @@ def plot_fpl_route_path(fdmc_bkk_fix):
 #                                   database = "aerothai_dwh",
 #                                   options="-c search_path=dbo,public")
 
-conn_postgres_target = psycopg2.connect(user = "postgres",
-                                  password = "password",
-                                  host = "127.0.0.1",
-                                  port = "5432",
-                                  database = "temp",
-                                  options="-c search_path=dbo,public")
+conn_postgres_target = psycopg2.connect(user="postgres",
+                                        password="password",
+                                        host="127.0.0.1",
+                                        port="5432",
+                                        database="temp",
+                                        options="-c search_path=dbo,public")
 
 # filter =  "NOT (latitude is NULL) \n" + \
 #           "AND NOT(flight_id is NULL) \n" + \
@@ -76,7 +80,7 @@ conn_postgres_target = psycopg2.connect(user = "postgres",
 #           "AND ground_speed < 700 \n" \
 #           "AND ground_speed > 50 \n"
 
-date_list = pd.date_range(start='2022-05-01', periods=13, freq='M')
+date_list = pd.date_range(start='2022-07-01', end='2023-12-31', freq='M')
 
 # today = dt.datetime.now()
 # date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d') + dt.timedelta(days=-3)]
@@ -179,13 +183,11 @@ with conn_postgres_target:
                 print(fdmc_bkk_fix_array[m])
                 plot_fpl_route_path(fdmc_bkk_fix_array[m])
 
-                    #print(wp_longitude)
+                #print(wp_longitude)
 
             #num_of_records = len(record)
 
             #k = 0
-
-
 
             #print(postgres_sql_text)
             #
@@ -217,7 +219,6 @@ with conn_postgres_target:
             #
             # longitude_1 = str(float(temp_1['longitude']))
             # longitude_2 = str(float(temp_1['longitude']))
-
 
             # postgres_sql_text = f"INSERT INTO \"FPL_track_{yyyymmdd}_temp\" (\"acid\"," + \
             #                     "\"track_no\"," \
@@ -386,5 +387,3 @@ with conn_postgres_target:
         # print(postgres_sql_text)
         # cursor_postgres_target.execute(postgres_sql_text)
         # conn_postgres_target.commit()
-
-

@@ -41,13 +41,13 @@ for f in files:
     os.remove(f)
 
 year = '2024'
-month = '01'
-day = '22'
+month = '07'
+day = '10'
 
 #STAR_list = ['LEBIM','NORTA','EASTE','WILLA','DOLNI']
 STAR_list = ['%']
 
-with conn_postgres_source:
+with (conn_postgres_source):
     cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)
     # Create an SQL query that selects the list of flights that we want plot
     # from the source PostgreSQL database
@@ -56,8 +56,8 @@ with conn_postgres_source:
                             f"FROM sur_air.cat062_{year}{month}{day} t " \
                             f"LEFT JOIN flight_data.flight_{year}{month} f " \
                             f"ON t.flight_id = f.id " \
-                            f"WHERE (f.dep LIKE '%' AND f.dest LIKE '%') " \
-                            f"AND f.flight_key LIKE '%CPA653%' " \
+                            f"WHERE (f.dep LIKE 'VTSP%' AND f.dest LIKE 'VTCC%') " \
+                            f"AND f.flight_key LIKE '%' "\
                             f"AND f.frule LIKE '%'; "
         cursor_postgres_source.execute(postgres_sql_text)
         #print(postgres_sql_text)

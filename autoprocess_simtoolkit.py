@@ -36,8 +36,8 @@ tic()
 db_name = 'navigraph'
 schema_name = 'public'
 
-#airac_list = ['2106','2107','2108','2109','2110','2111','2112','2113','2201','2202','2203','2204','2205','2206','2207']
-airac_list = ['2406']
+# airac_list = ['2311','2312','2401','2402','2405','2406']
+airac_list = ['2407']
 airac_list = reversed(airac_list)
 
 for airac in airac_list:
