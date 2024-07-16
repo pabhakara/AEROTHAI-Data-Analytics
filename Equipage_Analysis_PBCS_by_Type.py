@@ -15,7 +15,7 @@ pd.options.plotting.backend = "plotly"
 
 schema_name = 'flight_data'
 # conn_postgres = psycopg2.connect(user="pongabhaab",
-#                                  password="pongabhaab",
+#                                  password="pongabhaab2",
 #                                  host="172.16.129.241",
 #                                  port="5432",
 #                                  database="aerothai_dwh",
@@ -29,17 +29,25 @@ conn_postgres = psycopg2.connect(user="postgres",
 
 analysis = "PBCS"
 
-filter = {
-    "CPDLC RCP 400": "(comnav like '%P1%')" ,
-    "CPDLC RCP 240": "(comnav like '%P2%')" ,
+filter_old = {
+    "CPDLC RCP 400": "(comnav like '%P1%')",
+    "CPDLC RCP 240": "(comnav like '%P2%')",
     "RSP 400": "(item18 like '%RSP400%')",
-    "RSP 180":"(item18 like '%RSP180%')",
-
+    "RSP 180": "(item18 like '%RSP180%')",
     "Total": "(comnav like '%')"
 }
-date_list = pd.date_range(start='2017-01-01', end='2023-06-30',freq='M')
 
-equipage_list = list(filter.keys())
+filter_new = {
+    "CPDLC RCP 400": "(comnav like '%P1%')",
+    "CPDLC RCP 240": "(comnav like '%P2%')",
+    "RSP 400": "(item18 like '%RSP400%')",
+    "RSP 180": "(item18 like '%RSP180%')",
+    "Total": "(comnav like '%')"
+}
+
+date_list = pd.date_range(start='2017-01-01', end='2023-06-30', freq='M')
+
+equipage_list = list(filter_old.keys())
 equipage_count_df = pd.DataFrame()
 with conn_postgres:
     for equipage in equipage_list:
@@ -49,12 +57,19 @@ with conn_postgres:
             month = f"{date.month:02d}"
             equipage_count_temp_2 = pd.DataFrame([f"{year}-{month}"], columns=['time'])
 
-            # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
-            postgres_sql_text = f"SELECT count(*) " \
-                                f"FROM {schema_name}.\"{year}_{month}_radar\" " \
-                                f"WHERE {filter[equipage]} " \
-                                f"and (dest LIKE '%') " \
-                                f"and frule like 'I';" \
+            if date.year < 2024:
+                # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
+                postgres_sql_text = f"SELECT count(*) " \
+                                    f"FROM {schema_name}.\"{year}_{month}_radar\" " \
+                                    f"WHERE {filter_old[equipage]} " \
+                                    f"and (dest LIKE '%') " \
+                                    f"and frule like 'I';"
+            else:
+                postgres_sql_text = f"SELECT count(*) " \
+                                    f"FROM {schema_name}.\"flight_{year}{month}\" " \
+                                    f"WHERE {filter_new[equipage]} " \
+                                    f"and (dest LIKE '%') " \
+                                    f"and frule like 'I';"
                 # f"GROUP BY dest;"
             print(postgres_sql_text)
             cursor_postgres = conn_postgres.cursor()
@@ -70,7 +85,6 @@ with conn_postgres:
 df = equipage_count_df
 
 print(df)
-
 
 # Create figure
 # fig = go.Figure(
@@ -93,35 +107,35 @@ print(df)
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 
 color_list = ['#636EFA',
-     '#EF553B',
-     '#00CC96',
-     '#68228B',
-     '#006400']
-     # '#AB63FA',
-     # '#FFA15A']
-     # '#19D3F3',
-     # '#FF6692',
-     # '#B6E880',
-     # '#FF97FF',
-     # '#FECB52']
+              '#EF553B',
+              '#00CC96',
+              '#68228B',
+              '#006400']
+# '#AB63FA',
+# '#FFA15A']
+# '#19D3F3',
+# '#FF6692',
+# '#B6E880',
+# '#FF97FF',
+# '#FECB52']
 
 # Add traces
-for k in range(0,4):
+for k in range(0, 4):
     fig.add_trace(
         go.Bar(name=equipage_list[k],
-                          x=df.index,
-                          y=df[equipage_list[k]],
-                          offsetgroup=k,
-                          marker_color=color_list[k]),
+               x=df.index,
+               y=df[equipage_list[k]],
+               offsetgroup=k,
+               marker_color=color_list[k]),
         secondary_y=False,
     )
 
 for k in range(0, 4):
     fig.add_trace(
         go.Line(name=f"{equipage_list[k]} as % of Total IFR",
-                          x=df.index,
-                          y=df[equipage_list[k]]/df[equipage_list[-1]]*100,
-                          marker_color=color_list[k]),
+                x=df.index,
+                y=df[equipage_list[k]] / df[equipage_list[-1]] * 100,
+                marker_color=color_list[k]),
         secondary_y=True,
     )
     # fig.add_trace(
@@ -158,11 +172,11 @@ for k in range(0, 4):
 #     secondary_y=True,
 # )
 
-# Add figure title
 fig.update_layout(
-    title_text= f"Historical Monthly IFR Movements with {analysis} (January 2017 to June 2023)"
+    title_text=f"Historical Monthly IFR Movements with {analysis} Capability " \
+               f"{date_list[0].month_name()} {date_list[0].year} to " \
+               f"{date_list[-1].month_name()} {date_list[-1].year} "
 )
-
 # Set x-axis title
 fig.update_xaxes(title_text="Time")
 
@@ -170,13 +184,10 @@ fig.update_xaxes(title_text="Time")
 fig.update_yaxes(title_text="<b>Number of Movements</b>", secondary_y=False)
 fig.update_yaxes(title_text=f"<b>Percentage</b>", secondary_y=True)
 
-fig.show()
-
 # Set title
 # fig.update_layout(
 #     title_text="Monthly IFR Movements in Bangkok FIR  with Mode-S Equipage (January 2013 to June 2022)"
 # )
-
 
 
 # Add range slider
@@ -209,7 +220,13 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis}.html")
-df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis}.csv")
+fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis} "
+               f"{date_list[0].year}-{date_list[0].month:02d} To "
+               f"{date_list[-1].year}-{date_list[-1].month:02d}"
+               f".html")
+df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis} "
+          f"{date_list[0].year}-{date_list[0].month:02d} To "
+          f"{date_list[-1].year}-{date_list[-1].month:02d}"
+          f".csv")
 #fig.write_image("/Users/pongabha/Desktop/ADS-B.png")
 fig.show()

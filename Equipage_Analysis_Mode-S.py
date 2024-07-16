@@ -45,7 +45,7 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
 #                  "or item10_cns like '%/%X%')"
 # }
 
-filter = {
+filter_old = {
     "Mode-S EHS": "(item10_cns like '%/%L%' "
                   "or item10_cns like '%/%H%' ) ",
     "Mode-S ELS": "(item10_cns like '%/%S%' "
@@ -61,6 +61,25 @@ filter = {
                  "or item10_cns like '%/%I%' "
                  "or item10_cns like '%/%X%') "
 }
+
+filter_new = {
+    "Mode-S EHS": "(sur like '%L%' "
+                  "or sur like '%H%' ) ",
+    "Mode-S ELS": "(sur like '%S%' "
+                  "or sur like '%E%' "
+                  "or sur like '%P%' "
+                  "or sur like '%I%' "
+                  "or sur like '%X%') ",
+    "No Mode-S": "NOT (sur like '%L%' "
+                 "or sur like '%E%' "
+                 "or sur like '%H%' "
+                 "or sur like '%S%' "
+                 "or sur like '%P%' "
+                 "or sur like '%I%' "
+                 "or sur like '%X%') "
+}
+
+analysis = f"Mode-S"
 
 # filter = {
 #     "Mode-S": "(item10_cns like '%/%L%' "
@@ -82,9 +101,9 @@ filter = {
 # filter = {
 #     "ADS-B":"(item10_cns like '%/%B%'or item10_cns like '%/%U%' or item10_cns like '%/%V%') ",
 # }
-date_list = pd.date_range(start='2013-01-01', end='2023-12-31',freq='M')
+date_list = pd.date_range(start='2013-01-01', end='2024-06-30',freq='M')
 
-equipage_list = list(filter.keys())
+equipage_list = list(filter_old.keys())
 equipage_count_df = pd.DataFrame()
 
 color_list = ['#636EFA',
@@ -108,12 +127,19 @@ with conn_postgres:
             print(f"{year}-{month}")
             equipage_count_temp_2 = pd.DataFrame([f"{year}-{month}"], columns=['time'])
 
-            # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
-            postgres_sql_text = f"SELECT count(*) " \
-                                f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
-                                f"WHERE {filter[equipage]} " \
-                                f"and dest like '%'" \
-                                f"and frule like 'I';" \
+            if date.year < 2024:
+                # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
+                postgres_sql_text = f"SELECT count(*) " \
+                                    f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
+                                    f"WHERE {filter_old[equipage]} " \
+                                    f"and dest like '%'" \
+                                    f"and frule like 'I';"
+            else:
+                postgres_sql_text = f"SELECT count(*) " \
+                                    f"FROM {schema_name}.\"flight_{year}{month}\" " \
+                                    f"WHERE {filter_new[equipage]} " \
+                                    f"and dest like '%'" \
+                                    f"and frule like 'I';"
                 # f"GROUP BY dest;"
             cursor_postgres = conn_postgres.cursor()
             cursor_postgres.execute(postgres_sql_text)
@@ -193,9 +219,10 @@ fig.add_trace(
     secondary_y=True,
 )
 
-# Add figure title
 fig.update_layout(
-    title_text="Historical Monthly IFR Movements with Mode-S (January 2013 to December 2023)"
+    title_text=f"Historical Monthly IFR Movements with {analysis} Capability " \
+               f"{date_list[0].month_name()} {date_list[0].year} to " \
+               f"{date_list[-1].month_name()} {date_list[-1].year} "
 )
 
 # Set x-axis title
@@ -204,8 +231,6 @@ fig.update_xaxes(title_text="Time")
 # Set y-axes titles
 fig.update_yaxes(title_text="<b>Number of Movements</b>", secondary_y=False)
 fig.update_yaxes(title_text=f"<b>Percentage</b>", secondary_y=True)
-
-fig.show()
 
 # Set title
 # fig.update_layout(
@@ -244,7 +269,13 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/Mode-S.html")
-df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/Mode-S.csv")
+fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis} "
+               f"{date_list[0].year}-{date_list[0].month:02d} To "
+               f"{date_list[-1].year}-{date_list[-1].month:02d}"
+               f".html")
+df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis} "
+          f"{date_list[0].year}-{date_list[0].month:02d} To "
+          f"{date_list[-1].year}-{date_list[-1].month:02d}"
+          f".csv")
 #fig.write_image("/Users/pongabha/Desktop/ADS-B.png")
 fig.show()

@@ -21,6 +21,13 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
                                  database="aerothai_dwh",
                                  options="-c search_path=dbo," + schema_name)
 
+# conn_postgres = psycopg2.connect(user="postgres",
+#                                  password="password",
+#                                  host="localhost",
+#                                  port="5432",
+#                                  database="temp",
+#                                  options="-c search_path=dbo," + schema_name)
+
 # filter = {
 #     "Mode-S aircraft identification":"(item10_cns like '%/%S%' "
 #                                      "or item10_cns like '%/%L%' "
@@ -62,38 +69,56 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
 #                  "or item10_cns like '%/%X%') "
 # }
 
-filter = {
+filter_old = {
         "GLS": "(item10_cns like '%A%/%')",
         "No GLS": "NOT (item10_cns like '%A%/%')"
 }
 
-equipage_list = filter.keys()
+filter_new = {
+        "GLS": "(comnav like '%A%')",
+        "No GLS": "NOT (comnav like '%A%')"
+}
+
+
+date_list = pd.date_range(start='2013-01-01', end='2024-06-30',freq='M')
+
+equipage_list = filter_old.keys()
 equipage_count_df = pd.DataFrame()
 with conn_postgres:
     for equipage in equipage_list:
-        year_list = ['2023','2022','2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013']
-        month_list = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+        # year_list = ['2023','2022','2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013']
+        # month_list = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         equipage_count_temp_3 = pd.DataFrame()
-        for year in reversed(year_list):
-            for month in month_list:
-                print(f"{year}-{month}")
-                equipage_count_temp_2 = pd.DataFrame([f"{year}-{month}"], columns=['time'])
+        for date in date_list:
+            year = f"{date.year}"
+            month = f"{date.month:02d}"
+            print(f"{year}-{month}")
+            equipage_count_temp_2 = pd.DataFrame([f"{year}-{month}"], columns=['time'])
 
+            if date.year < 2024:
                 # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
                 postgres_sql_text = f"SELECT count(*) " \
                                     f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
-                                    f"WHERE {filter[equipage]} " \
-                                    f"and dest like 'VTSP%'" \
+                                    f"WHERE {filter_old[equipage]} " \
+                                    f"and dest like '%'" \
                                     f"and frule like 'I';" \
                     # f"GROUP BY dest;"
-                cursor_postgres = conn_postgres.cursor()
-                cursor_postgres.execute(postgres_sql_text)
-                record = cursor_postgres.fetchall()
+            else:
+                postgres_sql_text = f"SELECT count(*) " \
+                                    f"FROM {schema_name}.\"flight_{year}{month}\" " \
+                                    f"WHERE {filter_new[equipage]} " \
+                                    f"and dest like '%'" \
+                                    f"and frule like 'I';" \
+                    # f"GROUP BY dest;"
+
+            cursor_postgres = conn_postgres.cursor()
+            cursor_postgres.execute(postgres_sql_text)
+            record = cursor_postgres.fetchall()
                 # print(equipage)
-                equipage_count_temp = pd.DataFrame([record[0][0]], columns=[equipage])
-                equipage_count_temp_2 = pd.concat([equipage_count_temp_2, equipage_count_temp], axis=1)
-                equipage_count_temp_2 = equipage_count_temp_2.set_index('time')
-                equipage_count_temp_3 = pd.concat([equipage_count_temp_3, equipage_count_temp_2])
+            equipage_count_temp = pd.DataFrame([record[0][0]], columns=[equipage])
+            equipage_count_temp_2 = pd.concat([equipage_count_temp_2, equipage_count_temp], axis=1)
+            equipage_count_temp_2 = equipage_count_temp_2.set_index('time')
+            equipage_count_temp_3 = pd.concat([equipage_count_temp_3, equipage_count_temp_2])
 
         equipage_count_temp_4 = pd.DataFrame()
         # year_list = ['2023']
@@ -221,7 +246,7 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/GLS_VTSP.html")
-df.to_csv("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/GLS_VTSP.csv")
+# fig.write_html("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/GLS.html")
+# df.to_csv("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/GLS.csv")
 #fig.write_image("/Users/pongabha/Desktop/GLS.png")
 fig.show()

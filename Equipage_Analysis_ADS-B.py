@@ -2,6 +2,7 @@ import psycopg2.extras
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import calendar
 import datetime as dt
 import dash
 from dash import dcc
@@ -69,38 +70,52 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
 #                  "or item10_cns like '%/%X%') "
 # }
 
-filter = {
+filter_old = {
     "ADS-B":"(item10_cns like '%/%B%') ",
     "No ADS-B": "NOT (item10_cns like '%/%B%') ",
 }
 
-equipage_list = filter.keys()
+filter_new = {
+    "ADS-B":"(sur like '%B%') ",
+    "No ADS-B": "NOT (sur like '%B%') ",
+}
+analysis = "ADS-B"
+
+date_list = pd.date_range(start='2023-01-01', end='2024-06-30',freq='M')
+
+equipage_list = filter_old.keys()
 equipage_count_df = pd.DataFrame()
 with conn_postgres:
     for equipage in equipage_list:
-        year_list = ['2023','2022','2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013']
-        month_list = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         equipage_count_temp_3 = pd.DataFrame()
-        for year in reversed(year_list):
-            for month in month_list:
-                print(f"{year}-{month}")
-                equipage_count_temp_2 = pd.DataFrame([f"{year}-{month}"], columns=['time'])
+        for date in date_list:
+            year = f"{date.year}"
+            month = f"{date.month:02d}"
+            print(f"{year}-{month}")
+            equipage_count_temp_2 = pd.DataFrame([f"{year}-{month}"], columns=['time'])
+            # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
 
-                # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
+            if date.year < 2024:
                 postgres_sql_text = f"SELECT count(*) " \
                                     f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
-                                    f"WHERE {filter[equipage]} " \
-                                    f"and dest like 'VTPP%'" \
+                                    f"WHERE {filter_old[equipage]} " \
+                                    f"and dest like '%'" \
+                                    f"and frule like 'I';"
+            else:
+                postgres_sql_text = f"SELECT count(*) " \
+                                    f"FROM {schema_name}.\"flight_{year}{month}\" " \
+                                    f"WHERE {filter_new[equipage]} " \
+                                    f"and dest like '%'" \
                                     f"and frule like 'I';" \
                     # f"GROUP BY dest;"
-                cursor_postgres = conn_postgres.cursor()
-                cursor_postgres.execute(postgres_sql_text)
-                record = cursor_postgres.fetchall()
-                # print(equipage)
-                equipage_count_temp = pd.DataFrame([record[0][0]], columns=[equipage])
-                equipage_count_temp_2 = pd.concat([equipage_count_temp_2, equipage_count_temp], axis=1)
-                equipage_count_temp_2 = equipage_count_temp_2.set_index('time')
-                equipage_count_temp_3 = pd.concat([equipage_count_temp_3, equipage_count_temp_2])
+            cursor_postgres = conn_postgres.cursor()
+            cursor_postgres.execute(postgres_sql_text)
+            record = cursor_postgres.fetchall()
+            # print(equipage)
+            equipage_count_temp = pd.DataFrame([record[0][0]], columns=[equipage])
+            equipage_count_temp_2 = pd.concat([equipage_count_temp_2, equipage_count_temp], axis=1)
+            equipage_count_temp_2 = equipage_count_temp_2.set_index('time')
+            equipage_count_temp_3 = pd.concat([equipage_count_temp_3, equipage_count_temp_2])
 
         equipage_count_temp_4 = pd.DataFrame()
         # year_list = ['2023']
@@ -179,7 +194,9 @@ fig.add_trace(
 
 # Add figure title
 fig.update_layout(
-    title_text="Historical Monthly IFR Movements with ADS-B Capability (January 2013 to December 2023)"
+    title_text=f"Historical Monthly IFR Movements with ADS-B Capability " \
+               f"{date_list[0].month_name()} {date_list[0].year} to " \
+               f"{date_list[-1].month_name()} {date_list[-1].year} "
 )
 
 # Set x-axis title
@@ -188,8 +205,6 @@ fig.update_xaxes(title_text="Time")
 # Set y-axes titles
 fig.update_yaxes(title_text="<b>Number of Movements</b>", secondary_y=False)
 fig.update_yaxes(title_text=f"<b>Percentage</b>", secondary_y=True)
-
-fig.show()
 
 # Set title
 # fig.update_layout(
@@ -228,7 +243,13 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/ADS-B W14.html")
-df.to_csv("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/ADS-B W14.csv")
+fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis} "
+               f"{date_list[0].year}-{date_list[0].month:02d} To "
+               f"{date_list[-1].year}-{date_list[-1].month:02d}"
+               f".html")
+df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis} "
+          f"{date_list[0].year}-{date_list[0].month:02d} To "
+          f"{date_list[-1].year}-{date_list[-1].month:02d}"
+          f".csv")
 #fig.write_image("/Users/pongabha/Desktop/ADS-B.png")
 fig.show()

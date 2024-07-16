@@ -189,9 +189,10 @@ for k in range(0, 9):
 #     secondary_y=True,
 # )
 
-# Add figure title
 fig.update_layout(
-    title_text= f"Historical Monthly IFR Movements with {analysis} by type (July 2019 to December 2023)"
+    title_text=f"Historical Monthly IFR Movements with {analysis} Capability " \
+               f"{date_list[0].month_name()} {date_list[0].year} to " \
+               f"{date_list[-1].month_name()} {date_list[-1].year} "
 )
 
 # Set x-axis title
@@ -200,8 +201,6 @@ fig.update_xaxes(title_text="Time")
 # Set y-axes titles
 fig.update_yaxes(title_text="<b>Number of Movements</b>", secondary_y=False)
 fig.update_yaxes(title_text=f"<b>Percentage</b>", secondary_y=True)
-
-fig.show()
 
 # Set title
 # fig.update_layout(
@@ -240,7 +239,13 @@ fig.update_layout(
         type="date"
     )
 )
-# fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis}.html")
-# df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis}.csv")
+fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis} "
+               f"{date_list[0].year}-{date_list[0].month:02d} To "
+               f"{date_list[-1].year}-{date_list[-1].month:02d}"
+               f".html")
+df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis} "
+          f"{date_list[0].year}-{date_list[0].month:02d} To "
+          f"{date_list[-1].year}-{date_list[-1].month:02d}"
+          f".csv")
 #fig.write_image("/Users/pongabha/Desktop/ADS-B.png")
 fig.show()
