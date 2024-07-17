@@ -81,26 +81,6 @@ filter_new = {
 
 analysis = f"Mode-S"
 
-# filter = {
-#     "Mode-S": "(item10_cns like '%/%L%' "
-#                  "or item10_cns like '%/%E%' "
-#                  "or item10_cns like '%/%H%' "
-#                  "or item10_cns like '%/%S%' "
-#                  "or item10_cns like '%/%P%' "
-#                  "or item10_cns like '%/%I%' "
-#                  "or item10_cns like '%/%X%') ",
-#     "No Mode-S": "NOT (item10_cns like '%/%L%' "
-#                  "or item10_cns like '%/%E%' "
-#                  "or item10_cns like '%/%H%' "
-#                  "or item10_cns like '%/%S%' "
-#                  "or item10_cns like '%/%P%' "
-#                  "or item10_cns like '%/%I%' "
-#                  "or item10_cns like '%/%X%') "
-# }
-
-# filter = {
-#     "ADS-B":"(item10_cns like '%/%B%'or item10_cns like '%/%U%' or item10_cns like '%/%V%') ",
-# }
 date_list = pd.date_range(start='2013-01-01', end='2024-06-30',freq='M')
 
 equipage_list = list(filter_old.keys())
@@ -155,24 +135,6 @@ df = equipage_count_df
 
 print(df)
 
-
-# Create figure
-# fig = go.Figure(
-#     data=[
-#     go.Bar(name = "ADS-B",
-#            x=df.index,
-#            y=df['ADS-B'],
-#            offsetgroup=0),
-#     go.Bar(name = "No ADS-B",
-#            x=df.index,
-#            y=df['No ADS-B'],
-#            offsetgroup=1),
-#     go.Line(name="Percentage",
-#                x=df.index,
-#                y=df['ADS-B']/(df['No ADS-B']+df['ADS-B']),
-#             ),
-#     ]
-# )
 # Create figure with secondary y-axis
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 
@@ -231,13 +193,6 @@ fig.update_xaxes(title_text="Time")
 # Set y-axes titles
 fig.update_yaxes(title_text="<b>Number of Movements</b>", secondary_y=False)
 fig.update_yaxes(title_text=f"<b>Percentage</b>", secondary_y=True)
-
-# Set title
-# fig.update_layout(
-#     title_text="Monthly IFR Movements in Bangkok FIR  with Mode-S Equipage (January 2013 to June 2022)"
-# )
-
-
 
 # Add range slider
 fig.update_layout(
