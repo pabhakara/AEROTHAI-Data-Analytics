@@ -15,11 +15,11 @@ conn_postgres = psycopg2.connect(user="de_old_data",
                                  options="-c search_path=dbo,los")
 #
 #
-# date_list = pd.date_range(start='2024-07-01', end='2024-07-03')
+date_list = pd.date_range(start='2024-07-30', end='2024-07-31')
 
-today = dt.datetime.now()
-date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
-             + dt.timedelta(days=-3)]
+# today = dt.datetime.now()
+# date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
+#              + dt.timedelta(days=-3)]
 
 with (conn_postgres):
     cursor_postgres = conn_postgres.cursor()

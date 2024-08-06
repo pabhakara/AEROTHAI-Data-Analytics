@@ -138,39 +138,6 @@ for k in range(0, 4):
                 marker_color=color_list[k]),
         secondary_y=True,
     )
-    # fig.add_trace(
-    #     go.Line(name="Thai %",
-    #                            x=df.index,
-    #                            y=df[equipage_list[0]]/(df[equipage_list[0]]+df[equipage_list[1]])*100,
-    #             line=dict(color="#808080")
-    #                         ),
-    #     secondary_y=True,
-    # )
-
-# fig.add_trace(
-#     go.Bar(name=equipage_list[1],
-#                       x=df.index,
-#                       y=df[equipage_list[1]],
-#                       offsetgroup=1),
-#     secondary_y=False,
-# )
-
-# fig.add_trace(
-#     go.Bar(name=equipage_list[2],
-#                       x=df.index,
-#                       y=df[equipage_list[2]],
-#                       offsetgroup=2),
-#     secondary_y=False,
-# )
-
-# fig.add_trace(
-#     go.Line(name="Thai %",
-#                            x=df.index,
-#                            y=df[equipage_list[0]]/(df[equipage_list[0]]+df[equipage_list[1]])*100,
-#             line=dict(color="#808080")
-#                         ),
-#     secondary_y=True,
-# )
 
 fig.update_layout(
     title_text=f"Historical Monthly IFR Movements with {analysis} Capability " \
@@ -183,11 +150,6 @@ fig.update_xaxes(title_text="Time")
 # Set y-axes titles
 fig.update_yaxes(title_text="<b>Number of Movements</b>", secondary_y=False)
 fig.update_yaxes(title_text=f"<b>Percentage</b>", secondary_y=True)
-
-# Set title
-# fig.update_layout(
-#     title_text="Monthly IFR Movements in Bangkok FIR  with Mode-S Equipage (January 2013 to June 2022)"
-# )
 
 
 # Add range slider
