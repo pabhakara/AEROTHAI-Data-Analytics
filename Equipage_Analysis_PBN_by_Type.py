@@ -60,7 +60,7 @@ filter_new_data = {
 
 filter = filter_new_data
 
-date_list = pd.date_range(start='2019-01-01', end='2024-06-30',freq='M')
+date_list = pd.date_range(start='2019-07-01', end='2024-09-30',freq='M')
 
 equipage_list = list(filter.keys())
 equipage_count_df = pd.DataFrame()
@@ -155,39 +155,6 @@ for k in range(0, 9):
                           marker_color=color_list[k]),
         secondary_y=True,
     )
-    # fig.add_trace(
-    #     go.Line(name="Thai %",
-    #                            x=df.index,
-    #                            y=df[equipage_list[0]]/(df[equipage_list[0]]+df[equipage_list[1]])*100,
-    #             line=dict(color="#808080")
-    #                         ),
-    #     secondary_y=True,
-    # )
-
-# fig.add_trace(
-#     go.Bar(name=equipage_list[1],
-#                       x=df.index,
-#                       y=df[equipage_list[1]],
-#                       offsetgroup=1),
-#     secondary_y=False,
-# )
-
-# fig.add_trace(
-#     go.Bar(name=equipage_list[2],
-#                       x=df.index,
-#                       y=df[equipage_list[2]],
-#                       offsetgroup=2),
-#     secondary_y=False,
-# )
-
-# fig.add_trace(
-#     go.Line(name="Thai %",
-#                            x=df.index,
-#                            y=df[equipage_list[0]]/(df[equipage_list[0]]+df[equipage_list[1]])*100,
-#             line=dict(color="#808080")
-#                         ),
-#     secondary_y=True,
-# )
 
 fig.update_layout(
     title_text=f"Historical Monthly IFR Movements with {analysis} Capability " \

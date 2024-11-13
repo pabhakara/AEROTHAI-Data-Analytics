@@ -2,7 +2,6 @@ import psycopg2.extras
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import calendar
 import datetime as dt
 import dash
 from dash import dcc
@@ -28,58 +27,21 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
 #                                  port="5432",
 #                                  database="temp",
 #                                  options="-c search_path=dbo," + schema_name)
-
-# filter = {
-#     "Mode-S aircraft identification":"(item10_cns like '%/%S%' "
-#                                      "or item10_cns like '%/%L%' "
-#                                      "or item10_cns like '%/%E%' "
-#                                      "or item10_cns like '%/%H%' "
-#                                      "or item10_cns like '%/%I%') ",
-#     "Mode-S pressure-altitude": "(item10_cns like '%/%L%' "
-#                                 "or item10_cns like '%/%E%' "
-#                                 "or item10_cns like '%/%S%' "
-#                                 "or item10_cns like '%/%H%'"
-#                                 "or item10_cns like '%/%P%') ",
-#     "Mode-S extended squitter": "(item10_cns like '%/%L%' "
-#                                 "or item10_cns like '%/%E%' ) ",
-#     "Mode-S enhanced surveillance": "(item10_cns like '%/%L%' "
-#                                     "or item10_cns like '%/%H%' ) ",
-#     "No Mode-S": "NOT(item10_cns like '%/%L%' "
-#                  "or item10_cns like '%/%E%' "
-#                  "or item10_cns like '%/%S%' "
-#                  "or item10_cns like '%/%H%'"
-#                  "or item10_cns like '%/%P%'"
-#                  "or item10_cns like '%/%I%' "
-#                  "or item10_cns like '%/%X%')"
-# }
-
-# filter = {
-#     "Mode-S EHS": "(item10_cns like '%/%L%' "
-#                   "or item10_cns like '%/%H%' ) ",
-#     "Mode-S ELS": "(item10_cns like '%/%S%' "
-#                   "or item10_cns like '%/%E%' "
-#                   "or item10_cns like '%/%P%' "
-#                   "or item10_cns like '%/%I%' "
-#                   "or item10_cns like '%/%X%') ",
-#     "No Mode-S": "NOT (item10_cns like '%/%L%' "
-#                  "or item10_cns like '%/%E%' "
-#                  "or item10_cns like '%/%H%' "
-#                  "or item10_cns like '%/%S%' "
-#                  "or item10_cns like '%/%P%' "
-#                  "or item10_cns like '%/%I%' "
-#                  "or item10_cns like '%/%X%') "
-# }
+#
 
 filter_old = {
-    "ADS-B":"(item10_cns like '%/%B%') ",
-    "No ADS-B": "NOT (item10_cns like '%/%B%') ",
+    "8.33 kHz": "(item10_cns like '%Y%/%')",
+    "No 8.33 kHz": "NOT(item10_cns like '%Y%/%')",
 }
 
 filter_new = {
-    "ADS-B":"(sur like '%B%') ",
-    "No ADS-B": "NOT (sur like '%B%') ",
+    "8.33 kHz": "(comnav like '%Y%%')",
+    "No 8.33 kHz": "NOT(comnav like '%Y%')",
 }
-analysis = "ADS-B"
+
+
+analysis = "8.33 kHz"
+
 
 date_list = pd.date_range(start='2013-01-01', end='2024-09-30',freq='M')
 
@@ -87,20 +49,23 @@ equipage_list = filter_old.keys()
 equipage_count_df = pd.DataFrame()
 with conn_postgres:
     for equipage in equipage_list:
+        # year_list = ['2023','2022','2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013']
+        # month_list = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         equipage_count_temp_3 = pd.DataFrame()
         for date in date_list:
             year = f"{date.year}"
             month = f"{date.month:02d}"
             print(f"{year}-{month}")
             equipage_count_temp_2 = pd.DataFrame([f"{year}-{month}"], columns=['time'])
-            # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
 
             if date.year < 2024:
+                # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
                 postgres_sql_text = f"SELECT count(*) " \
                                     f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
                                     f"WHERE {filter_old[equipage]} " \
                                     f"and dest like '%'" \
-                                    f"and frule like 'I';"
+                                    f"and frule like 'I';" \
+                    # f"GROUP BY dest;"
             else:
                 postgres_sql_text = f"SELECT count(*) " \
                                     f"FROM {schema_name}.\"flight_{year}{month}\" " \
@@ -108,10 +73,11 @@ with conn_postgres:
                                     f"and dest like '%'" \
                                     f"and frule like 'I';" \
                     # f"GROUP BY dest;"
+
             cursor_postgres = conn_postgres.cursor()
             cursor_postgres.execute(postgres_sql_text)
             record = cursor_postgres.fetchall()
-            # print(equipage)
+                # print(equipage)
             equipage_count_temp = pd.DataFrame([record[0][0]], columns=[equipage])
             equipage_count_temp_2 = pd.concat([equipage_count_temp_2, equipage_count_temp], axis=1)
             equipage_count_temp_2 = equipage_count_temp_2.set_index('time')
@@ -119,7 +85,7 @@ with conn_postgres:
 
         equipage_count_temp_4 = pd.DataFrame()
         # year_list = ['2023']
-        # month_list = ['01','02','03','04','05','06','07','08','09','10']
+        # month_list = ['01','02','03','04','05','06','07']
         # for year in year_list:
         #     for month in month_list:
         #         print(f"{year}-{month}")
@@ -149,17 +115,17 @@ print(df)
 # Create figure
 # fig = go.Figure(
 #     data=[
-#     go.Bar(name = "ADS-B",
+#     go.Bar(name = "8.33Hz",
 #            x=df.index,
-#            y=df['ADS-B'],
+#            y=df['8.33Hz'],
 #            offsetgroup=0),
-#     go.Bar(name = "No ADS-B",
+#     go.Bar(name = "No 8.33Hz",
 #            x=df.index,
-#            y=df['No ADS-B'],
+#            y=df['No 8.33Hz'],
 #            offsetgroup=1),
 #     go.Line(name="Percentage",
 #                x=df.index,
-#                y=df['ADS-B']/(df['No ADS-B']+df['ADS-B']),
+#                y=df['8.33Hz']/(df['No 8.33Hz']+df['8.33Hz']),
 #             ),
 #     ]
 # )
@@ -168,25 +134,25 @@ fig = make_subplots(specs=[[{"secondary_y": True}]])
 
 # Add traces
 fig.add_trace(
-    go.Bar(name="ADS-B",
+    go.Bar(name="8.33 kHz",
                       x=df.index,
-                      y=df['ADS-B'],
+                      y=df['8.33 kHz'],
                       offsetgroup=0),
     secondary_y=False,
 )
 
 fig.add_trace(
-    go.Bar(name="No ADS-B",
+    go.Bar(name="No 8.33 kHz",
                       x=df.index,
-                      y=df['No ADS-B'],
+                      y=df['No 8.33 kHz'],
                       offsetgroup=1),
     secondary_y=False,
 )
 
 fig.add_trace(
-    go.Line(name="ADS-B %",
+    go.Line(name="8.33Hz %",
                            x=df.index,
-                           y=df['ADS-B']/(df['No ADS-B']+df['ADS-B'])*100,
+                           y=df['8.33 kHz']/(df['No 8.33 kHz']+df['8.33 kHz'])*100,
             line=dict(color="#808080")
                         ),
     secondary_y=True,
@@ -194,7 +160,7 @@ fig.add_trace(
 
 # Add figure title
 fig.update_layout(
-    title_text=f"Historical Monthly IFR Movements with ADS-B Capability " \
+    title_text=f"Historical Monthly IFR Movements with {analysis} Capability " \
                f"{date_list[0].month_name()} {date_list[0].year} to " \
                f"{date_list[-1].month_name()} {date_list[-1].year} "
 )
@@ -205,6 +171,8 @@ fig.update_xaxes(title_text="Time")
 # Set y-axes titles
 fig.update_yaxes(title_text="<b>Number of Movements</b>", secondary_y=False)
 fig.update_yaxes(title_text=f"<b>Percentage</b>", secondary_y=True)
+
+fig.show()
 
 # Set title
 # fig.update_layout(

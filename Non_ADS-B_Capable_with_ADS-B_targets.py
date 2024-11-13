@@ -43,7 +43,7 @@ for f in files:
 #
 summary_df = pd.DataFrame()
 
-date_list = pd.date_range(start='2022-12-01', end='2022-12-02')
+date_list = pd.date_range(start='2024-09-01', end='2024-09-22')
 
 with conn_postgres_source:
     cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)

@@ -22,14 +22,14 @@ def count_level_off_targets(year, month, day):
                         f"FROM sur_air.cat062_{year}{month}{day} s, " \
                         f"flight_data.flight_{year}{month} f " \
                         f"WHERE s.flight_key = f.flight_key " \
-                        f"AND f.dep LIKE '%' AND (f.dest LIKE 'VTBS' OR f.dest LIKE 'VTBD') " \
+                        f"AND f.dest LIKE '%' AND (f.dep LIKE 'VTBS' OR f.dep LIKE 'VTBD') " \
                         f"AND f.frule LIKE 'I' " \
                         f"AND (f.op_type = 'S') " \
                         f"AND NOT s.measured_fl IS NULL " \
                         f"AND NOT (LEFT(f.first_flevel,2) LIKE 'F1%' OR LEFT(f.first_flevel,1) LIKE 'S%' OR LEFT(" \
                         f"f.first_flevel,1) LIKE 'A%') " \
                         f"AND s.vert = 0 " \
-                        f"AND s.measured_fl > 50 AND s.measured_fl < 160 " \
+                        f"AND s.measured_fl > 30 AND s.measured_fl < 160 " \
                         f"GROUP BY s.flight_key, f.actype, f.first_flevel, ROUND(s.measured_fl)) " \
                         f"ORDER BY s.flight_key ASC, COUNT(*) DESC" \
                         f") a " \
@@ -77,4 +77,4 @@ with conn_postgres:
 equipage_count_df = pd.concat([equipage_count_temp_4])
 #equipage_count_df = equipage_count_df.set_index(['time', 'dap'])
 #print(equipage_count_df)
-equipage_count_df.to_csv(f"/Users/pongabha/Desktop/CDO_fiscal_year_{year}-analysis_below_FL160.csv")
+equipage_count_df.to_csv(f"/Users/pongabha/Desktop/CCO_fiscal_year_{year}-analysis_below_FL160.csv")

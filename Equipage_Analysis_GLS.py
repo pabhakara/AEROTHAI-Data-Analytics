@@ -27,8 +27,8 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
 #                                  port="5432",
 #                                  database="temp",
 #                                  options="-c search_path=dbo," + schema_name)
-
-# filter = {
+#
+# # filter = {
 #     "Mode-S aircraft identification":"(item10_cns like '%/%S%' "
 #                                      "or item10_cns like '%/%L%' "
 #                                      "or item10_cns like '%/%E%' "
@@ -80,7 +80,10 @@ filter_new = {
 }
 
 
-date_list = pd.date_range(start='2013-01-01', end='2024-06-30',freq='M')
+analysis = "GLS"
+
+
+date_list = pd.date_range(start='2019-07-01', end='2024-09-30',freq='M')
 
 equipage_list = filter_old.keys()
 equipage_count_df = pd.DataFrame()
@@ -197,7 +200,9 @@ fig.add_trace(
 
 # Add figure title
 fig.update_layout(
-    title_text="Historical Monthly IFR Landings at Thailand's Airports with GLS Capability (January 2013 to December 2023)"
+    title_text=f"Historical Monthly IFR Movements with {analysis} Capability " \
+               f"{date_list[0].month_name()} {date_list[0].year} to " \
+               f"{date_list[-1].month_name()} {date_list[-1].year} "
 )
 
 # Set x-axis title
@@ -246,7 +251,13 @@ fig.update_layout(
         type="date"
     )
 )
-# fig.write_html("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/GLS.html")
-# df.to_csv("/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/GLS.csv")
-#fig.write_image("/Users/pongabha/Desktop/GLS.png")
+fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis} "
+               f"{date_list[0].year}-{date_list[0].month:02d} To "
+               f"{date_list[-1].year}-{date_list[-1].month:02d}"
+               f".html")
+df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis} "
+          f"{date_list[0].year}-{date_list[0].month:02d} To "
+          f"{date_list[-1].year}-{date_list[-1].month:02d}"
+          f".csv")
+#fig.write_image("/Users/pongabha/Desktop/ADS-B.png")
 fig.show()

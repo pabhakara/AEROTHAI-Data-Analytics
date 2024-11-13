@@ -37,7 +37,7 @@ db_name = 'navigraph'
 schema_name = 'public'
 
 # airac_list = ['2311','2312','2401','2402','2405','2406']
-airac_list = ['2407']
+airac_list = ['2411']
 airac_list = reversed(airac_list)
 
 for airac in airac_list:
@@ -96,7 +96,7 @@ for airac in airac_list:
     create_iap_legs_rf(db_name,schema_name)
     create_iap_legs_af(db_name,schema_name)
     create_iap_legs(db_name,schema_name)
-    #
+
     create_ats_route_segments(db_name,schema_name)
     create_ats_route(db_name,schema_name)
 

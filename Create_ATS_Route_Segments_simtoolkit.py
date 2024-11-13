@@ -1,5 +1,4 @@
-def create_ats_route_segments(db_name,schema_name):
-
+def create_ats_route_segments(db_name, schema_name):
     import psycopg2
 
     #from autoprocess_simtoolkit import db_name,airac,schema_name
@@ -23,6 +22,10 @@ def create_ats_route_segments(db_name,schema_name):
 
         sql_query = "CREATE TABLE  " + table_name + "  (LIKE tbl_enroute_airways); " + \
                     "ALTER TABLE " + table_name + \
+                    " ADD waypoint_id varchar; " + \
+                    "ALTER TABLE " + table_name + \
+                    " ADD waypoint_id_2 varchar; " + \
+                    "ALTER TABLE " + table_name + \
                     " ADD waypoint_identifier_2 varchar; " + \
                     "ALTER TABLE " + table_name + \
                     " ADD waypoint_latitude_2 double precision; " + \
@@ -41,7 +44,7 @@ def create_ats_route_segments(db_name,schema_name):
         sql_query = "SELECT * " \
                     "FROM tbl_enroute_airways " \
                     "order by route_identifier,seqno; "
-            # query
+        # query
         cur.execute(sql_query)
 
         results = cur.fetchall()
@@ -77,6 +80,7 @@ def create_ats_route_segments(db_name,schema_name):
         outbound_course = []
         inbound_course = []
         inbound_distance = []
+        waypoint_id = []
 
         # populate the parameters with the query results, row by row
         for row in results:
@@ -98,6 +102,7 @@ def create_ats_route_segments(db_name,schema_name):
             outbound_course.append(row[15])
             inbound_course.append(row[16])
             inbound_distance.append(row[17])
+            waypoint_id.append(row[18])
         #print("Number of rows: " + str(len(area_code)))
         num_of_ids = len(area_code)
 
@@ -138,6 +143,7 @@ def create_ats_route_segments(db_name,schema_name):
                    "seqno," + \
                    "icao_code," + \
                    "waypoint_identifier," + \
+                   "waypoint_id," + \
                    "waypoint_latitude," + \
                    "waypoint_longitude," + \
                    "waypoint_description_code," + \
@@ -152,6 +158,7 @@ def create_ats_route_segments(db_name,schema_name):
                    "inbound_course," + \
                    "inbound_distance," + \
                    "waypoint_identifier_2," + \
+                   "waypoint_id_2," + \
                    "waypoint_latitude_2," + \
                    "waypoint_longitude_2," + \
                    "geom) " + \
@@ -160,7 +167,8 @@ def create_ats_route_segments(db_name,schema_name):
                    str(route_identifier[k]) + "'," + \
                    str(seqno[k]) + ",'" + \
                    str(icao_code[k]) + "','" + \
-                   str(waypoint_identifier[k]) + "'," + \
+                   str(waypoint_identifier[k]) + "','" + \
+                   str(waypoint_id[k]) + "'," + \
                    str(waypoint_latitude[k]) + "," + \
                    str(waypoint_longitude[k]) + ",'" + \
                    str(waypoint_description_code[k]) + "','" + \
@@ -174,7 +182,8 @@ def create_ats_route_segments(db_name,schema_name):
                    str(outbound_course_temp) + "," + \
                    str(inbound_course_temp) + "," + \
                    str(inbound_distance[k]) + ",'" + \
-                   str(waypoint_identifier[k + 1]) + "'," + \
+                   str(waypoint_identifier[k + 1]) + "','" + \
+                   str(waypoint_id[k + 1]) + "'," + \
                    str(waypoint_latitude[k + 1]) + "," + \
                    str(waypoint_longitude[k + 1]) + "," + \
                    "ST_LineFromText('LINESTRING(" + \
@@ -222,6 +231,7 @@ def create_ats_route_segments(db_name,schema_name):
                            "seqno," + \
                            "icao_code," + \
                            "waypoint_identifier," + \
+                           "waypoint_id," + \
                            "waypoint_latitude," + \
                            "waypoint_longitude," + \
                            "waypoint_description_code," + \
@@ -236,6 +246,7 @@ def create_ats_route_segments(db_name,schema_name):
                            "inbound_course," + \
                            "inbound_distance," + \
                            "waypoint_identifier_2," + \
+                           "waypoint_id_2," + \
                            "waypoint_latitude_2," + \
                            "waypoint_longitude_2," + \
                            "geom) " + \
@@ -244,7 +255,8 @@ def create_ats_route_segments(db_name,schema_name):
                            str(route_identifier[k]) + "'," + \
                            str(seqno[k]) + ",'" + \
                            str(icao_code[k]) + "','" + \
-                           str(waypoint_identifier[k]) + "'," + \
+                           str(waypoint_identifier[k]) + "','" + \
+                           str(waypoint_id[k]) + "'," + \
                            str(waypoint_latitude[k]) + "," + \
                            str(waypoint_longitude[k]) + ",'" + \
                            str(waypoint_description_code[k]) + "','" + \
@@ -258,12 +270,16 @@ def create_ats_route_segments(db_name,schema_name):
                            str(outbound_course_temp) + "," + \
                            str(inbound_course_temp) + "," + \
                            str(inbound_distance[k]) + ",'" + \
-                           str(waypoint_identifier[k + 1]) + "'," + \
+                           str(waypoint_identifier[k + 1]) + "','" + \
+                           str(waypoint_id[k + 1]) + "'," + \
                            str(waypoint_latitude[k + 1]) + "," + \
                            str(waypoint_longitude[k + 1]) + "," + \
                            "ST_LineFromText('LINESTRING(" + \
                            str(float(waypoint_longitude[k])) + " " + str(float(waypoint_latitude[k])) + "," + \
-                           str(float(waypoint_longitude[k + 1])) + " " + str(float(waypoint_latitude[k + 1])) + ")',4326));"
+                           str(float(waypoint_longitude[k + 1])) + " " + str(
+                           float(waypoint_latitude[k + 1])) + ")',4326));"
+                # print(sql_text)
+
                 cur.execute(sql_text)
                 conn.commit()
                 #print(sql_text)

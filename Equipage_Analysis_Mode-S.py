@@ -21,6 +21,13 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
                                  database="aerothai_dwh",
                                  options="-c search_path=dbo," + schema_name)
 
+# conn_postgres = psycopg2.connect(user = "postgres",
+#                                   password = "password",
+#                                   host = "127.0.0.1",
+#                                   port = "5432",
+#                                   database = "temp",
+#                                   options="-c search_path=dbo,public")
+
 # filter = {
 #     "Mode-S aircraft identification":"(item10_cns like '%/%S%' "
 #                                      "or item10_cns like '%/%L%' "
@@ -81,7 +88,7 @@ filter_new = {
 
 analysis = f"Mode-S"
 
-date_list = pd.date_range(start='2013-01-01', end='2024-06-30',freq='M')
+date_list = pd.date_range(start='2019-07-01', end='2024-09-30',freq='M')
 
 equipage_list = list(filter_old.keys())
 equipage_count_df = pd.DataFrame()
