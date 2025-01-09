@@ -37,12 +37,12 @@ filter = "NOT (latitude is NULL) \n" + \
          "AND NOT(geo_alt < 1) \n" \
          "AND ground_speed < 700 \n" \
          "AND ground_speed > 50 \n"
+#
+# date_list = pd.date_range(start='2025-01-05', end='2025-01-05')
 
-date_list = pd.date_range(start='2024-11-09', end='2024-11-10')
-
-# today = dt.datetime.now()
-# date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
-#              + dt.timedelta(days=-3)]
+today = dt.datetime.now()
+date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
+             + dt.timedelta(days=-3)]
 
 track_suffix = ""
 sur_air_suffix = ""
@@ -427,61 +427,84 @@ with (conn_postgres_target):
         cursor_postgres_target.execute(postgres_sql_text)
         conn_postgres_target.commit()
 
+        # Create an SQL query that selects surveillance targets from the source PostgreSQL database
         postgres_sql_text = f"UPDATE track.track_cat62_{yyyymmdd}{track_suffix} t\n" \
-                            f"SET dest_rwy = f.dest_rwy\n" \
-                            f"FROM\n" \
-                            f"(SELECT flight_key,dest_rwy\n" \
-                            f"FROM\n" \
-                            f"(SELECT flight_key,dest,dest_rwy,max(count)\n" \
-                            f"FROM\n" \
-                            f"(SELECT flight_key,dest, right(procedure_identifier,2) as dest_rwy,COUNT(*)\n" \
-                            f"FROM\n" \
-                            f"	(SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
-                            f"	FROM sur_air.cat062_{yyyymmdd}{sur_air_suffix} t, \n" \
-                            f"	flight_data.flight_{yyyymm} f,\n" \
-                            f"	temp.vt_finalpath_buffer b\n" \
-                            f"	WHERE  t.flight_id = f.id\n" \
-                            f"	AND (f.dest LIKE 'VT%')\n" \
-                            f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
-                            f"	UNION\n" \
-                            f"	SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
-                            f"	FROM sur_air.cat062_{yyyymmdd_next}{sur_air_suffix} t, \n" \
-                            f"	flight_data.flight_{yyyymm} f,\n" \
-                            f"	temp.vt_finalpath_buffer b\n" \
-                            f"	WHERE  t.flight_id = f.id\n" \
-                            f"	AND (f.dest LIKE 'VT%')\n" \
-                            f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
-                            f"	) a\n" \
-                            f"WHERE dest = airport_identifier AND vert = 2\n" \
-                            f"AND length(procedure_identifier) = 3\n" \
-                            f"GROUP BY flight_key,dest,procedure_identifier\n" \
-                            f"UNION\n" \
-                            f"SELECT flight_key,dest, right(procedure_identifier,3) as dest_rwy,COUNT(*) \n" \
-                            f"FROM \n" \
-                            f"	(SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
-                            f"	FROM sur_air.cat062_{yyyymmdd}{sur_air_suffix} t, \n" \
-                            f"	flight_data.flight_{yyyymm} f,\n" \
-                            f"	temp.vt_finalpath_buffer b\n" \
-                            f"	WHERE  t.flight_id = f.id\n" \
-                            f"	AND (f.dest LIKE 'VT%')\n" \
-                            f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
-                            f"	UNION\n" \
-                            f"	SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
-                            f"	FROM sur_air.cat062_{yyyymmdd_next}{sur_air_suffix} t, \n" \
-                            f"	flight_data.flight_{yyyymm} f,\n" \
-                            f"	temp.vt_finalpath_buffer b\n" \
-                            f"	WHERE  t.flight_id = f.id\n" \
-                            f"	AND (f.dest LIKE 'VT%')\n" \
-                            f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
-                            f"	) a\n" \
-                            f"WHERE dest = airport_identifier AND vert = 2\n" \
-                            f"AND length(procedure_identifier) = 4\n" \
-                            f"GROUP BY flight_key,dest,procedure_identifier) a\n" \
-                            f"GROUP BY flight_key,dest,dest_rwy) b\n" \
-                            f") f\n" \
-                            f"WHERE  t.flight_key = f.flight_key;\n"
+                             f"SET dest_rwy = f.dest_rwy\n" \
+                             f"FROM\n" \
+                             f"(SELECT flight_key,dest_rwy\n" \
+                             f"FROM\n" \
+                             f"(SELECT flight_key,dest,dest_rwy,max(count)\n" \
+                             f"FROM\n" \
+                             f"(SELECT flight_key,dest, right(procedure_identifier,2) as dest_rwy,COUNT(*)\n" \
+                             f"FROM\n" \
+                             f"	(SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
+                             f"	FROM sur_air.cat062_{yyyymmdd} t, \n" \
+                             f"	flight_data.flight_{yyyymm} f,\n" \
+                             f"	temp.vt_finalpath_buffer b\n" \
+                             f"	WHERE  t.flight_id = f.id\n" \
+                             f"	AND (f.dest LIKE 'VT%')\n" \
+                             f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
+                             f"	UNION\n" \
+                             f"	SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
+                             f"	FROM sur_air.cat062_{yyyymmdd_next} t, \n" \
+                             f"	flight_data.flight_{yyyymm_next} f,\n" \
+                             f"	temp.vt_finalpath_buffer b\n" \
+                             f"	WHERE  t.flight_id = f.id\n" \
+                             f"	AND (f.dest LIKE 'VT%')\n" \
+                             f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
+                             f"	) a\n" \
+                             f"WHERE dest = airport_identifier AND vert = 2\n" \
+                             f"AND length(procedure_identifier) = 3\n" \
+                             f"GROUP BY flight_key,dest,procedure_identifier\n" \
+                             f"UNION\n" \
+                             f"SELECT flight_key,dest, right(procedure_identifier,3) as dest_rwy,COUNT(*) \n" \
+                             f"FROM \n" \
+                             f"	(SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
+                             f"	FROM sur_air.cat062_{yyyymmdd} t, \n" \
+                             f"	flight_data.flight_{yyyymm} f,\n" \
+                             f"	temp.vt_finalpath_buffer b\n" \
+                             f"	WHERE  t.flight_id = f.id\n" \
+                             f"	AND (f.dest LIKE 'VT%')\n" \
+                             f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
+                             f"	UNION\n" \
+                             f"	SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
+                             f"	FROM sur_air.cat062_{yyyymmdd_next} t, \n" \
+                             f"	flight_data.flight_{yyyymm_next} f,\n" \
+                             f"	temp.vt_finalpath_buffer b\n" \
+                             f"	WHERE  t.flight_id = f.id\n" \
+                             f"	AND (f.dest LIKE 'VT%')\n" \
+                             f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
+                             f"	) a\n" \
+                             f"WHERE dest = airport_identifier AND vert = 2\n" \
+                             f"AND length(procedure_identifier) = 4\n" \
+                             f"GROUP BY flight_key,dest,procedure_identifier\n" \
+                             f"UNION\n" \
+                             f"SELECT flight_key,dest, right(left(procedure_identifier,3),2) as dest_rwy,COUNT(*) \n" \
+                             f"FROM\n" \
+                             f"(SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
+                             f"  FROM sur_air.cat062_{yyyymmdd} t,\n" \
+                             f"  flight_data.flight_{yyyymm} f,\n" \
+                             f"	temp.vt_finalpath_buffer b\n" \
+                             f"	WHERE  t.flight_id = f.id\n" \
+                             f"	AND (f.dest LIKE 'VT%')\n" \
+                             f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
+                             f"	UNION\n" \
+                             f"	SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
+                             f"	FROM sur_air.cat062_{yyyymmdd_next} t,\n" \
+                             f"	flight_data.flight_{yyyymm_next} f,\n" \
+                             f"	temp.vt_finalpath_buffer b\n" \
+                             f"	WHERE  t.flight_id = f.id\n" \
+                             f"	AND (f.dest LIKE 'VT%')\n" \
+                             f" AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
+                             f"	) a \n" \
+                             f"WHERE dest = airport_identifier AND vert = 2\n" \
+                             f"AND length(procedure_identifier) = 5 \n" \
+                             f"GROUP BY flight_key,dest,procedure_identifier\n) a\n" \
+                             f"GROUP BY flight_key,dest,dest_rwy) b\n" \
+                             f") f\n" \
+                             f"WHERE  t.flight_key = f.flight_key;\n"
+
         cursor_postgres_target.execute(postgres_sql_text)
-        print(postgres_sql_text)
         conn_postgres_target.commit()
 
         # Add dep to the tracks =====================================================

@@ -28,7 +28,7 @@ def count_level_off_targets(year, month, day):
                         f"AND NOT s.measured_fl IS NULL " \
                         f"AND NOT (LEFT(f.first_flevel,2) LIKE 'F1%' OR LEFT(f.first_flevel,1) LIKE 'S%' OR LEFT(" \
                         f"f.first_flevel,1) LIKE 'A%') " \
-                        f"AND s.vert = 0 " \
+                        f"AND s.sector LIKE 'BANGKOK%' AND s.vert = 0 " \
                         f"AND s.measured_fl > 30 AND s.measured_fl < 160 " \
                         f"GROUP BY s.flight_key, f.actype, f.first_flevel, ROUND(s.measured_fl)) " \
                         f"ORDER BY s.flight_key ASC, COUNT(*) DESC" \
@@ -59,7 +59,7 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
                                  options="-c search_path=dbo," + schema_name)
 
 
-date_list = pd.date_range(start='2023-10-01', end='2024-09-30', freq='D')
+date_list = pd.date_range(start='2024-01-01', end='2024-11-23', freq='D')
 
 with conn_postgres:
 
@@ -77,4 +77,4 @@ with conn_postgres:
 equipage_count_df = pd.concat([equipage_count_temp_4])
 #equipage_count_df = equipage_count_df.set_index(['time', 'dap'])
 #print(equipage_count_df)
-equipage_count_df.to_csv(f"/Users/pongabha/Desktop/CCO_fiscal_year_{year}-analysis_below_FL160.csv")
+equipage_count_df.to_csv(f"/Users/pongabha/Desktop/CCO_{year}-analysis_below_FL160.csv")

@@ -52,7 +52,7 @@ with (conn_postgres_source):
                             f"FROM sur_air.cat062_{year}{month}{day} t " \
                             f"LEFT JOIN flight_data.flight_{year}{month} f " \
                             f"ON t.flight_id = f.id " \
-                            f"WHERE (f.dep LIKE 'VTBS%' AND f.dest LIKE '%') " \
+                            f"WHERE (f.dep LIKE '%' AND f.dest LIKE 'VTSP') " \
                             f"AND f.flight_key LIKE '%' "\
                             f"AND f.frule LIKE '%' "\
                             f"ORDER BY t.flight_key ASC; "
@@ -86,7 +86,7 @@ with conn_postgres_source:
                             f"LEFT JOIN airac_current.airports a " \
                             f"ON a.airport_identifier = f.dest " \
                             f"WHERE f.flight_key = '{flight_key}' " \
-                            f"AND t.sector LIKE 'BANGKOK%' " \
+                            f"AND t.sector LIKE '%PHUKET%' " \
                             f"ORDER BY t.app_time "
 
         print(postgres_sql_text)

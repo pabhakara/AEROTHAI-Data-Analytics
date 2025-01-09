@@ -70,18 +70,22 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
 # }
 
 filter_old = {
-        "GLS": "(item10_cns like '%A%/%')",
-        "No GLS": "NOT (item10_cns like '%A%/%')"
+        "International": "(ftype = 1 OR ftype = 2)",
+        "Domestic": " (ftype = 4)",
+        "Overfly": "(ftype = 3)"
 }
 
 filter_new = {
-        "GLS": "(comnav like '%A%')",
-        "No GLS": "NOT (comnav like '%A%')"
+        "International": "(ftype = 1 OR ftype = 2)",
+        "Domestic": " (ftype = 4)",
+        "Overfly": "(ftype = 3)"
 }
 
-analysis = "GLS"
 
-date_list = pd.date_range(start='2019-07-01', end='2024-12-31',freq='M')
+analysis = "Inter-Dom-Overfly"
+
+
+date_list = pd.date_range(start='2013-01-01', end='2024-12-31',freq='M')
 
 equipage_list = filter_old.keys()
 equipage_count_df = pd.DataFrame()
@@ -149,56 +153,67 @@ df = equipage_count_df
 
 print(df)
 
-
-# Create figure
-# fig = go.Figure(
-#     data=[
-#     go.Bar(name = "GLS",
-#            x=df.index,
-#            y=df['GLS'],
-#            offsetgroup=0),
-#     go.Bar(name = "No GLS",
-#            x=df.index,
-#            y=df['No GLS'],
-#            offsetgroup=1),
-#     go.Line(name="Percentage",
-#                x=df.index,
-#                y=df['GLS']/(df['No GLS']+df['GLS']),
-#             ),
-#     ]
-# )
 # Create figure with secondary y-axis
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 
 # Add traces
 fig.add_trace(
-    go.Bar(name="GLS",
+    go.Bar(name="International",
                       x=df.index,
-                      y=df['GLS'],
+                      y=df['International'],
                       offsetgroup=0),
     secondary_y=False,
 )
 
 fig.add_trace(
-    go.Bar(name="No GLS",
+    go.Bar(name="Domestic",
                       x=df.index,
-                      y=df['No GLS'],
+                      y=df['Domestic'],
                       offsetgroup=1),
     secondary_y=False,
 )
 
 fig.add_trace(
-    go.Line(name="GLS %",
+    go.Bar(name="Overfly",
+                      x=df.index,
+                      y=df['Overfly'],
+                      offsetgroup=2),
+    secondary_y=False,
+)
+
+fig.add_trace(
+    go.Line(name="International %",
                            x=df.index,
-                           y=df['GLS']/(df['No GLS']+df['GLS'])*100,
-            line=dict(color="#808080")
+                           y=(df['International']/(df['Domestic']+df['International']+df['Overfly']))*100,
+            line=dict(color="#0008FF")
                         ),
     secondary_y=True,
 )
 
+fig.add_trace(
+    go.Line(name="Domestic %",
+                           x=df.index,
+                           y=(df['Domestic']/(df['Domestic']+df['International']+df['Overfly']))*100,
+            line=dict(color="#FF0000")
+                        ),
+    secondary_y=True,
+)
+
+fig.add_trace(
+    go.Line(name="Overfly %",
+                           x=df.index,
+                           y=(df['Overfly']/(df['Domestic']+df['International']+df['Overfly']))*100,
+            line=dict(color="#008700")
+                        ),
+    secondary_y=True,
+)
+
+
+
+
 # Add figure title
 fig.update_layout(
-    title_text=f"Historical Monthly IFR Movements with {analysis} Capability " \
+    title_text=f"Historical Monthly IFR Movements by {analysis} " \
                f"{date_list[0].month_name()} {date_list[0].year} to " \
                f"{date_list[-1].month_name()} {date_list[-1].year} "
 )

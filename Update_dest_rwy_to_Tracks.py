@@ -30,7 +30,7 @@ conn_postgres_target = psycopg2.connect(user="de_old_data",
 #                                   options="-c search_path=dbo,public")
 
 
-date_list = pd.date_range(start='2023-12-01', end='2023-12-01')
+date_list = pd.date_range(start='2025-01-01', end='2025-01-02')
 
 with conn_postgres_target:
     date = date_list[0]
@@ -41,9 +41,10 @@ with conn_postgres_target:
     yyyymm = f"{year}{month}"
 
     cursor_postgres_target = conn_postgres_target.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    postgres_sql_text = f"ALTER TABLE track.track_cat62_{yyyymm} \n" \
-                        f"DROP COLUMN IF EXISTS dest_rwy;\n" \
-                        f"ALTER TABLE track.track_cat62_{yyyymm} \n" \
+
+    postgres_sql_text = f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
+                        f"DROP COLUMN IF EXISTS dest_rwy CASCADE;\n" \
+                        f"ALTER TABLE track.track_cat62_{yyyymmdd} \n" \
                         f"ADD COLUMN dest_rwy character varying(3) DEFAULT '-';\n"
     cursor_postgres_target.execute(postgres_sql_text)
     conn_postgres_target.commit()
@@ -68,7 +69,7 @@ with conn_postgres_target:
 
         print(f"working on {yyyymmdd}")
         # Create an SQL query that selects surveillance targets from the source PostgreSQL database
-        postgres_sql_text = f"UPDATE track.track_cat62_{yyyymm} t\n" \
+        postgres_sql_text = f"UPDATE track.track_cat62_{yyyymmdd} t\n" \
                              f"SET dest_rwy = f.dest_rwy\n" \
                              f"FROM\n" \
                              f"(SELECT flight_key,dest_rwy\n" \
@@ -117,7 +118,29 @@ with conn_postgres_target:
                              f"	) a\n" \
                              f"WHERE dest = airport_identifier AND vert = 2\n" \
                              f"AND length(procedure_identifier) = 4\n" \
-                             f"GROUP BY flight_key,dest,procedure_identifier) a\n" \
+                             f"GROUP BY flight_key,dest,procedure_identifier\n" \
+                             f"UNION\n" \
+                             f"SELECT flight_key,dest, right(left(procedure_identifier,3),2) as dest_rwy,COUNT(*) \n" \
+                             f"FROM\n" \
+                             f"(SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
+                             f"  FROM sur_air.cat062_{yyyymmdd} t,\n" \
+                             f"  flight_data.flight_{yyyymm} f,\n" \
+                             f"	temp.vt_finalpath_buffer b\n" \
+                             f"	WHERE  t.flight_id = f.id\n" \
+                             f"	AND (f.dest LIKE 'VT%')\n" \
+                             f"	AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
+                             f"	UNION\n" \
+                             f"	SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
+                             f"	FROM sur_air.cat062_{yyyymmdd_next} t,\n" \
+                             f"	flight_data.flight_{yyyymm_next} f,\n" \
+                             f"	temp.vt_finalpath_buffer b\n" \
+                             f"	WHERE  t.flight_id = f.id\n" \
+                             f"	AND (f.dest LIKE 'VT%')\n" \
+                             f" AND ST_INTERSECTS(t.position,b.final_buffer)\n" \
+                             f"	) a \n" \
+                             f"WHERE dest = airport_identifier AND vert = 2\n" \
+                             f"AND length(procedure_identifier) = 5 \n" \
+                             f"GROUP BY flight_key,dest,procedure_identifier\n) a\n" \
                              f"GROUP BY flight_key,dest,dest_rwy) b\n" \
                              f") f\n" \
                              f"WHERE  t.flight_key = f.flight_key;\n"

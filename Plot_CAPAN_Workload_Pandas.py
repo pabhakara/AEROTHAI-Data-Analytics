@@ -19,14 +19,16 @@ def toc():
 
 tic()
 
-traffic_percentage = '100'
+traffic_percentage = '130'
 
 root_path = "/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/airspace analysis/FIR Capacity Study"
 
-#scenario = f"/2023/FIR_Capacity_2023-09-26 - Traffic {traffic_percentage}%"
+
+# scenario = f"/2023/FIR_Capacity_2023-09-26 - Traffic {traffic_percentage}%"
 
 scenario = f"/2023/FIR_Capacity_2023-09-26 - 12 Sector Traffic {traffic_percentage}%"
-# scenario = f"/SID_STAR_ROUTE_VT"
+
+# scenario = f"/BKK_FIR_baseline_12Sectors_BKK_APP_Sectors_01-02-21_extended"
 
 # scenario = f"/New_Northern_Routes 2023-09-06"
 
@@ -36,7 +38,7 @@ output_filepath = f"/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/airsp
 # output_filepath = f"/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/airspace analysis/" \
 #                   f"FIR Capacity Study{scenario}/Output Plots/"
 
-sectorcrossing_input_file = "/output/sectorcrossing.out.1"
+sectorcrossing_input_file = "/report/sectorcrossing.out.1"
 
 sectorcrossing_df = pd.read_csv(root_path + scenario + sectorcrossing_input_file,
                                 delimiter=';',header=0,

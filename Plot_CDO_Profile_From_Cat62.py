@@ -80,10 +80,10 @@ with (conn_postgres_source):
     # faf_distance = 7.1  # NM VTCC
     # thr_altitude = 1000 # ft VTCC
 
-    airport = 'VTSP'
-    faf_altitude = 1900  # ft VTSP
-    faf_distance = 5.2  # NM VTSP
-    thr_altitude = 82 # ft VTSP
+    # airport = 'VTSP'
+    # faf_altitude = 1900  # ft VTSP
+    # faf_distance = 5.2  # NM VTSP
+    # thr_altitude = 82 # ft VTSP
 
 with (conn_postgres_source):
     cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)

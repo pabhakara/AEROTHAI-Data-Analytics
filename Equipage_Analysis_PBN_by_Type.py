@@ -60,7 +60,7 @@ filter_new_data = {
 
 filter = filter_new_data
 
-date_list = pd.date_range(start='2019-07-01', end='2024-09-30',freq='M')
+date_list = pd.date_range(start='2019-07-01', end='2024-12-31',freq='M')
 
 equipage_list = list(filter.keys())
 equipage_count_df = pd.DataFrame()
