@@ -69,7 +69,7 @@ with (conn_postgres_target):
         month_next = f"{next_day.month:02d}"
         day_next = f"{next_day.day:02d}"
 
-        yyyymm_next = str(next_day.year).zfill(2) + str(next_day.month).zfill(2)
+        #yyyymm_next = str(next_day.year).zfill(2) + str(next_day.month).zfill(2)
         yyyymm_previous = str(previous_day.year).zfill(2) + str(previous_day.month).zfill(2)
 
         yyyymmdd_next = str(next_day.year).zfill(2) + str(next_day.month).zfill(2) + str(next_day.day).zfill(2)
@@ -447,7 +447,7 @@ with (conn_postgres_target):
                              f"	UNION\n" \
                              f"	SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
                              f"	FROM sur_air.cat062_{yyyymmdd_next} t, \n" \
-                             f"	flight_data.flight_{yyyymm_next} f,\n" \
+                             f"	flight_data.flight_{yyyymm} f,\n" \
                              f"	temp.vt_finalpath_buffer b\n" \
                              f"	WHERE  t.flight_id = f.id\n" \
                              f"	AND (f.dest LIKE 'VT%')\n" \
@@ -469,7 +469,7 @@ with (conn_postgres_target):
                              f"	UNION\n" \
                              f"	SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
                              f"	FROM sur_air.cat062_{yyyymmdd_next} t, \n" \
-                             f"	flight_data.flight_{yyyymm_next} f,\n" \
+                             f"	flight_data.flight_{yyyymm} f,\n" \
                              f"	temp.vt_finalpath_buffer b\n" \
                              f"	WHERE  t.flight_id = f.id\n" \
                              f"	AND (f.dest LIKE 'VT%')\n" \
@@ -491,7 +491,7 @@ with (conn_postgres_target):
                              f"	UNION\n" \
                              f"	SELECT t.flight_key,t.position,t.vert,f.dest,b.airport_identifier,b.procedure_identifier\n" \
                              f"	FROM sur_air.cat062_{yyyymmdd_next} t,\n" \
-                             f"	flight_data.flight_{yyyymm_next} f,\n" \
+                             f"	flight_data.flight_{yyyymm} f,\n" \
                              f"	temp.vt_finalpath_buffer b\n" \
                              f"	WHERE  t.flight_id = f.id\n" \
                              f"	AND (f.dest LIKE 'VT%')\n" \

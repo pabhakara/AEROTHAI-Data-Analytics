@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 from matplotlib.dates import DateFormatter
 
+from os import walk
+
 def tic():
     #Homemade version of matlab tic and toc functions
     import time
@@ -20,33 +22,68 @@ def toc():
     else:
         print("Toc: start time not set")
 
+def pd_read_airtop_csv(airtop_csv_file,dtype_list=None):
+    column_names = open(airtop_csv_file).readlines()[1].split(' ')
+    print(column_names)
+    airtop_df = pd.read_csv(airtop_csv_file,
+                                    delimiter=';', header=3,
+                                    names=column_names,
+                                    dtype=dtype_list)
+    return airtop_df
 
 tic()
 
 traffic_percentage = '100'
 
 root_path = "/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/airspace analysis/AirTOP Workspace/Projects"
+scenario = f"/BKK_FIR_AIRAC-2024-10_BKK_RWY_01-02-21"
 
-scenario = f"/BKK_FIR_AIRAC-2024-13_BKK_RWY_19-20-21"
+input_filepath = f"{root_path}{scenario}" + "/report/events/changeevents/"
 
-output_filepath = root_path + scenario
+output_filepath = f"{root_path}{scenario}"
+
+filenames = next(walk(input_filepath), (None, None, []))[2]  # [] if no file
+#
+# print(filenames)
+
+filenames = ['FLIGHT_ATC_SECTOR_ENTERED.csv']
+
+for filename in filenames:
+    print(input_filepath + filename)
+    airtop_pd = pd_read_airtop_csv(input_filepath + filename,dtype_list=None)
+    print(airtop_pd)
 
 sectorcrossing_input_file = "/report/events/changeevents/FLIGHT_ATC_SECTOR_ENTERED.csv"
-
-column_names = open(root_path + scenario + sectorcrossing_input_file).readlines()[1].split(' ')
-
-sectorcrossing_df = pd.read_csv(root_path + scenario + sectorcrossing_input_file,
-                                delimiter=';', header=3,
-                                names = column_names,
-                                dtype={'Time': 'S',
-                                       'OldCurrentATCSector': 'category',
-                                       'NewCurrentATCSector': 'category'})
+#
+# column_names = open(root_path + scenario + sectorcrossing_input_file).readlines()[1].split(' ')
+#
+# sectorcrossing_df = pd.read_csv(root_path + scenario + sectorcrossing_input_file,
+#                                 delimiter=';', header=3,
+#                                 names = column_names,
+#                                 dtype={'Time': 'S',
+#                                        'DurationInPreviousATCSector': 'S',
+#                                        'OldCurrentATCSector': 'category',
+#                                        'NewCurrentATCSector': 'category'})
+#
+sectorcrossing_df = pd_read_airtop_csv(root_path + scenario + sectorcrossing_input_file,
+                                       {'Time': 'S',
+                                        'DurationInPreviousATCSector': 'S',
+                                        'OldCurrentATCSector': 'category',
+                                        'NewCurrentATCSector': 'category'}
+                                       )
 
 sectorcrossing_df['Time'] = '2019-12-' + sectorcrossing_df['Time']
 
 datetime_format = "%Y-%m-%d %H:%M:%S"
 
 sectorcrossing_df['Time'] = sectorcrossing_df['Time'].apply(lambda x:datetime.strptime(x,datetime_format))
+
+# Sector Skip Filter
+filter = (sectorcrossing_df['DurationInPreviousATCSector'] > '00:02:00')
+
+sectorcrossing_df = sectorcrossing_df.loc[filter]
+
+print(sectorcrossing_df['DurationInPreviousATCSector'])
 
 sector_entry_df = sectorcrossing_df[sectorcrossing_df['NewCurrentATCSector'].isnull() == 0]
 sector_entry_df = sector_entry_df[sector_entry_df['NewCurrentATCSector'].str.contains('SECTOR_')]
@@ -86,7 +123,7 @@ workload_df = workload_df[workload_df['Airspace'].str.contains('SECTOR_')]
 
 workload_df.rename(columns={'Airspace': 'Sector', 'Time': 'TimeStamp'}, inplace=True)
 
-start_time = pd.Timestamp(2019, 12, 25, 22, 0, 0, 0)
+start_time = pd.Timestamp(2019, 12, 26, 0, 0, 0, 0)
 
 t = start_time
 
@@ -218,7 +255,7 @@ for sector in sector_list:
     # ax.xaxis.set_major_locator(MultipleLocator(12))
     # ax.yaxis.set_major_locator(MultipleLocator(10))
 
-    ax.xaxis.set_minor_locator(AutoMinorLocator(1))
+    #ax.xaxis.set_minor_locator(AutoMinorLocator(1))
     ax.yaxis.set_minor_locator(AutoMinorLocator(1))
 
     ax.set_ylim([0, 100])

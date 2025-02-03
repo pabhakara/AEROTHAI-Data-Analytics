@@ -40,7 +40,7 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
                                  database="aerothai_dwh",
                                  options="-c search_path=dbo," + schema_name)
 
-date_list = pd.date_range(start='2024-01-01', end='2024-01-01', freq='D')
+date_list = pd.date_range(start='2025-01-01', end='2025-01-07', freq='D')
 
 with conn_postgres:
     equipage_count_df = pd.DataFrame()

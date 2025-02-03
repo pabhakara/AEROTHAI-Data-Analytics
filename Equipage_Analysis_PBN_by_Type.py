@@ -41,6 +41,7 @@ filter_old_data = {
     "RNP APCH": "(pbn_type like '%S%')",
     "RNP AR APCH": "(pbn_type like '%T%')",
     "GLS": "(comnav like '%A%/%')",
+    "SBAS": "(comnav like '%B%/%')",
     "Total": "(pbn_type like '%')",
 }
 
@@ -55,6 +56,7 @@ filter_new_data = {
     "RNP APCH": "(item18_json->>'PBN' like '%S%')",
     "RNP AR APCH": "(item18_json->>'PBN' like '%T%')",
     "GLS": "(comnav like '%A%')",
+    "SBAS": "(comnav like '%B%')",
     "Total": "(item18_json->>'PBN' like '%')",
 }
 
@@ -134,10 +136,11 @@ color_list = ['#636EFA',
      '#FF6692',
      '#B6E880',
      '#FF97FF',
-     '#FECB52']
-
+     '#FECB52',
+     '#636EFA',
+     '#EF553B']
 # Add traces
-for k in range(0,9):
+for k in range(0,11):
     fig.add_trace(
         go.Bar(name=equipage_list[k],
                           x=df.index,
@@ -147,7 +150,7 @@ for k in range(0,9):
         secondary_y=False,
     )
 
-for k in range(0, 9):
+for k in range(0,11):
     fig.add_trace(
         go.Line(name=f"{equipage_list[k]} as % of Total IFR",
                           x=df.index,
