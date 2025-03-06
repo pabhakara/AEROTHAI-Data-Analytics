@@ -35,13 +35,13 @@ try:
 
     #print(df.describe())
 
-    domestic = df.query('dest.str.startswith("VT") and dep.str.startswith("VT")')
+    General = df.query('dest.str.startswith("VT") and dep.str.startswith("VT")')
 
     print("-------------- \n")
 
-    print(domestic.describe())
+    print(General.describe())
 
-    factor = pds.qcut(domestic["track_length"], [0, 0.25, 0.5, 0.75, 1],duplicates='drop')
+    factor = pds.qcut(General["track_length"], [0, 0.25, 0.5, 0.75, 1],duplicates='drop')
 
     print("-------------- \n")
 

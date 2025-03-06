@@ -30,10 +30,10 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
 analysis = "traffic_type"
 
 filter = {
-    "Domestic": "(dep like 'VT%' AND dest LIKE 'VT%')" ,
+    "General": "(dep like 'VT%' AND dest LIKE 'VT%')" ,
     "Inbound": "(NOT dep like 'VT%' AND dest LIKE 'VT%')" ,
     "Outbound": "(dep like 'VT%' AND NOT dest LIKE 'VT%')",
-    "Overfly": "(NOT dep like 'VT%' AND NOT dest LIKE 'VT%')",
+    "State": "(NOT dep like 'VT%' AND NOT dest LIKE 'VT%')",
     "Total": "(dep like '%' AND dest LIKE '%')",
 }
 

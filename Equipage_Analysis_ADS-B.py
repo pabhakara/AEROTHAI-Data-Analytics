@@ -81,7 +81,7 @@ filter_new = {
 }
 analysis = "ADS-B"
 
-date_list = pd.date_range(start='2013-01-01', end='2024-12-31',freq='M')
+date_list = pd.date_range(start='2013-01-01', end='2025-01-31',freq='M')
 
 equipage_list = filter_old.keys()
 equipage_count_df = pd.DataFrame()
@@ -99,15 +99,16 @@ with conn_postgres:
                 postgres_sql_text = f"SELECT count(*) " \
                                     f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
                                     f"WHERE {filter_old[equipage]} " \
-                                    f"and dest like 'VTCC%'" \
+                                    f"and dest like '%'" \
                                     f"and frule like 'I';"
             else:
                 postgres_sql_text = f"SELECT count(*) " \
                                     f"FROM {schema_name}.\"flight_{year}{month}\" " \
                                     f"WHERE {filter_new[equipage]} " \
-                                    f"and dest like 'VTCC%'" \
+                                    f"and dest like '%'" \
                                     f"and frule like 'I';" \
                     # f"GROUP BY dest;"
+            print(postgres_sql_text)
             cursor_postgres = conn_postgres.cursor()
             cursor_postgres.execute(postgres_sql_text)
             record = cursor_postgres.fetchall()
@@ -243,11 +244,11 @@ fig.update_layout(
         type="date"
     )
 )
-fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis}-VTCC "
+fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis}-"
                f"{date_list[0].year}-{date_list[0].month:02d} To "
                f"{date_list[-1].year}-{date_list[-1].month:02d}"
                f".html")
-df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis}-VTCC "
+df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis}-"
           f"{date_list[0].year}-{date_list[0].month:02d} To "
           f"{date_list[-1].year}-{date_list[-1].month:02d}"
           f".csv")

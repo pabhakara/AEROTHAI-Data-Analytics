@@ -14,22 +14,21 @@ import plotly.express as px
 pd.options.plotting.backend = "plotly"
 
 schema_name = 'flight_data'
-
 conn_postgres = psycopg2.connect(user="pongabhaab",
                                  password="pongabhaab2",
                                  host="172.16.129.241",
                                  port="5432",
                                  database="aerothai_dwh",
                                  options="-c search_path=dbo," + schema_name)
-#
-# conn_postgres = psycopg2.connect(user="postgres",
-#                                  password="password",
-#                                  host="localhost",
-#                                  port="5432",
-#                                  database="temp",
-#                                  options="-c search_path=dbo," + schema_name)
 
-# # filter = {
+# conn_postgres = psycopg2.connect(user = "postgres",
+#                                   password = "password",
+#                                   host = "127.0.0.1",
+#                                   port = "5432",
+#                                   database = "temp",
+#                                   options="-c search_path=dbo,public")
+
+# filter = {
 #     "Mode-S aircraft identification":"(item10_cns like '%/%S%' "
 #                                      "or item10_cns like '%/%L%' "
 #                                      "or item10_cns like '%/%E%' "
@@ -53,68 +52,82 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
 #                  "or item10_cns like '%/%X%')"
 # }
 
-# filter = {
-#     "Mode-S EHS": "(item10_cns like '%/%L%' "
-#                   "or item10_cns like '%/%H%' ) ",
-#     "Mode-S ELS": "(item10_cns like '%/%S%' "
-#                   "or item10_cns like '%/%E%' "
-#                   "or item10_cns like '%/%P%' "
-#                   "or item10_cns like '%/%I%' "
-#                   "or item10_cns like '%/%X%') ",
-#     "No Mode-S": "NOT (item10_cns like '%/%L%' "
-#                  "or item10_cns like '%/%E%' "
-#                  "or item10_cns like '%/%H%' "
-#                  "or item10_cns like '%/%S%' "
-#                  "or item10_cns like '%/%P%' "
-#                  "or item10_cns like '%/%I%' "
-#                  "or item10_cns like '%/%X%') "
-# }
-
 filter_old = {
-        "International": "(ftype = 1 OR ftype = 2)",
-        "Domestic": " (ftype = 4)",
-        "Overfly": "(ftype = 3)"
+    "Mode-S EHS": "(item10_cns like '%/%L%' "
+                  "or item10_cns like '%/%H%' ) ",
+    "Mode-S ELS": "(item10_cns like '%/%S%' "
+                  "or item10_cns like '%/%E%' "
+                  "or item10_cns like '%/%P%' "
+                  "or item10_cns like '%/%I%' "
+                  "or item10_cns like '%/%X%') ",
+    "Mode-C": " item10_cns like '%/%C%'"
+              "  AND (item10_cns like '%/%L%' "
+                 "or item10_cns like '%/%E%' "
+                 "or item10_cns like '%/%H%' "
+                 "or item10_cns like '%/%S%' "
+                 "or item10_cns like '%/%P%' "
+                 "or item10_cns like '%/%I%' "
+                 "or item10_cns like '%/%X%') ",
+    "Mode-A": " item10_cns like '%/%A%'"
+              "  AND (item10_cns like '%/%L%' "
+                 "or item10_cns like '%/%E%' "
+                 "or item10_cns like '%/%H%' "
+                 "or item10_cns like '%/%S%' "
+                 "or item10_cns like '%/%P%' "
+                 "or item10_cns like '%/%I%' "
+                 "or item10_cns like '%/%X%') ",
+    "No-Transponder": " item10_cns like '%/%A%'"
+              "  AND (item10_cns like '%/%L%' "
+              "or item10_cns like '%/%E%' "
+              "or item10_cns like '%/%H%' "
+              "or item10_cns like '%/%S%' "
+              "or item10_cns like '%/%P%' "
+              "or item10_cns like '%/%I%' "
+              "or item10_cns like '%/%X%') "
 }
 
 filter_new = {
-        "International": "(ftype = 1 OR ftype = 2)",
-        "Domestic": " (ftype = 4)",
-        "Overfly": "(ftype = 3)"
+    "Mode-S EHS": "(sur like '%L%' "
+                  "or sur like '%H%' ) ",
+    "Mode-S ELS": "(sur like '%S%' "
+                  "or sur like '%E%' "
+                  "or sur like '%P%' "
+                  "or sur like '%I%' "
+                  "or sur like '%X%') ",
+    "No Mode-S": "NOT (sur like '%L%' "
+                 "or sur like '%E%' "
+                 "or sur like '%H%' "
+                 "or sur like '%S%' "
+                 "or sur like '%P%' "
+                 "or sur like '%I%' "
+                 "or sur like '%X%') "
 }
 
-# filter_old = {
-#         "Commercial": "(op_type = 'S' OR op_type = 'N' )",
-#         "Military": " (op_type = 'M')",
-#         "General": "(op_type = 'G')"
-# }
-#
-# filter_new = {
-#         "Commercial": "(op_type = 'S' OR op_type = 'N' )",
-#         "Military": " (op_type = 'M')",
-#         "General": "(op_type = 'G')"
-# }
+analysis = f"Mode-S"
 
+date_list = pd.date_range(start='2019-07-01', end='2025-02-28',freq='M')
 
-
-analysis = "Inter-Dom-Overfly"
-
-dest = '%'
-dep = '%'
-condition = 'OR'
-
-date_list = pd.date_range(start='2013-01-01', end='2025-02-28',freq='M')
-print(date_list)
-
-equipage_list = filter_old.keys()
+equipage_list = list(filter_old.keys())
 equipage_count_df = pd.DataFrame()
+
+color_list = ['#636EFA',
+     '#EF553B',
+     '#00CC96',
+     '#AB63FA',
+     '#FFA15A',
+     '#19D3F3',
+     '#FF6692',
+     '#B6E880',
+     '#FF97FF',
+     '#FECB52']
+
 with conn_postgres:
     for equipage in equipage_list:
-        # year_list = ['2023','2022','2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013']
-        # month_list = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         equipage_count_temp_3 = pd.DataFrame()
         for date in date_list:
             year = f"{date.year}"
             month = f"{date.month:02d}"
+            day = f"{date.day:02d}"
             print(f"{year}-{month}")
             equipage_count_temp_2 = pd.DataFrame([f"{year}-{month}"], columns=['time'])
 
@@ -123,52 +136,25 @@ with conn_postgres:
                 postgres_sql_text = f"SELECT count(*) " \
                                     f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
                                     f"WHERE {filter_old[equipage]} " \
-                                    f"and (dest like '{dest}'" \
-                                    f"{condition} dep like '{dep}')" \
-                                    f"and frule like 'I';" \
-                    # f"GROUP BY dest;"
+                                    f"and dest like '%'" \
+                                    f"and frule like '%';"
             else:
                 postgres_sql_text = f"SELECT count(*) " \
                                     f"FROM {schema_name}.\"flight_{year}{month}\" " \
                                     f"WHERE {filter_new[equipage]} " \
-                                    f"and (dest like '{dest}'" \
-                                    f"{condition} dep like '{dep}')" \
-                                    f"and frule like 'I';" \
-                    # f"GROUP BY dest;"
-
+                                    f"and dest like '%'" \
+                                    f"and frule like '%';"
+                # f"GROUP BY dest;"
             cursor_postgres = conn_postgres.cursor()
             cursor_postgres.execute(postgres_sql_text)
             record = cursor_postgres.fetchall()
-                # print(equipage)
+            # print(equipage)
             equipage_count_temp = pd.DataFrame([record[0][0]], columns=[equipage])
             equipage_count_temp_2 = pd.concat([equipage_count_temp_2, equipage_count_temp], axis=1)
             equipage_count_temp_2 = equipage_count_temp_2.set_index('time')
             equipage_count_temp_3 = pd.concat([equipage_count_temp_3, equipage_count_temp_2])
 
-        equipage_count_temp_4 = pd.DataFrame()
-        # year_list = ['2023']
-        # month_list = ['01','02','03','04','05','06','07']
-        # for year in year_list:
-        #     for month in month_list:
-        #         print(f"{year}-{month}")
-        #         equipage_count_temp_2 = pd.DataFrame([f"{year}-{month}"], columns=['time'])
-        #
-        #         # postgres_sql_text = f"SELECT '{year}_{month}','{equipage}',dest,count(*) " \
-        #         postgres_sql_text = f"SELECT count(*) " \
-        #                             f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
-        #                             f"WHERE {filter[equipage]} " \
-        #                             f"and dest like '%'" \
-        #                             f"and frule like 'I';" \
-        #             # f"GROUP BY dest;"
-        #         cursor_postgres = conn_postgres.cursor()
-        #         cursor_postgres.execute(postgres_sql_text)
-        #         record = cursor_postgres.fetchall()
-        #         # print(equipage)
-        #         equipage_count_temp = pd.DataFrame([record[0][0]], columns=[equipage])
-        #         equipage_count_temp_2 = pd.concat([equipage_count_temp_2, equipage_count_temp], axis=1)
-        #         equipage_count_temp_2 = equipage_count_temp_2.set_index('time')
-        #         equipage_count_temp_4 = pd.concat([equipage_count_temp_4, equipage_count_temp_2])
-        equipage_count_df[equipage] = pd.concat([equipage_count_temp_3, equipage_count_temp_4])
+        equipage_count_df[equipage] = equipage_count_temp_3
 df = equipage_count_df
 
 print(df)
@@ -178,59 +164,49 @@ fig = make_subplots(specs=[[{"secondary_y": True}]])
 
 # Add traces
 fig.add_trace(
-    go.Bar(name="International",
+    go.Bar(name=equipage_list[0],
                       x=df.index,
-                      y=df['International'],
+                      y=df[equipage_list[0]],
                       offsetgroup=0),
     secondary_y=False,
 )
 
 fig.add_trace(
-    go.Bar(name="Domestic",
+    go.Bar(name=equipage_list[1],
                       x=df.index,
-                      y=df['Domestic'],
+                      y=df[equipage_list[1]],
                       offsetgroup=1),
     secondary_y=False,
 )
 
 fig.add_trace(
-    go.Bar(name="Overfly",
+    go.Bar(name=equipage_list[2],
                       x=df.index,
-                      y=df['Overfly'],
+                      y=df[equipage_list[2]],
                       offsetgroup=2),
     secondary_y=False,
 )
 
 fig.add_trace(
-    go.Line(name="International %",
+    go.Line(name="Mode-S EHS %",
                            x=df.index,
-                           y=(df['International']/(df['Domestic']+df['International']+df['Overfly']))*100,
-            line=dict(color="#0008FF")
+                           y=df['Mode-S EHS']/(df['Mode-S EHS']+df['Mode-S ELS']+df['No Mode-S'])*100,
+            line=dict(color="#808080")
                         ),
     secondary_y=True,
 )
 
 fig.add_trace(
-    go.Line(name="Domestic %",
+    go.Line(name="No Mode-S %",
                            x=df.index,
-                           y=(df['Domestic']/(df['Domestic']+df['International']+df['Overfly']))*100,
-            line=dict(color="#FF0000")
+                           y=df['No Mode-S']/(df['Mode-S EHS']+df['Mode-S ELS']+df['No Mode-S'])*100,
+            line=dict(color="#1DCA1D")
                         ),
     secondary_y=True,
 )
 
-fig.add_trace(
-    go.Line(name="Overfly %",
-                           x=df.index,
-                           y=(df['Overfly']/(df['Domestic']+df['International']+df['Overfly']))*100,
-            line=dict(color="#008700")
-                        ),
-    secondary_y=True,
-)
-
-# Add figure title
 fig.update_layout(
-    title_text=f"Historical Monthly IFR Movements from/to {dest} by {analysis} " \
+    title_text=f"Historical Monthly IFR/VFR Movements with {analysis} Capability " \
                f"{date_list[0].month_name()} {date_list[0].year} to " \
                f"{date_list[-1].month_name()} {date_list[-1].year} "
 )
@@ -241,15 +217,6 @@ fig.update_xaxes(title_text="Time")
 # Set y-axes titles
 fig.update_yaxes(title_text="<b>Number of Movements</b>", secondary_y=False)
 fig.update_yaxes(title_text=f"<b>Percentage</b>", secondary_y=True)
-
-fig.show()
-
-# Set title
-# fig.update_layout(
-#     title_text="Monthly IFR Movements in Bangkok FIR  with Mode-S Equipage (January 2013 to June 2022)"
-# )
-
-
 
 # Add range slider
 fig.update_layout(

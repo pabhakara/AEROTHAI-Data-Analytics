@@ -14,21 +14,20 @@ import plotly.express as px
 pd.options.plotting.backend = "plotly"
 
 schema_name = 'flight_data'
-
-conn_postgres = psycopg2.connect(user="pongabhaab",
-                                 password="pongabhaab2",
-                                 host="172.16.129.241",
-                                 port="5432",
-                                 database="aerothai_dwh",
-                                 options="-c search_path=dbo," + schema_name)
-#
-# conn_postgres = psycopg2.connect(user="postgres",
-#                                  password="password",
-#                                  host="localhost",
+# conn_postgres = psycopg2.connect(user="pongabhaab",
+#                                  password="pongabhaab2",
+#                                  host="172.16.129.241",
 #                                  port="5432",
-#                                  database="temp",
+#                                  database="aerothai_dwh",
 #                                  options="-c search_path=dbo," + schema_name)
 
+conn_postgres = psycopg2.connect(user="postgres",
+                                 password="password",
+                                 host="localhost",
+                                 port="5432",
+                                 database="temp",
+                                 options="-c search_path=dbo," + schema_name)
+#
 # # filter = {
 #     "Mode-S aircraft identification":"(item10_cns like '%/%S%' "
 #                                      "or item10_cns like '%/%L%' "
@@ -71,38 +70,23 @@ conn_postgres = psycopg2.connect(user="pongabhaab",
 # }
 
 filter_old = {
-        "International": "(ftype = 1 OR ftype = 2)",
-        "Domestic": " (ftype = 4)",
-        "Overfly": "(ftype = 3)"
+        "Commercial": "(op_type = 'S' OR op_type = 'N')",
+        "General": " (op_type = 'G')",
+        "State": "(op_type = 'M' or op_type = 'X')"
 }
 
 filter_new = {
-        "International": "(ftype = 1 OR ftype = 2)",
-        "Domestic": " (ftype = 4)",
-        "Overfly": "(ftype = 3)"
+        "Commercial": "(op_type = 'S' OR op_type = 'N')",
+        "General": " (op_type = 'G')",
+        "State": "(op_type = 'M' or op_type = 'X')"
 }
 
-# filter_old = {
-#         "Commercial": "(op_type = 'S' OR op_type = 'N' )",
-#         "Military": " (op_type = 'M')",
-#         "General": "(op_type = 'G')"
-# }
-#
-# filter_new = {
-#         "Commercial": "(op_type = 'S' OR op_type = 'N' )",
-#         "Military": " (op_type = 'M')",
-#         "General": "(op_type = 'G')"
-# }
 
+analysis = "Op_Type"
 
+dest = 'VT%'
 
-analysis = "Inter-Dom-Overfly"
-
-dest = '%'
-dep = '%'
-condition = 'OR'
-
-date_list = pd.date_range(start='2013-01-01', end='2025-02-28',freq='M')
+date_list = pd.date_range(start='2013-01-01', end='2025-01-31',freq='M')
 print(date_list)
 
 equipage_list = filter_old.keys()
@@ -123,17 +107,15 @@ with conn_postgres:
                 postgres_sql_text = f"SELECT count(*) " \
                                     f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
                                     f"WHERE {filter_old[equipage]} " \
-                                    f"and (dest like '{dest}'" \
-                                    f"{condition} dep like '{dep}')" \
-                                    f"and frule like 'I';" \
+                                    f"and dest like '{dest}'" \
+                                    f"and frule like '%';" \
                     # f"GROUP BY dest;"
             else:
                 postgres_sql_text = f"SELECT count(*) " \
                                     f"FROM {schema_name}.\"flight_{year}{month}\" " \
                                     f"WHERE {filter_new[equipage]} " \
-                                    f"and (dest like '{dest}'" \
-                                    f"{condition} dep like '{dep}')" \
-                                    f"and frule like 'I';" \
+                                    f"and dest like '{dest}'" \
+                                    f"and frule like '%';" \
                     # f"GROUP BY dest;"
 
             cursor_postgres = conn_postgres.cursor()
@@ -178,59 +160,62 @@ fig = make_subplots(specs=[[{"secondary_y": True}]])
 
 # Add traces
 fig.add_trace(
-    go.Bar(name="International",
+    go.Bar(name="Commercial",
                       x=df.index,
-                      y=df['International'],
+                      y=df['Commercial'],
                       offsetgroup=0),
     secondary_y=False,
 )
 
 fig.add_trace(
-    go.Bar(name="Domestic",
+    go.Bar(name="General",
                       x=df.index,
-                      y=df['Domestic'],
+                      y=df['General'],
                       offsetgroup=1),
     secondary_y=False,
 )
 
 fig.add_trace(
-    go.Bar(name="Overfly",
+    go.Bar(name="State",
                       x=df.index,
-                      y=df['Overfly'],
+                      y=df['State'],
                       offsetgroup=2),
     secondary_y=False,
 )
 
 fig.add_trace(
-    go.Line(name="International %",
+    go.Line(name="Commercial %",
                            x=df.index,
-                           y=(df['International']/(df['Domestic']+df['International']+df['Overfly']))*100,
+                           y=(df['Commercial']/(df['General']+df['Commercial']+df['State']))*100,
             line=dict(color="#0008FF")
                         ),
     secondary_y=True,
 )
 
 fig.add_trace(
-    go.Line(name="Domestic %",
+    go.Line(name="General %",
                            x=df.index,
-                           y=(df['Domestic']/(df['Domestic']+df['International']+df['Overfly']))*100,
+                           y=(df['General']/(df['General']+df['Commercial']+df['State']))*100,
             line=dict(color="#FF0000")
                         ),
     secondary_y=True,
 )
 
 fig.add_trace(
-    go.Line(name="Overfly %",
+    go.Line(name="State %",
                            x=df.index,
-                           y=(df['Overfly']/(df['Domestic']+df['International']+df['Overfly']))*100,
+                           y=(df['State']/(df['General']+df['Commercial']+df['State']))*100,
             line=dict(color="#008700")
                         ),
     secondary_y=True,
 )
 
+
+
+
 # Add figure title
 fig.update_layout(
-    title_text=f"Historical Monthly IFR Movements from/to {dest} by {analysis} " \
+    title_text=f"Historical Monthly IFR Movements at {dest} by {analysis} " \
                f"{date_list[0].month_name()} {date_list[0].year} to " \
                f"{date_list[-1].month_name()} {date_list[-1].year} "
 )

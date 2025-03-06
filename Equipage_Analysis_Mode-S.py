@@ -88,7 +88,7 @@ filter_new = {
 
 analysis = f"Mode-S"
 
-date_list = pd.date_range(start='2019-07-01', end='2024-09-30',freq='M')
+date_list = pd.date_range(start='2019-07-01', end='2025-02-28',freq='M')
 
 equipage_list = list(filter_old.keys())
 equipage_count_df = pd.DataFrame()
@@ -120,13 +120,13 @@ with conn_postgres:
                                     f"FROM {schema_name}.\"{year}_{month}_fdmc\" " \
                                     f"WHERE {filter_old[equipage]} " \
                                     f"and dest like '%'" \
-                                    f"and frule like 'I';"
+                                    f"and frule like '%';"
             else:
                 postgres_sql_text = f"SELECT count(*) " \
                                     f"FROM {schema_name}.\"flight_{year}{month}\" " \
                                     f"WHERE {filter_new[equipage]} " \
                                     f"and dest like '%'" \
-                                    f"and frule like 'I';"
+                                    f"and frule like '%';"
                 # f"GROUP BY dest;"
             cursor_postgres = conn_postgres.cursor()
             cursor_postgres.execute(postgres_sql_text)
@@ -189,7 +189,7 @@ fig.add_trace(
 )
 
 fig.update_layout(
-    title_text=f"Historical Monthly IFR Movements with {analysis} Capability " \
+    title_text=f"Historical Monthly IFR/VFR Movements with {analysis} Capability " \
                f"{date_list[0].month_name()} {date_list[0].year} to " \
                f"{date_list[-1].month_name()} {date_list[-1].year} "
 )

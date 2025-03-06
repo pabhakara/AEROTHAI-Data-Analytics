@@ -45,7 +45,7 @@ filter_new = {
     "Total": "(comnav like '%')"
 }
 
-date_list = pd.date_range(start='2019-07-01', end='2024-09-30', freq='M')
+date_list = pd.date_range(start='2019-07-01', end='2025-01-31', freq='M')
 
 equipage_list = list(filter_old.keys())
 equipage_count_df = pd.DataFrame()

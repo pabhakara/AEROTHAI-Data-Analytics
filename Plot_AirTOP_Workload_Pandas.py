@@ -36,7 +36,7 @@ tic()
 traffic_percentage = '100'
 
 root_path = "/Users/pongabha/Library/CloudStorage/Dropbox/Workspace/airspace analysis/AirTOP Workspace/Projects"
-scenario = f"/BKK_FIR_AIRAC-2024-10_BKK_RWY_01-02-21"
+scenario = f"/BKK_FIR_AIRAC-2024-13_BKK_RWY_19-20-21"
 
 input_filepath = f"{root_path}{scenario}" + "/report/events/changeevents/"
 
@@ -123,7 +123,7 @@ workload_df = workload_df[workload_df['Airspace'].str.contains('SECTOR_')]
 
 workload_df.rename(columns={'Airspace': 'Sector', 'Time': 'TimeStamp'}, inplace=True)
 
-start_time = pd.Timestamp(2019, 12, 26, 0, 0, 0, 0)
+start_time = pd.Timestamp(2019, 12, 25, 0, 0, 0, 0)
 
 t = start_time
 
@@ -137,7 +137,7 @@ traffic_count_df = pd.DataFrame()
 exit_count_df = pd.DataFrame()
 #
 sector_list = ['SECTOR_1N', 'SECTOR_1S', 'SECTOR_2N', 'SECTOR_2S', 'SECTOR_3N', 'SECTOR_3S',
-               'SECTOR_4N', 'SECTOR_4S', 'SECTOR_5N', 'SECTOR_5S', 'SECTOR_6N', 'SECTOR_6S']
+               'SECTOR_4N', 'SECTOR_4S', 'SECTOR_5N', 'SECTOR_5S', 'SECTOR_6N', 'SECTOR_6S',]
 #
 sector_list_df = pd.DataFrame(sector_list)
 #

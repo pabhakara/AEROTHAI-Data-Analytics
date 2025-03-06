@@ -38,7 +38,7 @@ filter = "NOT (latitude is NULL) \n" + \
          "AND ground_speed < 700 \n" \
          "AND ground_speed > 50 \n"
 #
-# date_list = pd.date_range(start='2025-01-05', end='2025-01-05')
+# date_list = pd.date_range(start='2025-02-10', end='2025-02-11')
 
 today = dt.datetime.now()
 date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
@@ -751,3 +751,11 @@ with (conn_postgres_target):
 
         p = Popen(command, shell=True, stdin=PIPE)
         p.communicate()
+
+        # command = f"pg_dump --dbname=postgres://de_old_data:de_old_data@172.16.129.241:5432/aerothai_dwh " \
+        #           f"--table=sur_air.cat062_{yyyymmdd} | psql -h " \
+        #           f"localhost -W -U postgres temp"
+        # print(command)
+        #
+        # p = Popen(command, shell=True, stdin=PIPE)
+        # p.communicate()

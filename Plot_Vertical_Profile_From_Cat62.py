@@ -21,28 +21,28 @@ def none_to_null(etd):
         x = "'" + etd + "'"
     return x
 
-# conn_postgres_source = psycopg2.connect(user="pongabhaab",
-#                                              password="pongabhaab2",
-#                                              host="172.16.129.241",
-#                                              port="5432",
-#                                              database="aerothai_dwh",
-#                                              options="-c search_path=dbo,sur_air")
-
-conn_postgres_source = psycopg2.connect(user="postgres",
-                                             password="password",
-                                             host="localhost",
+conn_postgres_source = psycopg2.connect(user="pongabhaab",
+                                             password="pongabhaab2",
+                                             host="172.16.129.241",
                                              port="5432",
-                                             database="temp",
+                                             database="aerothai_dwh",
                                              options="-c search_path=dbo,sur_air")
+#
+# conn_postgres_source = psycopg2.connect(user="postgres",
+#                                              password="password",
+#                                              host="localhost",
+#                                              port="5432",
+#                                              database="temp",
+#                                              options="-c search_path=dbo,sur_air")
 
 output_filepath = '/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Flight_Proflie_Plots/'
 files = glob.glob(f"{output_filepath}*")
 for f in files:
     os.remove(f)
 
-year = '2024'
-month = '10'
-day = '03'
+year = '2025'
+month = '02'
+day = '28'
 
 with (conn_postgres_source):
     cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -52,7 +52,7 @@ with (conn_postgres_source):
                             f"FROM sur_air.cat062_{year}{month}{day} t " \
                             f"LEFT JOIN flight_data.flight_{year}{month} f " \
                             f"ON t.flight_id = f.id " \
-                            f"WHERE (f.dep LIKE '%' AND f.dest LIKE 'VTSP') " \
+                            f"WHERE (f.dep LIKE 'VTBD%' AND f.dest LIKE '%') " \
                             f"AND f.flight_key LIKE '%' "\
                             f"AND f.frule LIKE '%' "\
                             f"ORDER BY t.flight_key ASC; "
@@ -86,7 +86,7 @@ with conn_postgres_source:
                             f"LEFT JOIN airac_current.airports a " \
                             f"ON a.airport_identifier = f.dest " \
                             f"WHERE f.flight_key = '{flight_key}' " \
-                            f"AND t.sector LIKE '%PHUKET%' " \
+                            f"AND t.sector LIKE '%BANGKOK%' " \
                             f"ORDER BY t.app_time "
 
         print(postgres_sql_text)
