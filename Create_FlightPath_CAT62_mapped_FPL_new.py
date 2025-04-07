@@ -1,524 +1,484 @@
+# cat062_etl_pipeline.py
+
 import datetime as dt
 import time
-from subprocess import PIPE, Popen
-
 import pandas as pd
 import psycopg2
 import psycopg2.extras
+from subprocess import PIPE, Popen
+import os
 
+def log_time(label):
+    now = time.time()
+    print(f"{label}: {dt.datetime.fromtimestamp(now).strftime('%Y-%m-%d %H:%M:%S')}")
+    return now
 
-def none_to_null(etd):
-    return 'null' if etd == 'None' else f"'{etd}'"
+def none_to_null(value):
+    return 'null' if value == 'None' else f"'{value}'"
 
+def connect_postgres(env: str, role: str):
+    if env == 'remote':
+        config = {
+            "user": "de_old_data",
+            "password": "de_old_data",
+            "host": "172.16.129.241",
+            "port": "5432",
+            "database": "aerothai_dwh",
+            "options": "-c search_path=dbo,public" if role == 'target' else "-c search_path=dbo,sur_air"
+        }
+    else:
+        config = {
+            "user": "postgres",
+            "password": "password",
+            "host": "127.0.0.1",
+            "port": "5432",
+            "database": "temp",
+            "options": "-c search_path=dbo,public" if role == 'target' else "-c search_path=dbo,temp"
+        }
+    try:
+        conn = psycopg2.connect(**config)
+        print(f"{role.capitalize()} DB ({env}) connected successfully.")
+        return conn
+    except psycopg2.Error as e:
+        print(f"Error connecting to {role} DB ({env}):", e)
+        return None
 
-# Create a connection to the remote PostgreSQL database
-conn_postgres_target = psycopg2.connect(
-    user="de_old_data",
-    password="de_old_data",
-    host="172.16.129.241",
-    port="5432",
-    database="aerothai_dwh",
-    options="-c search_path=dbo,public"
-)
+def prepare_date_strings(date):
+    year = f"{date.year}"
+    month = f"{date.month:02d}"
+    day = f"{date.day:02d}"
+    yyyymmdd = f"{year}{month}{day}"
+    yyyymm = f"{year}{month}"
 
-filter = (
-    "NOT (latitude is NULL) \n"
-    "AND NOT(flight_id is NULL) \n"
-    "AND NOT(geo_alt < 1) \n"
-    "AND ground_speed < 700 \n"
-    "AND ground_speed > 50 \n"
-)
+    start_day = dt.datetime.strptime(f"{year}-{month}-{day}", '%Y-%m-%d')
+    next_day = start_day + dt.timedelta(days=1)
+    previous_day = start_day - dt.timedelta(days=1)
 
-date_list = pd.date_range(start='2024-06-02', end='2024-06-02')
+    yyyymmdd_next = next_day.strftime('%Y%m%d')
+    yyyymmdd_previous = previous_day.strftime('%Y%m%d')
 
-# today = dt.datetime.now()
-# date_list = [
-#     dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d') + dt.timedelta(days=-3)
-# ]
+    return year, month, day, yyyymm, yyyymmdd, yyyymmdd_next, yyyymmdd_previous
 
-track_suffix = ""
-sur_air_suffix = ""
+def export_table_to_local(env, yyyymmdd):
+    if env == 'remote':
+        table_name = f"track.track_cat62_{yyyymmdd}"
+        print(f"🔍 Checking if remote table {table_name} exists...")
 
-with conn_postgres_target:
-    cursor_postgres_target = conn_postgres_target.cursor()
+        conn = connect_postgres(env, 'target')
+        with conn.cursor() as cur:
+            cur.execute(f"SELECT to_regclass('{table_name}');")
+            if cur.fetchone()[0] is None:
+                print(f"❌ Table {table_name} does not exist on remote.")
+                return
 
-    for date in date_list:
-        year = f"{date.year}"
-        month = f"{date.month:02d}"
-        day = f"{date.day:02d}"
-
-        yyyymmdd = f"{year}{month}{day}"
-        yyyymm = f"{year}{month}"
-
-        print(f"working on creating track_cat62_{yyyymmdd}{track_suffix}")
-
-        start_day = dt.datetime.strptime(f"{year}-{month}-{day}", '%Y-%m-%d')
-        next_day = start_day + dt.timedelta(days=1)
-        previous_day = start_day + dt.timedelta(days=-1)
-
-        yyyymm_next = f"{next_day.year:02d}{next_day.month:02d}"
-        yyyymm_previous = f"{previous_day.year:02d}{previous_day.month:02d}"
-
-        yyyymmdd_next = f"{next_day.year:02d}{next_day.month:02d}{next_day.day:02d}"
-        yyyymmdd_previous = f"{previous_day.year:02d}{previous_day.month:02d}{previous_day.day:02d}"
-
-        # Create an SQL query to create a new table for radar tracks in the target PostgreSQL database
-        postgres_sql_text = (
-            f"DROP TABLE IF EXISTS track_{yyyymmdd}{track_suffix}_temp; \n"
-            f"CREATE TABLE track_{yyyymmdd}{track_suffix}_temp ("
-            "acid character varying, "
-            "track_no integer, "
-            "geom geometry, "
-            "start_time timestamp without time zone, "
-            "end_time timestamp without time zone, "
-            "icao_24bit_dap character varying, "
-            "mode_a_code character varying, "
-            "dep character varying, "
-            "dest character varying, "
-            "flight_id integer, "
-            "flight_key character varying) "
-            "WITH (OIDS=FALSE);"
-        )
-
-        cursor_postgres_target.execute(postgres_sql_text)
-        conn_postgres_target.commit()
-
-        # Create a connection to the schema in the remote PostgreSQL database
-        conn_postgres_source = psycopg2.connect(
-            user="de_old_data",
-            password="de_old_data",
-            host="172.16.129.241",
-            port="5432",
-            database="aerothai_dwh",
-            options="-c search_path=dbo,sur_air"
-        )
-
-        with conn_postgres_source:
-            cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
-            # Create an SQL query that selects surveillance targets from the source PostgreSQL database
-            postgres_sql_text = (
-                f"SELECT * FROM ("
-                f"SELECT track_no, time_of_track, icao_24bit_dap, mode_a_code, acid, acid_dap, dep, dest, flight_key, "
-                f"flight_id, latitude, longitude, geo_alt "
-                f"FROM sur_air.cat062_{yyyymmdd}{sur_air_suffix} "
-                f"WHERE NOT (latitude is NULL) "
-                f"AND NOT(flight_id is NULL) "
-                f"AND NOT(geo_alt < 1) "
-                f"AND ground_speed < 700 "
-                f"AND ground_speed > 50 "
-                f"AND flight_key LIKE '%{year}-{month}-{day}%' "
-                f"UNION "
-                f"SELECT track_no, time_of_track, icao_24bit_dap, mode_a_code, acid, acid_dap, dep, dest, flight_key, "
-                f"flight_id, latitude, longitude, geo_alt "
-                f"FROM sur_air.cat062_{yyyymmdd_next}{sur_air_suffix} "
-                f"WHERE NOT (latitude is NULL) "
-                f"AND NOT(flight_id is NULL) "
-                f"AND NOT(geo_alt < 1) "
-                f"AND ground_speed < 700 "
-                f"AND ground_speed > 50 "
-                f"AND flight_key LIKE '%{year}-{month}-{day}%') a "
-                f"ORDER BY flight_key, time_of_track ASC;"
-            )
-
-            cursor_postgres_source.execute(postgres_sql_text)
-            record = cursor_postgres_source.fetchall()
-
-            num_of_records = len(record)
-            k = 0
-
-            while k < num_of_records - 1:
-                temp_1 = record[k]
-                temp_2 = record[k + 1]
-
-                acid = none_to_null(str(temp_1['acid']))
-                app_time = str(temp_1['time_of_track'])
-                dep = none_to_null(str(temp_1['dep']))
-                dest = none_to_null(str(temp_1['dest']))
-                flight_key = none_to_null(str(temp_1['flight_key']))
-                flight_id = none_to_null(str(temp_1['flight_id']))
-                track_no = none_to_null(str(temp_1['track_no']))
-                icao_24bit_dap = none_to_null(str(temp_1['icao_24bit_dap']))
-                mode_a_code = none_to_null(str(temp_1['mode_a_code']))
-                geo_alt = none_to_null(str(temp_1['geo_alt']))
-
-                latitude_1 = str(float(temp_1['latitude']))
-                longitude_1 = str(float(temp_1['longitude']))
-                geo_alt_1 = str(temp_1['geo_alt'])
-                app_time_1 = str(temp_1['time_of_track'])
-
-                latitude_2 = str(float(temp_2['latitude']))
-                longitude_2 = str(float(temp_2['longitude']))
-                geo_alt_2 = str(temp_2['geo_alt'])
-                app_time_2 = str(temp_2['time_of_track'])
-
-                postgres_sql_text = (
-                    f"INSERT INTO track_{yyyymmdd}{track_suffix}_temp (acid, track_no, icao_24bit_dap, mode_a_code, "
-                    f"start_time, dep, dest, flight_key, flight_id, geom, end_time) "
-                    f"VALUES ({acid}, {track_no}, {icao_24bit_dap}, {mode_a_code}, '{app_time}', {dep}, {dest}, "
-                    f"{flight_key}, {flight_id}, ST_LineFromText('LINESTRING("
-                )
-
-                while (temp_1['track_no'] == temp_2['track_no'] and
-                       abs(temp_2['longitude'] - temp_1['longitude']) < 1 and
-                       abs(temp_2['latitude'] - temp_1['latitude']) < 1 and
-                       (temp_2['time_of_track'] - temp_1['time_of_track']) <= dt.timedelta(minutes=1)):
-                    postgres_sql_text += f"{longitude_1} {latitude_1} {geo_alt_1},"
-                    k += 1
-                    if k == num_of_records - 1:
-                        break
-                    temp_1 = record[k]
-                    latitude_1 = str(float(temp_1['latitude']))
-                    longitude_1 = str(float(temp_1['longitude']))
-                    geo_alt_1 = str(temp_1['geo_alt'])
-                    app_time_1 = str(temp_1['time_of_track'])
-                    temp_2 = record[k + 1]
-
-                postgres_sql_text += f"{longitude_1} {latitude_1} {geo_alt_1},"
-                postgres_sql_text += (
-                    f"{longitude_1} {latitude_1} {geo_alt_1})',4326),'"
-                    f"{app_time_1}')"
-                )
-
-                cursor_postgres_target.execute(postgres_sql_text)
-                conn_postgres_target.commit()
-                print(f'track_{yyyymmdd} {((k / num_of_records) * 100):.3f}% Completed')
-
-                if num_of_records - k <= 2:
-                    # Calculate track duration and track distance at the end
-                    postgres_sql_text = (
-                        f"DROP TABLE IF EXISTS track_{yyyymmdd}{track_suffix}_temp_length; \n"
-                        "SELECT *, end_time-start_time as track_duration, "
-                        "ST_LengthSpheroid(geom, 'SPHEROID[\"WGS 84\",6378137,298.257223563]') / 1852 as track_length "
-                        f"INTO track_{yyyymmdd}{track_suffix}_temp_length from track_{yyyymmdd}{track_suffix}_temp; "
-                        f"DROP TABLE IF EXISTS track_{yyyymmdd}{track_suffix}_temp; "
-                        f"ALTER TABLE track_{yyyymmdd}{track_suffix}_temp_length RENAME TO track_{yyyymmdd}{track_suffix}_temp;"
-                    )
-
-                    cursor_postgres_target.execute(postgres_sql_text)
-                    conn_postgres_target.commit()
-                    break
-
-                k += 1
-
-        postgres_sql_text = (
-            f"DROP TABLE IF EXISTS track.track_{yyyymmdd}{track_suffix}_temp;\n"
-            f"ALTER TABLE public.track_{yyyymmdd}{track_suffix}_temp SET SCHEMA track;"
-        )
-        cursor_postgres_target.execute(postgres_sql_text)
-        conn_postgres_target.commit()
-
-        postgres_sql_text = (
-            f"DROP TABLE IF EXISTS track.track_cat62_{yyyymmdd}{track_suffix}; \n"
-            f"SELECT track.track_{yyyymmdd}{track_suffix}_temp.geom, track.track_{yyyymmdd}{track_suffix}_temp.start_time, "
-            f"track.track_{yyyymmdd}{track_suffix}_temp.end_time, track.track_{yyyymmdd}{track_suffix}_temp.track_duration, "
-            f"track.track_{yyyymmdd}{track_suffix}_temp.track_length, flight_data.flight_{yyyymm}.* "
-            f"INTO track.track_cat62_{yyyymmdd}{track_suffix} "
-            f"FROM track.track_{yyyymmdd}{track_suffix}_temp "
-            f"LEFT JOIN flight_data.flight_{yyyymm} ON "
-            f"track.track_{yyyymmdd}{track_suffix}_temp.flight_key = flight_data.flight_{yyyymm}.flight_key;"
-        )
-
-        cursor_postgres_target.execute(postgres_sql_text)
-        conn_postgres_target.commit()
-
-        postgres_sql_text = (
-            f"DROP TABLE IF EXISTS track.track_{yyyymmdd}{track_suffix}_temp; "
-            f"GRANT SELECT ON ALL TABLES IN SCHEMA track TO public;"
-        )
-        cursor_postgres_target.execute(postgres_sql_text)
-        conn_postgres_target.commit()
-
-        # Add dest_rwy to the tracks
-        print(f"working on adding arrival runway to {yyyymmdd} tracks")
-
-        postgres_sql_text = (
-            f"ALTER TABLE track.track_cat62_{yyyymmdd}{track_suffix} \n"
-            f"DROP COLUMN IF EXISTS dest_rwy;\n"
-            f"ALTER TABLE track.track_cat62_{yyyymmdd}{track_suffix} \n"
-            f"ADD COLUMN dest_rwy character varying(3) DEFAULT '-';\n"
-        )
-        cursor_postgres_target.execute(postgres_sql_text)
-        conn_postgres_target.commit()
-
-        postgres_sql_text = (
-            f"UPDATE track.track_cat62_{yyyymmdd}{track_suffix} t\n"
-            f"SET dest_rwy = f.dest_rwy\n"
-            f"FROM\n"
-            f"(SELECT flight_key, dest_rwy\n"
-            f"FROM\n"
-            f"(SELECT flight_key, dest, dest_rwy, max(count)\n"
-            f"FROM\n"
-            f"(SELECT flight_key, dest, right(procedure_identifier, 2) as dest_rwy, COUNT(*)\n"
-            f"FROM\n"
-            f"(SELECT t.flight_key, t.position, t.vert, f.dest, b.airport_identifier, b.procedure_identifier\n"
-            f"FROM sur_air.cat062_{yyyymmdd}{sur_air_suffix} t, \n"
-            f"flight_data.flight_{yyyymm} f, \n"
-            f"temp.vt_finalpath_buffer b\n"
-            f"WHERE t.flight_id = f.id\n"
-            f"AND (f.dest LIKE 'VT%')\n"
-            f"AND ST_INTERSECTS(t.position, b.final_buffer)\n"
-            f"UNION\n"
-            f"SELECT t.flight_key, t.position, t.vert, f.dest, b.airport_identifier, b.procedure_identifier\n"
-            f"FROM sur_air.cat062_{yyyymmdd_next}{sur_air_suffix} t, \n"
-            f"flight_data.flight_{yyyymm} f, \n"
-            f"temp.vt_finalpath_buffer b\n"
-            f"WHERE t.flight_id = f.id\n"
-            f"AND (f.dest LIKE 'VT%')\n"
-            f"AND ST_INTERSECTS(t.position, b.final_buffer)\n"
-            f") a\n"
-            f"WHERE dest = airport_identifier AND vert = 2\n"
-            f"AND length(procedure_identifier) = 3\n"
-            f"GROUP BY flight_key, dest, procedure_identifier\n"
-            f"UNION\n"
-            f"SELECT flight_key, dest, right(procedure_identifier, 3) as dest_rwy, COUNT(*)\n"
-            f"FROM\n"
-            f"(SELECT t.flight_key, t.position, t.vert, f.dest, b.airport_identifier, b.procedure_identifier\n"
-            f"FROM sur_air.cat062_{yyyymmdd}{sur_air_suffix} t, \n"
-            f"flight_data.flight_{yyyymm} f, \n"
-            f"temp.vt_finalpath_buffer b\n"
-            f"WHERE t.flight_id = f.id\n"
-            f"AND (f.dest LIKE 'VT%')\n"
-            f"AND ST_INTERSECTS(t.position, b.final_buffer)\n"
-            f"UNION\n"
-            f"SELECT t.flight_key, t.position, t.vert, f.dest, b.airport_identifier, b.procedure_identifier\n"
-            f"FROM sur_air.cat062_{yyyymmdd_next}{sur_air_suffix} t, \n"
-            f"flight_data.flight_{yyyymm} f, \n"
-            f"temp.vt_finalpath_buffer b\n"
-            f"WHERE t.flight_id = f.id\n"
-            f"AND (f.dest LIKE 'VT%')\n"
-            f"AND ST_INTERSECTS(t.position, b.final_buffer)\n"
-            f") a\n"
-            f"WHERE dest = airport_identifier AND vert = 2\n"
-            f"AND length(procedure_identifier) = 4\n"
-            f"GROUP BY flight_key, dest, procedure_identifier) a\n"
-            f"GROUP BY flight_key, dest, dest_rwy) b\n"
-            f") f\n"
-            f"WHERE t.flight_key = f.flight_key;\n"
-        )
-        cursor_postgres_target.execute(postgres_sql_text)
-        conn_postgres_target.commit()
-
-        # Add dep_rwy to the tracks
-        print(f"working on adding departure runway to {yyyymmdd} tracks")
-
-        postgres_sql_text = (
-            f"ALTER TABLE track.track_cat62_{yyyymmdd}{track_suffix} \n"
-            f"DROP COLUMN IF EXISTS dep_rwy;\n"
-            f"ALTER TABLE track.track_cat62_{yyyymmdd}{track_suffix} \n"
-            f"ADD COLUMN dep_rwy character varying(3) DEFAULT '-';\n"
-        )
-        cursor_postgres_target.execute(postgres_sql_text)
-        conn_postgres_target.commit()
-
-        postgres_sql_text = (
-            f"UPDATE track.track_cat62_{yyyymmdd}{track_suffix} t\n"
-            f"SET dep_rwy = f.dep_rwy\n"
-            f"FROM\n"
-            f"(SELECT flight_key, dep_rwy\n"
-            f"FROM\n"
-            f"(SELECT flight_key, dep, dep_rwy, max(count)\n"
-            f"FROM\n"
-            f"(SELECT flight_key, dep, right(runway_identifier, 2) as dep_rwy, COUNT(*)\n"
-            f"FROM\n"
-            f"(SELECT t.flight_key, t.position, t.vert, f.dep, b.airport_identifier, b.runway_identifier\n"
-            f"FROM sur_air.cat062_{yyyymmdd}{sur_air_suffix} t, \n"
-            f"flight_data.flight_{yyyymm} f, \n"
-            f"temp.vt_dep_buffer b\n"
-            f"WHERE t.flight_id = f.id\n"
-            f"AND (f.dep LIKE 'VT%')\n"
-            f"AND ST_INTERSECTS(t.position, b.buffer)\n"
-            f") a\n"
-            f"WHERE dep = airport_identifier AND vert = 1\n"
-            f"AND length(runway_identifier) = 4\n"
-            f"GROUP BY flight_key, dep, runway_identifier\n"
-            f"UNION\n"
-            f"SELECT flight_key, dep, right(runway_identifier, 3) as dep_rwy, COUNT(*)\n"
-            f"FROM\n"
-            f"(SELECT t.flight_key, t.position, t.vert, f.dep, b.airport_identifier, b.runway_identifier\n"
-            f"FROM sur_air.cat062_{yyyymmdd}{sur_air_suffix} t, \n"
-            f"flight_data.flight_{yyyymm} f, \n"
-            f"temp.vt_dep_buffer b\n"
-            f"WHERE t.flight_id = f.id\n"
-            f"AND (f.dep LIKE 'VT%')\n"
-            f"AND ST_INTERSECTS(t.position, b.buffer)\n"
-            f") a\n"
-            f"WHERE dep = airport_identifier AND vert = 1\n"
-            f"AND length(runway_identifier) = 5\n"
-            f"GROUP BY flight_key, dep, runway_identifier) a\n"
-            f"GROUP BY flight_key, dep, dep_rwy) b\n"
-            f") f\n"
-            f"WHERE t.flight_key = f.flight_key;\n"
-        )
-        cursor_postgres_target.execute(postgres_sql_text)
-        conn_postgres_target.commit()
-
-        # Create entry_maintain_exit_fl table
-        cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        postgres_sql_text = (
-            f"DROP TABLE IF EXISTS track.entry_maintain_exit_fl_{yyyymmdd}; \n"
-            f"CREATE TABLE track.entry_maintain_exit_fl_{yyyymmdd} ("
-            "flight_key character varying, "
-            "entry_fl double precision, "
-            "maintain_fl double precision, "
-            "exit_fl double precision) "
-            "WITH (OIDS=FALSE);"
-        )
-        cursor_postgres_target.execute(postgres_sql_text)
-        conn_postgres_target.commit()
-
-        postgres_sql_text = (
-            f"SELECT flight_key "
-            f"FROM flight_data.flight_{yyyymm} "
-            f"WHERE flight_key LIKE '%{year}-{month}-{day}%' "
-            f"AND (mapped -> 'TopSky-ATC-MK-CAT062')::integer = 1 "
-            f"ORDER BY flight_key ASC;"
-        )
-
-        cursor_postgres_source.execute(postgres_sql_text)
-        flight_key_list = cursor_postgres_source.fetchall()
-        print(flight_key_list)
-
-        k = 0
-        num_of_records = len(flight_key_list)
-
-        for flight_key in flight_key_list:
-            postgres_sql_text = (
-                f"SELECT flight_key, measured_fl as entry_fl "
-                f"FROM (SELECT * "
-                f"FROM sur_air.cat062_{yyyymmdd}{sur_air_suffix} "
-                f"UNION "
-                f"SELECT * "
-                f"FROM sur_air.cat062_{yyyymmdd_next}{sur_air_suffix}) x "
-                f"WHERE flight_key = '{flight_key[0]}' "
-                f"AND NOT sector IS NULL "
-                f"ORDER BY app_time ASC "
-                f"LIMIT 1"
-            )
-            cursor_postgres_source.execute(postgres_sql_text)
-            record_1 = cursor_postgres_source.fetchall()
-
-            postgres_sql_text = (
-                f"SELECT flight_key, measured_fl as exit_fl "
-                f"FROM (SELECT * "
-                f"FROM sur_air.cat062_{yyyymmdd}{sur_air_suffix} "
-                f"UNION "
-                f"SELECT * "
-                f"FROM sur_air.cat062_{yyyymmdd_next}{sur_air_suffix}) x "
-                f"WHERE flight_key = '{flight_key[0]}' "
-                f"AND NOT sector IS NULL "
-                f"ORDER BY app_time DESC "
-                f"LIMIT 1"
-            )
-            cursor_postgres_source.execute(postgres_sql_text)
-            record_2 = cursor_postgres_source.fetchall()
-
-            if record_1:
-                temp_1 = record_1[0]
-                temp_2 = record_2[0]
-
-                entry_fl = none_to_null(str(temp_1['entry_fl']))
-                exit_fl = none_to_null(str(temp_2['exit_fl']))
-
-                postgres_sql_text = (
-                    f"INSERT INTO track.entry_maintain_exit_fl_{yyyymmdd} ("
-                    f"flight_key, entry_fl, exit_fl) "
-                    f"VALUES ('{flight_key[0]}', {entry_fl}, {exit_fl});"
-                )
-
-                cursor_postgres_target.execute(postgres_sql_text)
-                conn_postgres_target.commit()
-
-                print(f'entry_maintain_exit_fl_{yyyymmdd} {((k / num_of_records) * 100):.3f}% Completed')
-
-                k += 1
-
-        # Add maintain_fl to the tracks
-        cursor_postgres_source = conn_postgres_source.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
-        postgres_sql_text = (
-            f"SELECT flight_key "
-            f"FROM flight_data.flight_{yyyymm} "
-            f"WHERE flight_key LIKE '%{year}-{month}-{day}%' "
-            f"AND (mapped -> 'TopSky-ATC-MK-CAT062')::integer = 1 "
-            f"ORDER BY flight_key ASC;"
-        )
-        cursor_postgres_source.execute(postgres_sql_text)
-        flight_key_list = cursor_postgres_source.fetchall()
-
-        k = 0
-        num_of_records = len(flight_key_list)
-
-        postgres_sql_text = (
-            f"UPDATE track.entry_maintain_exit_fl_{yyyymmdd} t\n"
-            f"SET maintain_fl = f.maintain_fl\n"
-            f"FROM\n"
-            f"(SELECT x.flight_key, x.measured_fl as maintain_fl\n"
-            f"FROM\n"
-            f"(SELECT flight_key, measured_fl, COUNT(*)\n"
-            f"FROM\n"
-            f"(SELECT app_time, flight_key, measured_fl\n"
-            f"FROM sur_air.cat062_{yyyymmdd_next}{sur_air_suffix}\n"
-            f"WHERE vert = 0 AND flight_key LIKE '%{year}-{month}-{day}%'\n"
-            f"AND measured_fl > 100 AND NOT sector IS NULL\n"
-            f"UNION\n"
-            f"SELECT app_time, flight_key, measured_fl\n"
-            f"FROM sur_air.cat062_{yyyymmdd}{sur_air_suffix}\n"
-            f"WHERE vert = 0 AND flight_key LIKE '%{year}-{month}-{day}%'\n"
-            f"AND measured_fl > 100 AND NOT sector IS NULL) a\n"
-            f"GROUP BY flight_key, measured_fl) x,\n"
-            f"(SELECT flight_key, max(count)\n"
-            f"FROM\n"
-            f"(SELECT flight_key, measured_fl, COUNT(*)\n"
-            f"FROM\n"
-            f"(SELECT app_time, flight_key, measured_fl\n"
-            f"FROM sur_air.cat062_{yyyymmdd_next}{sur_air_suffix}\n"
-            f"WHERE vert = 0 AND flight_key LIKE '%{year}-{month}-{day}%'\n"
-            f"AND measured_fl > 100 AND NOT sector IS NULL\n"
-            f"UNION\n"
-            f"SELECT app_time, flight_key, measured_fl\n"
-            f"FROM sur_air.cat062_{yyyymmdd}{sur_air_suffix}\n"
-            f"WHERE vert = 0 AND flight_key LIKE '%{year}-{month}-{day}%'\n"
-            f"AND measured_fl > 100 AND NOT sector IS NULL) a\n"
-            f"GROUP BY flight_key, measured_fl\n"
-            f"ORDER BY flight_key, count DESC) x\n"
-            f"GROUP BY flight_key) y\n"
-            f"WHERE x.flight_key = y.flight_key AND x.count = y.max\n"
-            f"AND x.count > 12 * 1\n"
-            f"ORDER BY flight_key) f\n"
-            f"WHERE t.flight_key = f.flight_key\n"
-        )
-        cursor_postgres_target.execute(postgres_sql_text)
-        conn_postgres_target.commit()
-
-        postgres_sql_text = (
-            f"ALTER TABLE track.track_cat62_{yyyymmdd}{track_suffix}\n"
-            f"ADD COLUMN IF NOT EXISTS entry_fl double precision;\n"
-            f"ALTER TABLE track.track_cat62_{yyyymmdd}{track_suffix}\n"
-            f"ADD COLUMN IF NOT EXISTS maintain_fl double precision;\n"
-            f"ALTER TABLE track.track_cat62_{yyyymmdd}{track_suffix}\n"
-            f"ADD COLUMN IF NOT EXISTS exit_fl double precision;\n"
-            f"UPDATE track.track_cat62_{yyyymmdd}{track_suffix} t\n"
-            f"SET entry_fl = f.entry_fl FROM (SELECT * FROM track.entry_maintain_exit_fl_{yyyymmdd}) f\n"
-            f"WHERE t.flight_key = f.flight_key;\n"
-            f"UPDATE track.track_cat62_{yyyymmdd}{track_suffix} t\n"
-            f"SET maintain_fl = f.maintain_fl FROM (SELECT * FROM track.entry_maintain_exit_fl_{yyyymmdd}) f\n"
-            f"WHERE t.flight_key = f.flight_key;\n"
-            f"UPDATE track.track_cat62_{yyyymmdd}{track_suffix} t\n"
-            f"SET exit_fl = f.exit_fl FROM (SELECT * FROM track.entry_maintain_exit_fl_{yyyymmdd}) f\n"
-            f"WHERE t.flight_key = f.flight_key;"
-        )
-        cursor_postgres_target.execute(postgres_sql_text)
-        conn_postgres_target.commit()
-
-        postgres_sql_text = f"DROP TABLE track.entry_maintain_exit_fl_{yyyymmdd};"
-        cursor_postgres_target.execute(postgres_sql_text)
-        conn_postgres_target.commit()
-
-        command = (
-            f"pg_dump --dbname=postgres://de_old_data:de_old_data@172.16.129.241:5432/aerothai_dwh "
-            f"--table=track.track_cat62_{yyyymmdd} | psql -h localhost -W -U postgres temp"
-        )
-        print(command)
+        command = f"pg_dump --schema=track --table={table_name} --dbname=postgres://de_old_data:de_old_data@172.16.129.241:5432/aerothai_dwh " \
+                  f"| psql -h localhost -W -U postgres temp"
+        print(f"📤 Dumping {table_name} from remote to local...")
         p = Popen(command, shell=True, stdin=PIPE)
         p.communicate()
+
+
+def create_track_table(cursor, yyyymmdd, suffix=""):
+    sql = f"""
+        DROP TABLE IF EXISTS track.track_{yyyymmdd}{suffix}_temp;
+        CREATE TABLE track.track_{yyyymmdd}{suffix}_temp (
+            acid character varying,
+            track_no integer,
+            geom geometry,
+            start_time timestamp without time zone,
+            end_time timestamp without time zone,
+            icao_24bit_dap character varying,
+            mode_a_code character varying,
+            dep character varying,
+            dest character varying,
+            flight_id integer,
+            flight_key character varying
+        ) WITH (OIDS=FALSE);
+    """
+    cursor.execute(sql)
+
+def insert_linestrings(cursor, linestrings, yyyymmdd, suffix=""):
+    for entry in linestrings:
+        sql = f"""
+            INSERT INTO track.track_{yyyymmdd}{suffix}_temp (
+                acid, track_no, icao_24bit_dap, mode_a_code, start_time,
+                dep, dest, flight_key, flight_id, geom, end_time
+            ) VALUES (
+                %(acid)s, %(track_no)s, %(icao_24bit_dap)s, %(mode_a_code)s, %(start_time)s,
+                %(dep)s, %(dest)s, %(flight_key)s, %(flight_id)s,
+                ST_LineFromText(%(geom_wkt)s, 4326), %(end_time)s
+            );
+        """
+        cursor.execute(sql, entry)
+
+def extract_cat062_records(cursor, yyyymmdd, yyyymmdd_next, year, month, day, suffix=""):
+    sql = f"""
+        SELECT *
+        FROM (
+            SELECT track_no, time_of_track, icao_24bit_dap, mode_a_code, acid, acid_dap,
+                   dep, dest, flight_key, flight_id, latitude, longitude, geo_alt
+            FROM sur_air.cat062_{yyyymmdd}{suffix}
+            WHERE latitude IS NOT NULL AND flight_id IS NOT NULL
+              AND geo_alt >= 1 AND ground_speed BETWEEN 50 AND 700
+              AND flight_key LIKE '%{year}-{month}-{day}%'
+
+            UNION ALL
+
+            SELECT track_no, time_of_track, icao_24bit_dap, mode_a_code, acid, acid_dap,
+                   dep, dest, flight_key, flight_id, latitude, longitude, geo_alt
+            FROM sur_air.cat062_{yyyymmdd_next}{suffix}
+            WHERE latitude IS NOT NULL AND flight_id IS NOT NULL
+              AND geo_alt >= 1 AND ground_speed BETWEEN 50 AND 700
+              AND flight_key LIKE '%{year}-{month}-{day}%'
+        ) a
+        ORDER BY flight_key, time_of_track ASC;
+    """
+    cursor.execute(sql)
+    return cursor.fetchall()
+
+import datetime as dt
+
+def is_valid_pair(rec1, rec2):
+    return (
+        rec1['track_no'] == rec2['track_no'] and
+        abs(rec2['longitude'] - rec1['longitude']) < 1 and
+        abs(rec2['latitude'] - rec1['latitude']) < 1 and
+        (rec2['time_of_track'] - rec1['time_of_track']) <= dt.timedelta(minutes=1)
+    )
+
+def format_point(rec):
+    lon = float(rec['longitude'])
+    lat = float(rec['latitude'])
+    alt = float(rec['geo_alt']) if rec['geo_alt'] is not None else -1
+    return f"{lon} {lat} {alt}"
+
+import math
+
+def compute_bearing(p1, p2):
+    """Compute the bearing (degrees) from p1 to p2."""
+    lon1, lat1 = math.radians(p1['longitude']), math.radians(p1['latitude'])
+    lon2, lat2 = math.radians(p2['longitude']), math.radians(p2['latitude'])
+    dlon = lon2 - lon1
+    x = math.sin(dlon) * math.cos(lat2)
+    y = math.cos(lat1)*math.sin(lat2) - math.sin(lat1)*math.cos(lat2)*math.cos(dlon)
+    return (math.degrees(math.atan2(x, y)) + 360) % 360
+
+def should_skip_point(prev, curr, next_rec, heading_threshold=1, alt_threshold=50):
+    """Return True if the current point can be skipped based on similar heading and altitude."""
+    if not next_rec:
+        return False
+
+    prev_heading = compute_bearing(prev, curr)
+    next_heading = compute_bearing(curr, next_rec)
+
+    heading_diff = abs(prev_heading - next_heading)
+    if heading_diff > 180:
+        heading_diff = 360 - heading_diff
+
+    alt_diff = abs(float(curr['geo_alt'] or -1) - float(prev['geo_alt'] or -1))
+    next_alt_diff = abs(float(next_rec['geo_alt'] or -1) - float(curr['geo_alt'] or -1))
+
+    return heading_diff < heading_threshold and alt_diff < alt_threshold and next_alt_diff < alt_threshold
+
+def build_linestring_segment(track_records):
+    """Construct a 3D LINESTRING WKT from a simplified sequence of track records and count skipped points."""
+    simplified = []
+    skipped_count = 0
+
+    for i in range(len(track_records)):
+        prev = track_records[i - 1] if i > 0 else None
+        curr = track_records[i]
+        next_rec = track_records[i + 1] if i < len(track_records) - 1 else None
+
+        if prev and next_rec and should_skip_point(prev, curr, next_rec):
+            skipped_count += 1
+            continue
+
+        simplified.append(format_point(curr))
+
+    if len(simplified) == 1:
+        simplified.append(simplified[0])
+
+    return f"LINESTRING({','.join(simplified)})", skipped_count
+
+
+def build_linestring_geometry(records, yyyymmdd, suffix=""):
+    linestrings = []
+    total_skipped = 0
+    k = 0
+    n = len(records)
+
+    while k < n - 1:
+        rec_start = records[k]
+        rec_next = records[k + 1]
+
+        if not is_valid_pair(rec_start, rec_next):
+            k += 1
+            continue
+
+        segment = [rec_start]
+        start_time = rec_start['time_of_track']
+
+        while (
+            k < n - 1 and
+            records[k]['track_no'] == records[k + 1]['track_no'] and
+            is_valid_pair(records[k], records[k + 1])
+        ):
+            segment.append(records[k + 1])
+            k += 1
+
+        end_time = segment[-1]['time_of_track']
+        linestring_wkt, skipped = build_linestring_segment(segment)
+        total_skipped += skipped
+
+        entry = {
+            'acid': segment[-1].get('acid'),
+            'track_no': segment[-1]['track_no'],
+            'icao_24bit_dap': segment[-1].get('icao_24bit_dap'),
+            'mode_a_code': segment[-1].get('mode_a_code'),
+            'start_time': start_time,
+            'end_time': end_time,
+            'dep': segment[-1].get('dep'),
+            'dest': segment[-1].get('dest'),
+            'flight_key': segment[-1].get('flight_key'),
+            'flight_id': segment[-1].get('flight_id'),
+            'geom_wkt': linestring_wkt
+        }
+
+        linestrings.append(entry)
+        k += 1
+
+    print(f"Total skipped points: {total_skipped}")
+    return linestrings
+
+
+def enrich_with_flight_data(cursor, yyyymm, yyyymmdd, suffix=""):
+    sql = f"""
+        DROP TABLE IF EXISTS track.track_cat62_{yyyymmdd}{suffix};
+        SELECT 
+            temp.geom, temp.start_time, temp.end_time,
+            temp.end_time - temp.start_time AS track_duration,
+            ST_LengthSpheroid(temp.geom, 'SPHEROID["WGS 84",6378137,298.257223563]') / 1852 AS track_length,
+            f.*
+        INTO track.track_cat62_{yyyymmdd}{suffix}
+        FROM track.track_{yyyymmdd}{suffix}_temp temp
+        LEFT JOIN flight_data.flight_{yyyymm} f
+        ON temp.flight_key = f.flight_key;
+
+        DROP TABLE IF EXISTS track.track_{yyyymmdd}{suffix}_temp;
+        GRANT SELECT ON track.track_cat62_{yyyymmdd}{suffix} TO public;
+    """
+    cursor.execute(sql)
+def add_runway_columns(cursor, yyyymmdd, suffix=""):
+    sql = f"""
+        ALTER TABLE track.track_cat62_{yyyymmdd}{suffix} 
+        ADD COLUMN IF NOT EXISTS dep_rwy character varying(3) DEFAULT '-';
+
+        ALTER TABLE track.track_cat62_{yyyymmdd}{suffix} 
+        ADD COLUMN IF NOT EXISTS dest_rwy character varying(3) DEFAULT '-';
+    """
+    cursor.execute(sql)
+
+def assign_arrival_runways(cursor, yyyymmdd, yyyymmdd_next, yyyymm, suffix=""):
+    sql = f"""
+        WITH all_cat062 AS (
+            SELECT * FROM sur_air.cat062_{yyyymmdd}
+            UNION ALL
+            SELECT * FROM sur_air.cat062_{yyyymmdd_next}
+        ),
+        arr_candidates AS (
+            SELECT t.flight_key,
+                   CASE
+                       WHEN LENGTH(b.procedure_identifier) = 4 THEN RIGHT(b.procedure_identifier, 3)
+                       WHEN LENGTH(b.procedure_identifier) = 5 THEN RIGHT(LEFT(b.procedure_identifier, 3), 2)
+                       ELSE RIGHT(b.procedure_identifier, 2)
+                   END AS dest_rwy,
+                   COUNT(*) AS cnt
+            FROM all_cat062 t
+            JOIN flight_data.flight_{yyyymm} f ON t.flight_id = f.id
+            JOIN temp.vt_finalpath_buffer b ON ST_Intersects(t.position, b.final_buffer)
+            WHERE f.dest = b.airport_identifier AND t.vert = 2 AND f.dest LIKE 'VT%'
+            GROUP BY t.flight_key, b.procedure_identifier
+        ),
+        arr_selected AS (
+            SELECT DISTINCT ON (flight_key) flight_key, dest_rwy
+            FROM arr_candidates
+            ORDER BY flight_key, cnt DESC
+        )
+        UPDATE track.track_cat62_{yyyymmdd}{suffix} t
+        SET dest_rwy = a.dest_rwy
+        FROM arr_selected a
+        WHERE t.flight_key = a.flight_key;
+    """
+    cursor.execute(sql)
+
+def assign_departure_runways(cursor, yyyymmdd, yyyymm, suffix=""):
+    sql = f"""
+        WITH dep_candidates AS (
+            SELECT t.flight_key,
+                   CASE 
+                       WHEN LENGTH(b.runway_identifier) = 4 THEN RIGHT(b.runway_identifier, 2)
+                       ELSE RIGHT(b.runway_identifier, 3)
+                   END AS dep_rwy,
+                   COUNT(*) AS cnt
+            FROM sur_air.cat062_{yyyymmdd}{suffix} t
+            JOIN flight_data.flight_{yyyymm} f ON t.flight_id = f.id
+            JOIN temp.vt_dep_buffer b ON ST_Intersects(t.position, b.buffer)
+            WHERE f.dep = b.airport_identifier AND t.vert = 1 AND f.dep LIKE 'VT%'
+            GROUP BY t.flight_key, b.runway_identifier
+        ),
+        dep_selected AS (
+            SELECT DISTINCT ON (flight_key) flight_key, dep_rwy
+            FROM dep_candidates
+            ORDER BY flight_key, cnt DESC
+        )
+        UPDATE track.track_cat62_{yyyymmdd}{suffix} t
+        SET dep_rwy = d.dep_rwy
+        FROM dep_selected d
+        WHERE t.flight_key = d.flight_key;
+    """
+    cursor.execute(sql)
+def assign_runways(cursor, yyyymmdd, yyyymm, yyyymmdd_next, suffix=""):
+    print(f"Assigning runways for {yyyymmdd}.")
+
+    add_runway_columns(cursor, yyyymmdd, suffix)
+    assign_arrival_runways(cursor, yyyymmdd, yyyymmdd_next, yyyymm, suffix)
+    assign_departure_runways(cursor, yyyymmdd, yyyymm, suffix)
+
+    print(f"Runway assignment completed for {yyyymmdd}.")
+
+def add_flight_level_columns(cursor, yyyymmdd, suffix=""):
+    sql = f"""
+        ALTER TABLE track.track_cat62_{yyyymmdd}{suffix}
+        ADD COLUMN IF NOT EXISTS entry_fl double precision;
+
+        ALTER TABLE track.track_cat62_{yyyymmdd}{suffix}
+        ADD COLUMN IF NOT EXISTS maintain_fl double precision;
+
+        ALTER TABLE track.track_cat62_{yyyymmdd}{suffix}
+        ADD COLUMN IF NOT EXISTS exit_fl double precision;
+    """
+    cursor.execute(sql)
+
+def assign_entry_flight_level(cursor, yyyymmdd, yyyymmdd_next, year, month, day, suffix=""):
+    sql = f"""
+        WITH cat062_union AS (
+            SELECT * FROM sur_air.cat062_{yyyymmdd}{suffix}
+            UNION
+            SELECT * FROM sur_air.cat062_{yyyymmdd_next}{suffix}
+        ),
+        entry_fl_cte AS (
+            SELECT flight_key, measured_fl AS entry_fl
+            FROM cat062_union
+            WHERE sector IS NOT NULL AND flight_key LIKE '%{year}-{month}-{day}%'
+            ORDER BY app_time ASC
+        )
+        UPDATE track.track_cat62_{yyyymmdd}{suffix} t
+        SET entry_fl = f.entry_fl
+        FROM entry_fl_cte f
+        WHERE t.flight_key = f.flight_key;
+    """
+    cursor.execute(sql)
+
+def assign_exit_flight_level(cursor, yyyymmdd, yyyymmdd_next, year, month, day, suffix=""):
+    sql = f"""
+        WITH cat062_union AS (
+            SELECT * FROM sur_air.cat062_{yyyymmdd}{suffix}
+            UNION
+            SELECT * FROM sur_air.cat062_{yyyymmdd_next}{suffix}
+        ),
+        exit_fl_cte AS (
+            SELECT flight_key, measured_fl AS exit_fl
+            FROM cat062_union
+            WHERE sector IS NOT NULL AND flight_key LIKE '%{year}-{month}-{day}%'
+            ORDER BY app_time DESC
+        )
+        UPDATE track.track_cat62_{yyyymmdd}{suffix} t
+        SET exit_fl = f.exit_fl
+        FROM exit_fl_cte f
+        WHERE t.flight_key = f.flight_key;
+    """
+    cursor.execute(sql)
+
+
+def assign_maintain_flight_level(cursor, yyyymmdd, yyyymmdd_next, year, month, day, suffix=""):
+    sql = f"""
+        WITH cat062_union AS (
+            SELECT app_time, flight_key, measured_fl
+            FROM sur_air.cat062_{yyyymmdd}{suffix}
+            WHERE vert = 0 AND measured_fl > 100 AND sector IS NOT NULL AND flight_key LIKE '%{year}-{month}-{day}%'
+            UNION ALL
+            SELECT app_time, flight_key, measured_fl
+            FROM sur_air.cat062_{yyyymmdd_next}{suffix}
+            WHERE vert = 0 AND measured_fl > 100 AND sector IS NOT NULL AND flight_key LIKE '%{year}-{month}-{day}%'
+        ),
+        fl_counts AS (
+            SELECT flight_key, measured_fl, COUNT(*) AS cnt
+            FROM cat062_union
+            GROUP BY flight_key, measured_fl
+        ),
+        fl_max AS (
+            SELECT flight_key, MAX(cnt) AS max_cnt
+            FROM fl_counts
+            GROUP BY flight_key
+        ),
+        maintain_cte AS (
+            SELECT c.flight_key, c.measured_fl AS maintain_fl
+            FROM fl_counts c
+            JOIN fl_max m ON c.flight_key = m.flight_key AND c.cnt = m.max_cnt
+        )
+        UPDATE track.track_cat62_{yyyymmdd}{suffix} t
+        SET maintain_fl = f.maintain_fl
+        FROM maintain_cte f
+        WHERE t.flight_key = f.flight_key;
+    """
+    cursor.execute(sql)
+
+def assign_flight_levels(cursor, yyyymmdd, yyyymmdd_next, yyyymm, year, month, day, suffix=""):
+    print(f"Assigning entry, maintain, and exit flight levels for {yyyymmdd}...")
+
+    add_flight_level_columns(cursor, yyyymmdd, suffix)
+    assign_entry_flight_level(cursor, yyyymmdd, yyyymmdd_next, year, month, day, suffix)
+    assign_exit_flight_level(cursor, yyyymmdd, yyyymmdd_next, year, month, day, suffix)
+    assign_maintain_flight_level(cursor, yyyymmdd, yyyymmdd_next, year, month, day, suffix)
+
+    print(f"Flight level assignment completed for {yyyymmdd}.")
+
+def process_day(date, target_conn, source_conn, environment='remote', suffix=''):
+    year, month, day, yyyymm, yyyymmdd, yyyymmdd_next, _ = prepare_date_strings(date)
+
+    with target_conn:
+        cursor_target = target_conn.cursor()
+        create_track_table(cursor_target, yyyymmdd, suffix)
+
+        with source_conn:
+            cursor_source = source_conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            records = extract_cat062_records(cursor_source, yyyymmdd, yyyymmdd_next, year, month, day, suffix)
+
+        lines = build_linestring_geometry(records, yyyymmdd, suffix)
+        insert_linestrings(cursor_target, lines, yyyymmdd, suffix)
+        enrich_with_flight_data(cursor_target, yyyymm, yyyymmdd, suffix)
+        assign_runways(cursor_target, yyyymmdd, yyyymm, yyyymmdd_next, suffix)
+        assign_flight_levels(cursor_target, yyyymmdd, yyyymmdd_next, yyyymm, year, month, day, suffix)
+
+if __name__ == "__main__":
+    start_time = log_time("Start time")
+
+    ENVIRONMENT = 'remote'
+
+    # date_list = pd.date_range(start='2023-04-09', end='2023-04-10')
+
+    today = dt.datetime.now()
+    date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
+                 + dt.timedelta(days=-3)]
+
+    conn_postgres_target = connect_postgres(ENVIRONMENT, 'target')
+    conn_postgres_source = connect_postgres(ENVIRONMENT, 'source')
+
+    for date in date_list:
+        print(f"\n🛫 Processing {date.strftime('%Y-%m-%d')}...")
+        process_day(date, conn_postgres_target, conn_postgres_source, ENVIRONMENT)
+
+    end_time = log_time("End time")
+    elapsed = end_time - start_time
+    print(f"\n⏱️ Total execution time: {elapsed:.2f} seconds")

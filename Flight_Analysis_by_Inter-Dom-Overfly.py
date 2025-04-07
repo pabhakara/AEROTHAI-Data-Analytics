@@ -171,123 +171,141 @@ with conn_postgres:
         equipage_count_df[equipage] = pd.concat([equipage_count_temp_3, equipage_count_temp_4])
 df = equipage_count_df
 
-print(df)
+# Convert index to datetime for proper date operations
+df.index = pd.to_datetime(df.index)
+
+# Save the original monthly totals
+df_total = df.copy()
+
+# Add number of days in each month
+df['days_in_month'] = df.index.days_in_month
+
+# Calculate daily averages
+df_avg = df_total.copy()
+for col in ['International', 'Domestic', 'Overfly']:
+    df_avg[col] = df_total[col] / df['days_in_month']
+
+# Drop helper column
+df.drop(columns='days_in_month', inplace=True)
 
 # Create figure with secondary y-axis
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 
-# Add traces
+# Add bar traces for monthly total flights
 fig.add_trace(
-    go.Bar(name="International",
-                      x=df.index,
-                      y=df['International'],
-                      offsetgroup=0),
+    go.Bar(name="International (Total)",
+           x=df_total.index,
+           y=df_total['International'],
+           offsetgroup=0),
     secondary_y=False,
 )
 
 fig.add_trace(
-    go.Bar(name="Domestic",
-                      x=df.index,
-                      y=df['Domestic'],
-                      offsetgroup=1),
+    go.Bar(name="Domestic (Total)",
+           x=df_total.index,
+           y=df_total['Domestic'],
+           offsetgroup=1),
     secondary_y=False,
 )
 
 fig.add_trace(
-    go.Bar(name="Overfly",
-                      x=df.index,
-                      y=df['Overfly'],
-                      offsetgroup=2),
+    go.Bar(name="Overfly (Total)",
+           x=df_total.index,
+           y=df_total['Overfly'],
+           offsetgroup=2),
+    secondary_y=False,
+)
+
+# Add dotted lines for daily average flights
+fig.add_trace(
+    go.Scatter(name="International Avg/Day",
+               x=df_avg.index,
+               y=df_avg['International'],
+               line=dict(dash='dot', color="#0008FF")),
     secondary_y=False,
 )
 
 fig.add_trace(
-    go.Line(name="International %",
-                           x=df.index,
-                           y=(df['International']/(df['Domestic']+df['International']+df['Overfly']))*100,
-            line=dict(color="#0008FF")
-                        ),
+    go.Scatter(name="Domestic Avg/Day",
+               x=df_avg.index,
+               y=df_avg['Domestic'],
+               line=dict(dash='dot', color="#FF0000")),
+    secondary_y=False,
+)
+
+fig.add_trace(
+    go.Scatter(name="Overfly Avg/Day",
+               x=df_avg.index,
+               y=df_avg['Overfly'],
+               line=dict(dash='dot', color="#008700")),
+    secondary_y=False,
+)
+
+# Add percentage lines (same as before)
+fig.add_trace(
+    go.Scatter(name="International %",
+               x=df_total.index,
+               y=(df_total['International'] / df_total.sum(axis=1)) * 100,
+               line=dict(color="#0008FF")),
     secondary_y=True,
 )
 
 fig.add_trace(
-    go.Line(name="Domestic %",
-                           x=df.index,
-                           y=(df['Domestic']/(df['Domestic']+df['International']+df['Overfly']))*100,
-            line=dict(color="#FF0000")
-                        ),
+    go.Scatter(name="Domestic %",
+               x=df_total.index,
+               y=(df_total['Domestic'] / df_total.sum(axis=1)) * 100,
+               line=dict(color="#FF0000")),
     secondary_y=True,
 )
 
 fig.add_trace(
-    go.Line(name="Overfly %",
-                           x=df.index,
-                           y=(df['Overfly']/(df['Domestic']+df['International']+df['Overfly']))*100,
-            line=dict(color="#008700")
-                        ),
+    go.Scatter(name="Overfly %",
+               x=df_total.index,
+               y=(df_total['Overfly'] / df_total.sum(axis=1)) * 100,
+               line=dict(color="#008700")),
     secondary_y=True,
 )
 
-# Add figure title
+# Add figure title and labels
 fig.update_layout(
-    title_text=f"Historical Monthly IFR Movements from/to {dest} by {analysis} " \
-               f"{date_list[0].month_name()} {date_list[0].year} to " \
-               f"{date_list[-1].month_name()} {date_list[-1].year} "
+    title_text=f"Historical Monthly IFR Movements from/to {dest} by {analysis}<br>"
+               f"{date_list[0].month_name()} {date_list[0].year} to "
+               f"{date_list[-1].month_name()} {date_list[-1].year}<br>"
+               f"(Bars = Monthly Total | Dotted Lines = Daily Avg | Solid Lines = % Share)"
 )
 
-# Set x-axis title
 fig.update_xaxes(title_text="Time")
-
-# Set y-axes titles
-fig.update_yaxes(title_text="<b>Number of Movements</b>", secondary_y=False)
-fig.update_yaxes(title_text=f"<b>Percentage</b>", secondary_y=True)
-
-fig.show()
-
-# Set title
-# fig.update_layout(
-#     title_text="Monthly IFR Movements in Bangkok FIR  with Mode-S Equipage (January 2013 to June 2022)"
-# )
-
-
+fig.update_yaxes(title_text="<b>Number of Flights</b>", secondary_y=False)
+fig.update_yaxes(title_text="<b>Percentage</b>", secondary_y=True)
 
 # Add range slider
 fig.update_layout(
     xaxis=dict(
         rangeselector=dict(
             buttons=list([
-                dict(count=1,
-                     label="1m",
-                     step="month",
-                     stepmode="backward"),
-                dict(count=6,
-                     label="6m",
-                     step="month",
-                     stepmode="backward"),
-                dict(count=1,
-                     label="YTD",
-                     step="year",
-                     stepmode="todate"),
-                dict(count=1,
-                     label="1y",
-                     step="year",
-                     stepmode="backward"),
+                dict(count=1, label="1m", step="month", stepmode="backward"),
+                dict(count=6, label="6m", step="month", stepmode="backward"),
+                dict(count=1, label="YTD", step="year", stepmode="todate"),
+                dict(count=1, label="1y", step="year", stepmode="backward"),
                 dict(step="all")
             ])
         ),
-        rangeslider=dict(
-            visible=True
-        ),
+        rangeslider=dict(visible=True),
         type="date"
     )
 )
+
+# Export to HTML and CSV
 fig.write_html(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis} "
                f"{date_list[0].year}-{date_list[0].month:02d} To "
-               f"{date_list[-1].year}-{date_list[-1].month:02d}"
-               f".html")
-df.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis} "
-          f"{date_list[0].year}-{date_list[0].month:02d} To "
-          f"{date_list[-1].year}-{date_list[-1].month:02d}"
-          f".csv")
-#fig.write_image("/Users/pongabha/Desktop/ADS-B.png")
+               f"{date_list[-1].year}-{date_list[-1].month:02d}.html")
+
+df_total.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis} "
+                f"{date_list[0].year}-{date_list[0].month:02d} To "
+                f"{date_list[-1].year}-{date_list[-1].month:02d} - Monthly Total.csv")
+
+df_avg.to_csv(f"/Users/pongabha/Dropbox/Workspace/AEROTHAI Data Analytics/Equipage Analysis/{analysis} "
+              f"{date_list[0].year}-{date_list[0].month:02d} To "
+              f"{date_list[-1].year}-{date_list[-1].month:02d} - Daily Avg.csv")
+
 fig.show()

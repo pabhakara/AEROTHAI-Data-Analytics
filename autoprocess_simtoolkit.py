@@ -37,7 +37,7 @@ db_name = 'navigraph'
 schema_name = 'public'
 
 # airac_list = ['2311','2312','2401','2402','2405','2406']
-airac_list = ['2301']
+airac_list = ['2503']
 #airac_list = reversed(airac_list)
 
 for airac in airac_list:

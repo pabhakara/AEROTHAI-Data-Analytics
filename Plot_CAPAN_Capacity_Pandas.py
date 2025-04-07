@@ -4,6 +4,14 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 import numpy as np
+# Required Libraries
+import pandas as pd
+import numpy as np
+import plotly.express as px
+import plotly.graph_objects as go
+import os
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
 
 def tic():
     #Homemade version of matlab tic and toc functions
@@ -108,6 +116,8 @@ for iter_num in range(1,2):
     sector_list = ['SECTOR_1N', 'SECTOR_1S', 'SECTOR_2N', 'SECTOR_2S', 'SECTOR_3N', 'SECTOR_3S',
                     'SECTOR_4N', 'SECTOR_4S', 'SECTOR_5N', 'SECTOR_5S', 'SECTOR_6N', 'SECTOR_6S'
                     'SECTOR_7N', 'SECTOR_7S', 'SECTOR_8N', 'SECTOR_8S']
+
+
 
     sector_list_df = pd.DataFrame(sector_list)
 

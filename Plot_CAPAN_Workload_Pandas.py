@@ -106,6 +106,12 @@ sector_list = ['SECTOR_1N', 'SECTOR_1S', 'SECTOR_2N', 'SECTOR_2S', 'SECTOR_3N', 
                     'SECTOR_4N', 'SECTOR_4S', 'SECTOR_5N', 'SECTOR_5S', 'SECTOR_6N', 'SECTOR_6S',
                     'SECTOR_7N', 'SECTOR_7S', 'SECTOR_8N', 'SECTOR_8S']
 
+sector_list = [
+    'APE1', 'APE2', 'APN', 'APS1', 'APS2',
+    'APW', 'ARR19_1', 'ARR19_2', 'DAR21',
+    'DDP21', 'DSB19'
+]
+
 sector_list_df = pd.DataFrame(sector_list)
 
 # Total sector entry counts in 24 hours
