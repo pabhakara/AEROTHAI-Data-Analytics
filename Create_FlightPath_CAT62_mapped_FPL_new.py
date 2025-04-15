@@ -77,7 +77,6 @@ def export_table_to_local(env, yyyymmdd):
         p = Popen(command, shell=True, stdin=PIPE)
         p.communicate()
 
-
 def create_track_table(cursor, yyyymmdd, suffix=""):
     sql = f"""
         DROP TABLE IF EXISTS track.track_{yyyymmdd}{suffix}_temp;
@@ -200,7 +199,6 @@ def build_linestring_segment(track_records):
         simplified.append(simplified[0])
 
     return f"LINESTRING({','.join(simplified)})", skipped_count
-
 
 def build_linestring_geometry(records, yyyymmdd, suffix=""):
     linestrings = []
@@ -444,6 +442,35 @@ def assign_flight_levels(cursor, yyyymmdd, yyyymmdd_next, yyyymm, year, month, d
 
     print(f"Flight level assignment completed for {yyyymmdd}.")
 
+def import_track_from_remote(yyyymmdd):
+    remote_pg_uri = "postgres://de_old_data:de_old_data@172.16.129.241:5432/aerothai_dwh"
+    local_pg_user = "postgres"
+    local_pg_db = "temp"
+    local_pg_password = "password"
+    local_pg_host = "localhost"
+    local_pg_port = "5432"
+    schema = "track"
+    table = f"track_cat62_{yyyymmdd}"
+    full_table = f"{schema}.{table}"
+    print(f"⬇️  Importing {full_table} from remote...")
+    command = (
+        f"pg_dump --dbname={remote_pg_uri} "
+        f"--table={full_table} | "
+        f"psql -h {local_pg_host} -U {local_pg_user} -d {local_pg_db}"
+    )
+    env = os.environ.copy()
+    env["PGPASSWORD"] = local_pg_password
+
+    p = Popen(command, shell=True, env=env, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    stdout, stderr = p.communicate()
+
+    if p.returncode == 0:
+        print(f"✅ Successfully imported {full_table}")
+    else:
+        print(f"❌ Failed to import {full_table}")
+        print("STDERR:\n", stderr.decode())
+
+
 def process_day(date, target_conn, source_conn, environment='remote', suffix=''):
     year, month, day, yyyymm, yyyymmdd, yyyymmdd_next, _ = prepare_date_strings(date)
 
@@ -460,6 +487,36 @@ def process_day(date, target_conn, source_conn, environment='remote', suffix='')
         enrich_with_flight_data(cursor_target, yyyymm, yyyymmdd, suffix)
         assign_runways(cursor_target, yyyymmdd, yyyymm, yyyymmdd_next, suffix)
         assign_flight_levels(cursor_target, yyyymmdd, yyyymmdd_next, yyyymm, year, month, day, suffix)
+        if environment == 'remote':
+            import_track_from_remote(yyyymmdd)
+
+        # remote_pg_uri = "postgres://de_old_data:de_old_data@172.16.129.241:5432/aerothai_dwh"
+        # local_pg_user = "postgres"
+        # local_pg_db = "temp"
+        # local_pg_password = "password"
+        # local_pg_host = "localhost"
+        # local_pg_port = "5432"
+        # schema = "track"
+        # table = f"track_cat62_{yyyymmdd}"
+        # full_table = f"{schema}.{table}"
+        # print(f"⬇️  Importing {full_table} from remote...")
+        # command = (
+        #     f"pg_dump --dbname={remote_pg_uri} "
+        #     f"--table={full_table} | "
+        #     f"psql -h {local_pg_host} -U {local_pg_user} -d {local_pg_db}"
+        # )
+        # env = os.environ.copy()
+        # env["PGPASSWORD"] = local_pg_password
+        #
+        # p = Popen(command, shell=True, env=env, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        # stdout, stderr = p.communicate()
+        #
+        # if p.returncode == 0:
+        #     print(f"✅ Successfully imported {full_table}")
+        # else:
+        #     print(f"❌ Failed to import {full_table}")
+        #     print("STDERR:\n", stderr.decode())
+
 
 if __name__ == "__main__":
     start_time = log_time("Start time")
@@ -470,7 +527,7 @@ if __name__ == "__main__":
 
     today = dt.datetime.now()
     date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
-                 + dt.timedelta(days=-3)]
+                 + dt.timedelta(days=-73)]
 
     conn_postgres_target = connect_postgres(ENVIRONMENT, 'target')
     conn_postgres_source = connect_postgres(ENVIRONMENT, 'source')

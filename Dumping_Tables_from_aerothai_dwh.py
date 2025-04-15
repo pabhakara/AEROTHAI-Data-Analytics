@@ -13,7 +13,7 @@ local_pg_host = "localhost"
 local_pg_port = "5432"
 
 # --- Date range ---
-date_list = pd.date_range(start="2024-11-01", end="2024-11-30")
+date_list = pd.date_range(start="2025-04-12", end="2025-04-12")
 
 # --- Connect to local PostgreSQL ---
 def table_exists_local(schema: str, table: str) -> bool:
@@ -45,8 +45,8 @@ def table_exists_local(schema: str, table: str) -> bool:
 for date in date_list:
     yyyymmdd = date.strftime("%Y%m%d")
 
-    schema = "sur_air" #"track" # "sur_air" #
-    table = f"cat062_{yyyymmdd}" # f"track_cat62_{yyyymmdd}" #
+    schema = "track" # "sur_air" #
+    table = f"track_cat62_{yyyymmdd}" #f"cat062_{yyyymmdd}" #
 
     full_table = f"{schema}.{table}"
 
