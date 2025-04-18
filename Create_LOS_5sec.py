@@ -7,19 +7,18 @@ import pandas as pd
 # database = "track")
 
 #Try to connect to the remote PostGresSQL database in which we will store our flight trajectories coupled with FPL data.
+# date_list = pd.date_range(start='2025-04-13', end='2025-04-13')
+
+today = dt.datetime.now()
+date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
+             + dt.timedelta(days=-3)]
+
 conn_postgres = psycopg2.connect(user="de_old_data",
                                  password="de_old_data",
                                  host="172.16.129.241",
                                  port="5432",
                                  database="aerothai_dwh",
                                  options="-c search_path=dbo,los")
-
-# date_list = pd.date_range(start='2025-04-08', end='2025-04-10')
-
-today = dt.datetime.now()
-date_list = [dt.datetime.strptime(f"{today.year}-{today.month}-{today.day}", '%Y-%m-%d')
-             + dt.timedelta(days=-3)]
-
 
 with (conn_postgres):
     cursor_postgres = conn_postgres.cursor()

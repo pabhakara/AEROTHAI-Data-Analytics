@@ -8,9 +8,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b70db43c-7c4d-4b3e-9e46-199adf2487f4" name="Default Changelist" comment="test2">
+      <change afterPath="$PROJECT_DIR$/Dump_Schema_from_aerothai_dwh.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Insert_new_flight_data_records.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Insert_new_jade_mk_records.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/airac_differences.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dme_coverage_map.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Create_FlightPath_CAT62_mapped_FPL_new.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_FlightPath_CAT62_mapped_FPL_new.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dumping_Tables_from_aerothai_dwh.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dumping_Tables_from_aerothai_dwh.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Create_FlightPath_CAT62_mapped_FPL.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_FlightPath_CAT62_mapped_FPL.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Create_FlightPath_CAT62_mapped_FPL_new.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Create_LOS_5sec.py" beforeDir="false" afterPath="$PROJECT_DIR$/Create_LOS_5sec.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DME-DME.py" beforeDir="false" afterPath="$PROJECT_DIR$/DME-DME.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dumping_Tables_from_aerothai_dwh.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dump_Tables_from_aerothai_dwh.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,120 +87,129 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python tests.Python tests in test_RAIM_prediction.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python.AirTOP_Traffic_Mapped_To_BAPP_Sectors.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Asterix_Decoder.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Batch_Copy.executor&quot;: &quot;Run&quot;,
-    &quot;Python.CCO_analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.CDO_analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Calculate_TTG_for_BKK_Arrivals.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Calculate_TTG_for_BKK_Arrivals_FlightKey.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Calculate_TTG_for_BKK_Depatures.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Check sur_air cat062.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Convert_Aieron_JSON_to_GeoJSON.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Convert_Aieron_JSON_to_GeoJSON_Combinned.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Convert_Aieron_JSON_to_GeoJSON_Points.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Convert_Aieron_JSON_to_GeoJSON_and_Plot_in_Folium.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Count_CCO.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Count_CDO.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_ATS_Route_Segments_simtoolkit (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_ATS_Route_Segments_simtoolkit.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_AirTOP_ArrivalLegs_from_Navigraph.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_AirTOP_ArrivalLegs_from_Navigraph_crashed.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_FPL_Track.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_Filed_FPL_path.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_FlightPath_CAT62_mapped_FPL.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_FlightPath_CAT62_mapped_FPL_new.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_LOS_5sec.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_Landing_Separation.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_Line_of_Sight_GeoJSON.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_Line_of_Sight_Point_in_GeoJSON.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_Line_of_Sight_Polygon_in_GeoJSON.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Create_VHF_Line_of_Sight_Coverage.executor&quot;: &quot;Run&quot;,
-    &quot;Python.DME-DME.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Detect_Go_Around.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Dumping_Tables_from_aerothai_dwh.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Equipage_Analysis_8.33Hz.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Equipage_Analysis_ADS-B.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Equipage_Analysis_DEST_VT.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Equipage_Analysis_GLS.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Equipage_Analysis_Mode-S.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Equipage_Analysis_PBCS_by_Type.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Equipage_Analysis_PBN_DME_DME_by_Type.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Equipage_Analysis_PBN_by_Type.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Equipage_Analysis_by_Dom_Int.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Find_ICAO_24bit_FPL_NOT_Matched_DAP.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Flight_Analysis_by_Categories.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Flight_Analysis_by_Inter-Dom-Overfly.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Flight_Analysis_by_Inter-Dom-Overfly_new.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Flight_Analysis_by_OpType.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Import_Aieron_JSON_into_PostGIS.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Load_Aireon_Data_from_CSV.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Loop_over_days_IAS_at_FAF.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MySQL_(remote)_to_PostGres.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Non_ADS-B_Capable_with_ADS-B_targets.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PDF_to_PPT.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Plot_AirTOP_ATC_Task_Pandas.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Plot_AirTOP_ATC_Task_Pandas_ChatGPT.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Plot_AirTOP_Capacity.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Plot_AirTOP_Sector_Entry_Pandas.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Plot_AirTOP_Workload_Pandas.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Plot_Aireon_Data_in_Folium.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Plot_CAPAN_Workload_Pandas.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Plot_CAPAN_Workload_Postgres.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Plot_CCD_Profile_From_Cat62.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Plot_CCO_Profile_From_Cat62.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Plot_CDO_Profile_From_Cat62.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Plot_IAS_From_Cat62.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Plot_Vertical_Profile_From_Cat62.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Plot_Vertical_Profile_From_Cat62_mode_a.executor&quot;: &quot;Run&quot;,
-    &quot;Python.RNP_APCH.executor&quot;: &quot;Run&quot;,
-    &quot;Python.STARs_VT_Profile.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Update_dest_rwy_to_Tracks.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Vertical_Profile_Analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Visualize_Aireon_Data_on_Globe.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Word_To_PPT.executor&quot;: &quot;Run&quot;,
-    &quot;Python.autoprocess_simtoolkit.executor&quot;: &quot;Run&quot;,
-    &quot;Python.docx.executor&quot;: &quot;Run&quot;,
-    &quot;Python.new_file.executor&quot;: &quot;Run&quot;,
-    &quot;Python.plot_sur_air_in_folium.executor&quot;: &quot;Run&quot;,
-    &quot;Python.plot_sur_air_in_plotly.executor&quot;: &quot;Run&quot;,
-    &quot;Python.scratch.executor&quot;: &quot;Run&quot;,
-    &quot;Python.temp.executor&quot;: &quot;Run&quot;,
-    &quot;Python.terminal_efficiency.executor&quot;: &quot;Run&quot;,
-    &quot;Python.terminal_efficiency_vtcc.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;settings.editor.splitter.proportion&quot;: &quot;0.44195518&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python tests.Python tests in test_RAIM_prediction.py.executor": "Run",
+    "Python.AirTOP_Traffic_Mapped_To_BAPP_Sectors.executor": "Run",
+    "Python.Asterix_Decoder.executor": "Run",
+    "Python.Batch_Copy.executor": "Run",
+    "Python.CCO_analysis.executor": "Run",
+    "Python.CDO_analysis.executor": "Run",
+    "Python.Calculate_TTG_for_BKK_Arrivals.executor": "Run",
+    "Python.Calculate_TTG_for_BKK_Arrivals_FlightKey.executor": "Run",
+    "Python.Calculate_TTG_for_BKK_Depatures.executor": "Run",
+    "Python.Check sur_air cat062.executor": "Run",
+    "Python.Convert_Aieron_JSON_to_GeoJSON.executor": "Run",
+    "Python.Convert_Aieron_JSON_to_GeoJSON_Combinned.executor": "Run",
+    "Python.Convert_Aieron_JSON_to_GeoJSON_Points.executor": "Run",
+    "Python.Convert_Aieron_JSON_to_GeoJSON_and_Plot_in_Folium.executor": "Run",
+    "Python.Count_CCO.executor": "Run",
+    "Python.Count_CDO.executor": "Run",
+    "Python.Create_ATS_Route_Segments_simtoolkit (1).executor": "Run",
+    "Python.Create_ATS_Route_Segments_simtoolkit.executor": "Run",
+    "Python.Create_AirTOP_ArrivalLegs_from_Navigraph.executor": "Run",
+    "Python.Create_AirTOP_ArrivalLegs_from_Navigraph_crashed.executor": "Run",
+    "Python.Create_FPL_Track.executor": "Run",
+    "Python.Create_Filed_FPL_path.executor": "Run",
+    "Python.Create_FlightPath_CAT62_mapped_FPL.executor": "Run",
+    "Python.Create_FlightPath_CAT62_mapped_FPL_new.executor": "Run",
+    "Python.Create_LOS_5sec.executor": "Run",
+    "Python.Create_Landing_Separation.executor": "Run",
+    "Python.Create_Line_of_Sight_GeoJSON.executor": "Run",
+    "Python.Create_Line_of_Sight_Point_in_GeoJSON.executor": "Run",
+    "Python.Create_Line_of_Sight_Polygon_in_GeoJSON.executor": "Run",
+    "Python.Create_VHF_Line_of_Sight_Coverage.executor": "Run",
+    "Python.DME-DME.executor": "Run",
+    "Python.Detect_Go_Around.executor": "Run",
+    "Python.Dump_Schema_from_aerotha_dwh.executor": "Run",
+    "Python.Dump_Tables_from_aerothai_dwh.executor": "Run",
+    "Python.Dumping_Tables_from_aerothai_dwh.executor": "Run",
+    "Python.Equipage_Analysis_8.33Hz.executor": "Run",
+    "Python.Equipage_Analysis_ADS-B.executor": "Run",
+    "Python.Equipage_Analysis_DEST_VT.executor": "Run",
+    "Python.Equipage_Analysis_GLS.executor": "Run",
+    "Python.Equipage_Analysis_Mode-S.executor": "Run",
+    "Python.Equipage_Analysis_PBCS_by_Type.executor": "Run",
+    "Python.Equipage_Analysis_PBN_DME_DME_by_Type.executor": "Run",
+    "Python.Equipage_Analysis_PBN_by_Type.executor": "Run",
+    "Python.Equipage_Analysis_by_Dom_Int.executor": "Run",
+    "Python.Find_ICAO_24bit_FPL_NOT_Matched_DAP.executor": "Run",
+    "Python.Flight_Analysis_by_Categories.executor": "Run",
+    "Python.Flight_Analysis_by_Inter-Dom-Overfly.executor": "Run",
+    "Python.Flight_Analysis_by_Inter-Dom-Overfly_new.executor": "Run",
+    "Python.Flight_Analysis_by_OpType.executor": "Run",
+    "Python.Import_Aieron_JSON_into_PostGIS.executor": "Run",
+    "Python.Insert_flight_data_from_remote.executor": "Run",
+    "Python.Insert_new_flight_data_records.executor": "Run",
+    "Python.Insert_new_jade_mk_records.executor": "Run",
+    "Python.Load_Aireon_Data_from_CSV.executor": "Run",
+    "Python.Loop_over_days_IAS_at_FAF.executor": "Run",
+    "Python.MySQL_(remote)_to_PostGres.executor": "Run",
+    "Python.Non_ADS-B_Capable_with_ADS-B_targets.executor": "Run",
+    "Python.PDF_to_PPT.executor": "Run",
+    "Python.Plot_AirTOP_ATC_Task_Pandas.executor": "Run",
+    "Python.Plot_AirTOP_ATC_Task_Pandas_ChatGPT.executor": "Run",
+    "Python.Plot_AirTOP_Capacity.executor": "Run",
+    "Python.Plot_AirTOP_Sector_Entry_Pandas.executor": "Run",
+    "Python.Plot_AirTOP_Workload_Pandas.executor": "Run",
+    "Python.Plot_Aireon_Data_in_Folium.executor": "Run",
+    "Python.Plot_CAPAN_Workload_Pandas.executor": "Run",
+    "Python.Plot_CAPAN_Workload_Postgres.executor": "Run",
+    "Python.Plot_CCD_Profile_From_Cat62.executor": "Run",
+    "Python.Plot_CCO_Profile_From_Cat62.executor": "Run",
+    "Python.Plot_CDO_Profile_From_Cat62.executor": "Run",
+    "Python.Plot_IAS_From_Cat62.executor": "Run",
+    "Python.Plot_Vertical_Profile_From_Cat62.executor": "Run",
+    "Python.Plot_Vertical_Profile_From_Cat62_mode_a.executor": "Run",
+    "Python.RNP_APCH.executor": "Run",
+    "Python.STARs_VT_Profile.executor": "Run",
+    "Python.Update_dest_rwy_to_Tracks.executor": "Run",
+    "Python.Vertical_Profile_Analysis.executor": "Run",
+    "Python.Visualize_Aireon_Data_on_Globe.executor": "Run",
+    "Python.Word_To_PPT.executor": "Run",
+    "Python.airac_differences.executor": "Run",
+    "Python.autoprocess_simtoolkit.executor": "Run",
+    "Python.docx.executor": "Run",
+    "Python.new_file.executor": "Run",
+    "Python.plot_sur_air_in_folium.executor": "Run",
+    "Python.plot_sur_air_in_plotly.executor": "Run",
+    "Python.scratch.executor": "Run",
+    "Python.steam_pg_backup_to_s3.executor": "Run",
+    "Python.steam_postgis_database_to_s3.executor": "Run",
+    "Python.temp.executor": "Run",
+    "Python.terminal_efficiency.executor": "Run",
+    "Python.terminal_efficiency_vtcc.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/Users/pongabha/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "aDefault",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "settings.editor.splitter.proportion": "0.44195518",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ],
-    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
-      &quot;Python&quot;
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "Python"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
+      <recent name="$USER_HOME$/Library/CloudStorage/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Create_FlightPath_CAT62_mapped_FPL_new">
-    <configuration name="Create_FlightPath_CAT62_mapped_FPL_new" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python.Insert_new_flight_data_records">
+    <configuration name="Create_FlightPath_CAT62_mapped_FPL" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Data_Analytics" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -206,7 +223,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Create_FlightPath_CAT62_mapped_FPL_new.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Create_FlightPath_CAT62_mapped_FPL.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -238,7 +255,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Dumping_Tables_from_aerothai_dwh" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="DME-DME" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Data_Analytics" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -252,7 +269,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Dumping_Tables_from_aerothai_dwh.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/DME-DME.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -261,7 +278,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="MySQL_(remote)_to_PostGres" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="Insert_new_flight_data_records" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Data_Analytics" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -275,7 +292,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MySQL_(remote)_to_PostGres.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Insert_new_flight_data_records.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -284,7 +301,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Plot_Vertical_Profile_From_Cat62" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="Insert_new_jade_mk_records" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Data_Analytics" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -298,7 +315,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Plot_Vertical_Profile_From_Cat62.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Insert_new_jade_mk_records.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -308,19 +325,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.MySQL_(remote)_to_PostGres" />
-      <item itemvalue="Python.Dumping_Tables_from_aerothai_dwh" />
-      <item itemvalue="Python.Plot_Vertical_Profile_From_Cat62" />
-      <item itemvalue="Python.Create_FlightPath_CAT62_mapped_FPL_new" />
+      <item itemvalue="Python.DME-DME" />
+      <item itemvalue="Python.Create_FlightPath_CAT62_mapped_FPL" />
       <item itemvalue="Python.Create_LOS_5sec" />
+      <item itemvalue="Python.Insert_new_flight_data_records" />
+      <item itemvalue="Python.Insert_new_jade_mk_records" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Create_FlightPath_CAT62_mapped_FPL_new" />
-        <item itemvalue="Python.Dumping_Tables_from_aerothai_dwh" />
+        <item itemvalue="Python.Insert_new_flight_data_records" />
+        <item itemvalue="Python.Insert_new_jade_mk_records" />
+        <item itemvalue="Python.DME-DME" />
         <item itemvalue="Python.Create_LOS_5sec" />
-        <item itemvalue="Python.MySQL_(remote)_to_PostGres" />
-        <item itemvalue="Python.Plot_Vertical_Profile_From_Cat62" />
+        <item itemvalue="Python.Create_FlightPath_CAT62_mapped_FPL" />
       </list>
     </recent_temporary>
   </component>
@@ -435,7 +452,9 @@
       <workItem from="1743754749840" duration="49267000" />
       <workItem from="1744159565150" duration="20128000" />
       <workItem from="1744628075149" duration="1204000" />
-      <workItem from="1744684558619" duration="2321000" />
+      <workItem from="1744684558619" duration="28267000" />
+      <workItem from="1744796239387" duration="6841000" />
+      <workItem from="1744861132842" duration="21546000" />
     </task>
     <task id="LOCAL-00029" summary="test2">
       <created>1625320295540</created>
@@ -780,7 +799,7 @@
       <option name="project" value="LOCAL" />
       <updated>1654989181515</updated>
     </task>
-    <option name="localTasksCounter" value="94" />
+    <option name="localTasksCounter" value="95" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -822,35 +841,40 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Create_Line_of_Sight_Polygon_in_GeoJSON.coverage" NAME="Create_Line_of_Sight_Polygon_in_GeoJSON Coverage Results" MODIFIED="1742781748957" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$terminal_efficiency.coverage" NAME="terminal_efficiency Coverage Results" MODIFIED="1719368596264" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Insert_new_flight_data_records.coverage" NAME="Insert_new_flight_data_records Coverage Results" MODIFIED="1744948310166" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Create_FPL_Track.coverage" NAME="Create_FPL_Track Coverage Results" MODIFIED="1719679104059" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Batch_Copy.coverage" NAME="Batch_Copy Coverage Results" MODIFIED="1743309035008" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Calculate_TTG_for_BKK_Arrivals.coverage" NAME="Calculate_TTG_for_BKK_Arrivals Coverage Results" MODIFIED="1740457388330" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$.coverage" NAME=" Coverage Results" MODIFIED="1737599104997" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Equipage_Analysis_PBCS_by_Type.coverage" NAME="Equipage_Analysis_PBCS_by_Type Coverage Results" MODIFIED="1738565367962" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$steam_postgis_database_to_s3.coverage" NAME="steam_postgis_database_to_s3 Coverage Results" MODIFIED="1744778240780" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Flight_Analysis_by_Inter_Dom_Overfly.coverage" NAME="Flight_Analysis_by_Inter-Dom-Overfly Coverage Results" MODIFIED="1741078636164" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Equipage_Analysis_PBCS_by_Type.coverage" NAME="Equipage_Analysis_PBCS_by_Type Coverage Results" MODIFIED="1738565367962" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Count_CDO.coverage" NAME="Count_CDO Coverage Results" MODIFIED="1727324211954" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Plot_AirTOP_Sector_Entry_Pandas.coverage" NAME="Plot_AirTOP_Sector_Entry_Pandas Coverage Results" MODIFIED="1741162254345" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Check_sur_air_cat062.coverage" NAME="Check sur_air cat062 Coverage Results" MODIFIED="1721009507831" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Non_ADS_B_Capable_with_ADS_B_targets.coverage" NAME="Non_ADS-B_Capable_with_ADS-B_targets Coverage Results" MODIFIED="1727249912974" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Create_FlightPath_CAT62_mapped_FPL.coverage" NAME="Create_FlightPath_CAT62_mapped_FPL Coverage Results" MODIFIED="1743905255993" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Create_FlightPath_CAT62_mapped_FPL.coverage" NAME="Create_FlightPath_CAT62_mapped_FPL Coverage Results" MODIFIED="1744937581594" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$STARs_VT_Profile.coverage" NAME="STARs_VT_Profile Coverage Results" MODIFIED="1727933449694" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Visualize_Aireon_Data_on_Globe.coverage" NAME="Visualize_Aireon_Data_on_Globe Coverage Results" MODIFIED="1743501007600" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Plot_CDO_Profile_From_Cat62.coverage" NAME="Plot_CDO_Profile_From_Cat62 Coverage Results" MODIFIED="1734320419087" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Dumping_Tables_from_aerothai_dwh.coverage" NAME="Dumping_Tables_from_aerothai_dwh Coverage Results" MODIFIED="1744686430521" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Dumping_Tables_from_aerothai_dwh.coverage" NAME="Dump_Tables_from_aerothai_dwh Coverage Results" MODIFIED="1744771705071" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$PDF_to_PPT.coverage" NAME="PDF_to_PPT Coverage Results" MODIFIED="1738148212400" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Plot_AirTOP_ATC_Task_Pandas_ChatGPT.coverage" NAME="Plot_AirTOP_ATC_Task_Pandas_ChatGPT Coverage Results" MODIFIED="1741769105235" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Calculate_TTG_for_BKK_Depatures.coverage" NAME="Calculate_TTG_for_BKK_Depatures Coverage Results" MODIFIED="1740491872057" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Dump_Tables_from_aerothai_dwh.coverage" NAME="Dump_Tables_from_aerothai_dwh Coverage Results" MODIFIED="1744865659849" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$CDO_analysis.coverage" NAME="CDO_analysis Coverage Results" MODIFIED="1728473635461" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$CCO_analysis.coverage" NAME="CCO_analysis Coverage Results" MODIFIED="1732594926925" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Create_Landing_Separation.coverage" NAME="Create_Landing_Separation Coverage Results" MODIFIED="1733098187417" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$steam_pg_backup_to_s3.coverage" NAME="steam_pg_backup_to_s3 Coverage Results" MODIFIED="1744778177078" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Plot_AirTOP_Workload_Pandas.coverage" NAME="Plot_AirTOP_Workload_Pandas Coverage Results" MODIFIED="1741316715996" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$DME_DME.coverage" NAME="DME-DME Coverage Results" MODIFIED="1742372922176" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Dump_Schema_from_aerotha_dwh.coverage" NAME="Dump_Schema_from_aerotha_dwh Coverage Results" MODIFIED="1744688757491" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$DME_DME.coverage" NAME="DME-DME Coverage Results" MODIFIED="1744940840217" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Equipage_Analysis_Mode_S.coverage" NAME="Equipage_Analysis_Mode-S Coverage Results" MODIFIED="1741141058460" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Update_dest_rwy_to_Tracks.coverage" NAME="Update_dest_rwy_to_Tracks Coverage Results" MODIFIED="1736239203070" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Plot_CAPAN_Workload_Pandas.coverage" NAME="Plot_CAPAN_Workload_Pandas Coverage Results" MODIFIED="1736147738267" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Count_CCO.coverage" NAME="Count_CCO Coverage Results" MODIFIED="1728355955281" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Plot_Aireon_Data_in_Folium.coverage" NAME="Plot_Aireon_Data_in_Folium Coverage Results" MODIFIED="1743488181276" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Create_LOS_5sec.coverage" NAME="Create_LOS_5sec Coverage Results" MODIFIED="1744685101172" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Create_LOS_5sec.coverage" NAME="Create_LOS_5sec Coverage Results" MODIFIED="1744937615469" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$docx.coverage" NAME="docx Coverage Results" MODIFIED="1738146842211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Plot_AirTOP_Capacity.coverage" NAME="Plot_AirTOP_Capacity Coverage Results" MODIFIED="1743063873379" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Create_FlightPath_CAT62_mapped_FPL_new.coverage" NAME="Create_FlightPath_CAT62_mapped_FPL_new Coverage Results" MODIFIED="1744686875114" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -859,7 +883,7 @@
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Create_Filed_FPL_path.coverage" NAME="Create_Filed_FPL_path Coverage Results" MODIFIED="1719683524243" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Equipage_Analysis_DEST_VT.coverage" NAME="Equipage_Analysis_DEST_VT Coverage Results" MODIFIED="1721026518724" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Create_ATS_Route_Segments_simtoolkit.coverage" NAME="Create_ATS_Route_Segments_simtoolkit Coverage Results" MODIFIED="1724464176411" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$autoprocess_simtoolkit.coverage" NAME="autoprocess_simtoolkit Coverage Results" MODIFIED="1742478783080" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$autoprocess_simtoolkit.coverage" NAME="autoprocess_simtoolkit Coverage Results" MODIFIED="1744886963666" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Create_ATS_Route_Segments_simtoolkit__1_.coverage" NAME="Create_ATS_Route_Segments_simtoolkit (1) Coverage Results" MODIFIED="1724464532743" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/Library/CloudStorage/Dropbox/Workspace/PycharmProjects/AEROTHAI_Data_Analytics" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Vertical_Profile_Analysis.coverage" NAME="Vertical_Profile_Analysis Coverage Results" MODIFIED="1728309545951" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$RNP_APCH.coverage" NAME="RNP_APCH Coverage Results" MODIFIED="1737685441750" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -871,6 +895,7 @@
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$new_file.coverage" NAME="new_file Coverage Results" MODIFIED="1743497398347" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$temp.coverage" NAME="temp Coverage Results" MODIFIED="1743906684301" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Create_VHF_Line_of_Sight_Coverage.coverage" NAME="Create_VHF_Line_of_Sight_Coverage Coverage Results" MODIFIED="1742807780622" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$airac_differences.coverage" NAME="airac_differences Coverage Results" MODIFIED="1744884985657" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Convert_Aieron_JSON_to_GeoJSON_Points.coverage" NAME="Convert_Aieron_JSON_to_GeoJSON_Points Coverage Results" MODIFIED="1743397273711" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Flight_Analysis_by_Inter_Dom_Overfly_new.coverage" NAME="Flight_Analysis_by_Inter-Dom-Overfly_new Coverage Results" MODIFIED="1743208214114" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Flight_Analysis_by_Categories.coverage" NAME="Flight_Analysis_by_Categories Coverage Results" MODIFIED="1739928325678" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -878,6 +903,7 @@
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$terminal_efficiency_vtcc.coverage" NAME="terminal_efficiency_vtcc Coverage Results" MODIFIED="1719374875622" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Convert_Aieron_JSON_to_GeoJSON_and_Plot_in_Folium.coverage" NAME="Convert_Aieron_JSON_to_GeoJSON_and_Plot_in_Folium Coverage Results" MODIFIED="1743489195545" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Import_Aieron_JSON_into_PostGIS.coverage" NAME="Import_Aieron_JSON_into_PostGIS Coverage Results" MODIFIED="1743415092346" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Insert_new_jade_mk_records.coverage" NAME="Insert_new_jade_mk_records Coverage Results" MODIFIED="1744948238460" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$scratch.coverage" NAME="scratch Coverage Results" MODIFIED="1742475850690" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Equipage_Analysis_ADS_B.coverage" NAME="Equipage_Analysis_ADS-B Coverage Results" MODIFIED="1738632669614" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Convert_Aieron_JSON_to_GeoJSON_Combinned.coverage" NAME="Convert_Aieron_JSON_to_GeoJSON_Combinned Coverage Results" MODIFIED="1743489043022" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -890,6 +916,7 @@
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Plot_CCO_Profile_From_Cat62.coverage" NAME="Plot_CCO_Profile_From_Cat62 Coverage Results" MODIFIED="1732592949649" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Word_To_PPT.coverage" NAME="Word_To_PPT Coverage Results" MODIFIED="1738232068733" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$plot_sur_air_in_plotly.coverage" NAME="plot_sur_air_in_plotly Coverage Results" MODIFIED="1743486696477" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Insert_flight_data_from_remote.coverage" NAME="Insert_flight_data_from_remote Coverage Results" MODIFIED="1744716111014" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Plot_Vertical_Profile_From_Cat62_mode_a.coverage" NAME="Plot_Vertical_Profile_From_Cat62_mode_a Coverage Results" MODIFIED="1724719963241" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$Convert_Aieron_JSON_to_GeoJSON.coverage" NAME="Convert_Aieron_JSON_to_GeoJSON Coverage Results" MODIFIED="1743395750805" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AEROTHAI_Data_Analytics$plot_sur_air_in_folium.coverage" NAME="plot_sur_air_in_folium Coverage Results" MODIFIED="1743485642919" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
